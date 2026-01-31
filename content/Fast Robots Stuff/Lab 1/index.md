@@ -6,3 +6,4 @@ weight = 12
 tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontroller" ]
 +++
 
+*Lab content coming soon.*

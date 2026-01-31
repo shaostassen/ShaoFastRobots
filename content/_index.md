@@ -23,18 +23,18 @@ title = "About Me"
 
 <div style="display: grid; grid-template-columns: 240px minmax(260px, 520px); gap: 24px; align-items: start;">
   <div>
-    <img src="/ProfilePicture.jpg#no-hover#start" alt="Profile Picture" style="display:block; width: 100%; height: auto; max-height: 240px; object-fit: contain;">
+    <img src="ProfilePicture.jpg#no-hover#start" alt="Profile Picture" style="display:block; width: 100%; height: auto; max-height: 240px; object-fit: contain;">
   </div>
   <div style="line-height: 1.5;">
     <p>Senior at Cornell University studying Computer Science with a focus in Robotics</p>
-    <p>Here on campus I am doing foundation model and diffusion policy research on the assisitive robotic lab EmPRISE. I am also an Autonomous member of the Combat Robotics at Cornell Project Team. I will be updating my site through the semester to reflect my progress in Fast Robots - ECE4160.</p>
+    <p>Here on campus I am doing foundation model and diffusion policy research on the assistive robotic lab EmPRISE. I am also an Autonomous member of the Combat Robotics at Cornell Project Team. I will be updating my site through the semester to reflect my progress in Fast Robots - ECE4160.</p>
   </div>
 </div>
 
 <br />
 
 <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
-  <img src="/crclogo.png#no-hover" alt="Combat Robotics at Cornell Logo" style="display:block; height: 140px; width: auto; border: none; box-shadow: none; outline: none;">
-  <img src="/empriselogo.png#no-hover" alt="EmPRISE Lab Logo" style="display:block; height: 140px; width: auto; border: none; box-shadow: none; outline: none;">
+  <img src="crclogo.png#no-hover" alt="Combat Robotics at Cornell Logo" style="display:block; height: 140px; width: auto; border: none; box-shadow: none; outline: none;">
+  <img src="empriselogo.png#no-hover" alt="EmPRISE Lab Logo" style="display:block; height: 140px; width: auto; border: none; box-shadow: none; outline: none;">
 </div>
 
