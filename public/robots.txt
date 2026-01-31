@@ -1,4 +1,0 @@
-User-agent: *
-Disallow:
-Allow: /
-Sitemap: https://shaostassen.github.io/ShaoFastRobots/sitemap.xml
