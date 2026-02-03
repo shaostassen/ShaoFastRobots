@@ -19,31 +19,32 @@ During section 1A, I installed the Arduino IDE and the corresponding libraries a
 
 The Artemis board flashed its onboard LED as expected.
 
-<iframe width="450" height="315" src="YOUR_BLINK_VIDEO_LINK" allowfullscreen></iframe> <figcaption>Blink test video</figcaption>
+<iframe width="450" height="315" src="https://youtube.com/embed/sc9GYfxh8Js" allowfullscreen></iframe> <figcaption>Blink test video</figcaption>
 
 ### Serial
 
-The Artemis received a string over USB serial and echoed it back, confirming serial RX/TX.
+The Artemis received a string over USB serial and echoed it back as I typed into the Serial Monitor, confirming serial RX/TX.
 
-<img src="/Fast%20Robots%20Media/Lab%201/Serial.png" alt="Serial output" style="display:block;"> <figcaption>Serial output test</figcaption>
+<iframe width="450" height="315" src="https://www.youtube.com/embed/2BgWrvYRqUY" allowfullscreen></iframe> <figcaption>Microphone output test</figcaption>
 
 ### AnalogRead with Temperature Sensor
 
-The onboard temperature sensor responded to heat (touch / breath), showing changing readings over time.
+The onboard temperature sensor responded to heat (touch / breath), showing changing readings over time. In this case, I was blowing hot air to increase the temperature.
 
-<iframe width="450" height="315" src="YOUR_TEMP_VIDEO_LINK" allowfullscreen></iframe> <figcaption>Temperature sensor test</figcaption>
+<iframe width="450" height="315" src="https://youtube.com/embed/SCBCG4Kok9c" allowfullscreen></iframe> <figcaption>Temperature sensor test</figcaption>
 
 ### Microphone Output
 
-The PDM microphone output changed with voice/whistle input, confirming the microphone pipeline works.
+The PDM microphone output changed with voice/whistle input, confirming the microphone pipeline works. In this case, I was whistling in the background to increase the sound frequency. 
 
-<iframe width="450" height="315" src="YOUR_MIC_VIDEO_LINK" allowfullscreen></iframe> <figcaption>Microphone output test</figcaption>
+<iframe width="450" height="315" src="https://www.youtube.com/embed/r-GiDprUTt8" allowfullscreen></iframe> <figcaption>Microphone output test</figcaption>
 
-Part A of this lab is just meant for setup and test if the microcontroller functions properly, which it does.
+Part A of this lab is mainly for setup and test if the microcontroller functions properly with the computer, which it does.
 
 ## Lab 1B
 
 ### Introduction
+With regrads to the prelab and background reading, this is what I understand: 
 
 Bluetooth Low Energy (BLE) enables a lightweight communication link between my computer and the Artemis board. At a high level:
 
@@ -79,7 +80,7 @@ Useful functions:
 5. Started JupyterLab: `jupyter lab`
 6. After `uuid4()`, I updated connections.yaml with my Artemis MAC address (from Serial Monitor) and a unique BLE service UUID.
 
-<img src="YOUR_MAC_SCREENSHOT_PATH" alt="MAC address" style="display:block;"> <figcaption>Artemis MAC address output</figcaption> <img src="YOUR_CONNECTIONS_YAML_SCREENSHOT_PATH" alt="connections.yaml" style="display:block;"> <figcaption>Updated connections.yaml (service UUID + MAC)</figcaption>
+<img src="/Fast Robots Media/Lab 1/mac_address.jpg" alt="MAC address" style="display:block;"> <figcaption>Artemis MAC address output</figcaption> <img src="/Fast Robots Media/Lab 1/connection_yaml.jpg" alt="connections.yaml" style="display:block;"> <figcaption>Updated connections.yaml (service UUID + MAC)</figcaption>
 
 7. Connected successfully to the Artemis Nano board in Python:
 ```python
@@ -87,7 +88,7 @@ ble = get_ble_controller()
 ble.connect()
 ```
 
-<img src="YOUR_BLE_CONNECT_SCREENSHOT_PATH" alt="BLE connect" style="display:block;"> <figcaption>Successful BLE connection</figcaption>
+<img src="/Fast Robots Media/Lab 1/success_connection.jpg" alt="BLE connect" style="display:block;"> <figcaption>Successful BLE connection</figcaption>
 
 #### TASK 1
 I sent a string from my computer using ECHO. The Artemis constructed an augmented reply and transmitted it back over the TX string characteristic.
@@ -125,7 +126,7 @@ echoed_string = ble.receive_string(ble.uuid['RX_STRING'])
 print(echoed_string)
 ```
 
-<img src="YOUR_ECHO_RESULT_SCREENSHOT_PATH" alt="ECHO output" style="display:block;"> <figcaption>ECHO output received on laptop</figcaption>
+<img src="/Fast Robots Media/Lab 1/echo.jpg" alt="ECHO output" style="display:block;"> <figcaption>ECHO output received on laptop</figcaption>
 
 #### TASK 2 
 I sent three floats with SEND_THREE_FLOATS and extracted them on the Artemis.
@@ -151,7 +152,7 @@ case SEND_THREE_FLOATS:
     if (!success)
         return;
 
-    Serial.print("Three Integers: ");
+    Serial.print("Three Floats: ");
     Serial.print(float_c);
     Serial.print(", ");
     Serial.print(float_d);
@@ -167,7 +168,7 @@ Python:
 ble.send_command(CMD.SEND_THREE_FLOATS, "11.0|-12.3|0.01")
 ```
 
-<img src="YOUR_THREE_FLOATS_SCREENSHOT_PATH" alt="Three floats output" style="display:block;"> <figcaption>SEND_THREE_FLOATS serial output</figcaption>
+<img src="/Fast Robots Media/Lab 1/three_float.jpg" alt="Three floats output" style="display:block;"> <figcaption>SEND_THREE_FLOATS serial output</figcaption>
 
 #### TASK 3 
 I added `GET_TIME_MILLIS`, which replies with a timestamp string formatted as `T:<millis>`.
@@ -187,7 +188,7 @@ case GET_TIME_MILLIS: {
     tx_estring_value.append(buf);
 
     tx_characteristic_string.writeValue(tx_estring_value.c_str());
-    Serial.println(tx_estring_value.c_str());
+    // Serial.println(tx_estring_value.c_str());
     break;
 }
 ```
@@ -219,7 +220,7 @@ print("Listening for notifications")
 ble.send_command(CMD.GET_TIME_MILLIS, "") 
 ```
 
-<img src="YOUR_NOTIFY_SCREENSHOT_PATH" alt="Notification output" style="display:block;"> <figcaption>Notification handler receiving Artemis strings</figcaption>
+<img src="/Fast Robots Media/Lab 1/notification.jpg" alt="Notification output" style="display:block;"> <figcaption>Notification handler receiving Artemis strings</figcaption>
 
 #### TASK 5
 I ran a short for loop sending `GET_TIME_MILLIS` repeatedly and used the timestamps received to estimate throughput.
@@ -235,7 +236,7 @@ From the printed timestamps, the average inter-message gap was approximately ___
 
 data rate ≈ (messages/sec) × (bytes/message) = ___ bytes/sec
 
-<img src="YOUR_TASK5_SCREENSHOT_PATH" alt="Task 5 output" style="display:block;"> <figcaption>GET_TIME_MILLIS loop output</figcaption>
+<img src="/Fast Robots Media/Lab 1/get_time_millis.jpg" alt="Task 5 output" style="display:block;"> <figcaption>GET_TIME_MILLIS loop output</figcaption>
 
 #### TASK 6
 I implemented an Arduino timestamp buffer (global array) and added `SEND_TIME_DATA` to send stored timestamps back to the laptop.
@@ -292,7 +293,7 @@ case SEND_TIME_DATA:{
 }
 ```
 
-<img src="YOUR_TASK6_SCREENSHOT_PATH" alt="SEND_TIME_DATA" style="display:block;"> <figcaption>SEND_TIME_DATA output</figcaption>
+<img src="/Fast Robots Media/Lab 1/send_time_data.jpg" alt="SEND_TIME_DATA" style="display:block;"> <figcaption>SEND_TIME_DATA output</figcaption>
 
 #### TASK 7
 I added a second buffer array for temperature values (same length as timestamps). Each index corresponds to a paired measurement. `GET_TEMP_READINGS` sends `T:<ms> , TEMP:<val>` on each line.
@@ -344,7 +345,7 @@ case GET_TEMP_READINGS: {
     break;
 }
 ```
-<img src="YOUR_TASK7_SCREENSHOT_PATH" alt="Temp readings" style="display:block;"> <figcaption>Timestamp + temperature streaming</figcaption>
+<img src="/Fast Robots Media/Lab 1/get_temp_data.jpg" alt="Temp readings" style="display:block;"> <figcaption>Timestamp + temperature streaming</figcaption>
 
 #### TASK 8 
 Method 1 (Task 5) is slower for recording because each sample depends on BLE command/response timing. It is useful for simple debugging and low-rate telemetry when real-time interaction matters.
