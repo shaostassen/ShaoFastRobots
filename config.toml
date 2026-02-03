@@ -27,6 +27,10 @@ taxonomies = [{ name = "tags", feed = true }]
 # smart_punctuation = true
 # bottom_footnotes = true
 
+[markdown.highlighting]
+theme = "github-light"
+style = "inline"
+
 [search]
 # index_format = "elasticlunr_json"
 index_format = "fuse_json"
