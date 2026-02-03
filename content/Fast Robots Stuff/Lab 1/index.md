@@ -81,12 +81,12 @@ Useful functions:
 6. After `uuid4()`, I updated connections.yaml with my Artemis MAC address (from Serial Monitor) and a unique BLE service UUID.
 
 <figure>
-  <img src="mac_address.jpg" alt="MAC address" style="display:block;">
+  <img src="mac_address.JPG" alt="MAC address" style="display:block;">
   <figcaption>Artemis MAC address output</figcaption>
 </figure>
 
 <figure>
-  <img src="connection_yaml.jpg" alt="connections.yaml" style="display:block;">
+  <img src="connection_yaml.JPG" alt="connections.yaml" style="display:block;">
   <figcaption>Updated connections.yaml (service UUID + MAC)</figcaption>
 </figure>
 
@@ -97,7 +97,7 @@ ble = get_ble_controller()
 ble.connect()
 ```
 <figure>
-    <img src="success_connection.jpg" alt="BLE connect" style="display:block;"> <figcaption>Successful BLE connection</figcaption>
+    <img src="success_connection.JPG" alt="BLE connect" style="display:block;"> <figcaption>Successful BLE connection</figcaption>
 </figure>
 
 #### TASK 1
@@ -136,7 +136,7 @@ echoed_string = ble.receive_string(ble.uuid['RX_STRING'])
 print(echoed_string)
 ```
 <figure>
-    <img src="echo.jpg" alt="ECHO output" style="display:block;"> <figcaption>ECHO output received on laptop</figcaption>
+    <img src="echo.JPG" alt="ECHO output" style="display:block;"> <figcaption>ECHO output received on laptop</figcaption>
 </figure>
 
 
@@ -181,7 +181,7 @@ ble.send_command(CMD.SEND_THREE_FLOATS, "11.0|-12.3|0.01")
 ```
 
 <figure>
-    <img src="three_float.jpg" alt="Three floats output" style="display:block;"> <figcaption>SEND_THREE_FLOATS serial output</figcaption>
+    <img src="three_float.JPG" alt="Three floats output" style="display:block;"> <figcaption>SEND_THREE_FLOATS serial output</figcaption>
 </figure>
 
 #### TASK 3 
@@ -235,7 +235,7 @@ ble.send_command(CMD.GET_TIME_MILLIS, "")
 ```
 
 <figure>
-    <img src="notification.jpg" alt="Notification output" style="display:block;"> <figcaption>Notification handler receiving Artemis strings</figcaption>
+    <img src="notification.JPG" alt="Notification output" style="display:block;"> <figcaption>Notification handler receiving Artemis strings</figcaption>
 </figure>
 
 #### TASK 5
@@ -253,7 +253,7 @@ From the printed timestamps, the average inter-message gap was approximately 58.
 data rate ≈ (messages/sec) × (bytes/message) = 153.43 bytes/sec
 
 <figure>
-    <img src="get_time_millis.jpg" alt="Task 5 output" style="display:block;"> <figcaption>GET_TIME_MILLIS loop output</figcaption>
+    <img src="get_time_millis.JPG" alt="Task 5 output" style="display:block;"> <figcaption>GET_TIME_MILLIS loop output</figcaption>
 </figure>
 
 #### TASK 6
@@ -312,7 +312,7 @@ case SEND_TIME_DATA:{
 ```
 
 <figure>
-    <img src="send_time_data.jpg" alt="SEND_TIME_DATA" style="display:block;"> <figcaption>SEND_TIME_DATA output</figcaption>
+    <img src="send_time_data.JPG" alt="SEND_TIME_DATA" style="display:block;"> <figcaption>SEND_TIME_DATA output</figcaption>
 </figure>
 
 #### TASK 7
@@ -367,7 +367,7 @@ case GET_TEMP_READINGS: {
 ```
 
 <figure>
-    <img src="get_temp_data.jpg" alt="Temp readings" style="display:block;"> <figcaption>Timestamp + temperature streaming</figcaption>
+    <img src="get_temp_data.JPG" alt="Temp readings" style="display:block;"> <figcaption>Timestamp + temperature streaming</figcaption>
 </figure>
 
 #### TASK 8 
