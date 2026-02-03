@@ -80,15 +80,25 @@ Useful functions:
 5. Started JupyterLab: `jupyter lab`
 6. After `uuid4()`, I updated connections.yaml with my Artemis MAC address (from Serial Monitor) and a unique BLE service UUID.
 
-<img src="mac_address.jpg" alt="MAC address" style="display:block;"> <figcaption>Artemis MAC address output</figcaption> <img src="connection_yaml.jpg" alt="connections.yaml" style="display:block;"> <figcaption>Updated connections.yaml (service UUID + MAC)</figcaption>
+<figure>
+  <img src="mac_address.jpg" alt="MAC address" style="display:block;">
+  <figcaption>Artemis MAC address output</figcaption>
+</figure>
+
+<figure>
+  <img src="connection_yaml.jpg" alt="connections.yaml" style="display:block;">
+  <figcaption>Updated connections.yaml (service UUID + MAC)</figcaption>
+</figure>
+
 
 7. Connected successfully to the Artemis Nano board in Python:
 ```python
 ble = get_ble_controller()
 ble.connect()
 ```
-
-<img src="success_connection.jpg" alt="BLE connect" style="display:block;"> <figcaption>Successful BLE connection</figcaption>
+<figure>
+    <img src="success_connection.jpg" alt="BLE connect" style="display:block;"> <figcaption>Successful BLE connection</figcaption>
+</figure>
 
 #### TASK 1
 I sent a string from my computer using ECHO. The Artemis constructed an augmented reply and transmitted it back over the TX string characteristic.
@@ -125,8 +135,10 @@ ble.send_command(CMD.ECHO, "Hello World!")
 echoed_string = ble.receive_string(ble.uuid['RX_STRING'])
 print(echoed_string)
 ```
+<figure>
+    <img src="echo.jpg" alt="ECHO output" style="display:block;"> <figcaption>ECHO output received on laptop</figcaption>
+</figure>
 
-<img src="echo.jpg" alt="ECHO output" style="display:block;"> <figcaption>ECHO output received on laptop</figcaption>
 
 #### TASK 2 
 I sent three floats with SEND_THREE_FLOATS and extracted them on the Artemis.
@@ -168,7 +180,9 @@ Python:
 ble.send_command(CMD.SEND_THREE_FLOATS, "11.0|-12.3|0.01")
 ```
 
-<img src="three_float.jpg" alt="Three floats output" style="display:block;"> <figcaption>SEND_THREE_FLOATS serial output</figcaption>
+<figure>
+    <img src="three_float.jpg" alt="Three floats output" style="display:block;"> <figcaption>SEND_THREE_FLOATS serial output</figcaption>
+</figure>
 
 #### TASK 3 
 I added `GET_TIME_MILLIS`, which replies with a timestamp string formatted as `T:<millis>`. The results of this task is shown in task 4. I also had to add `GET_TIME_MILLIS` to the `cmd_types.py` with the right order in the types file. 
@@ -220,7 +234,9 @@ print("Listening for notifications")
 ble.send_command(CMD.GET_TIME_MILLIS, "") 
 ```
 
-<img src="notification.jpg" alt="Notification output" style="display:block;"> <figcaption>Notification handler receiving Artemis strings</figcaption>
+<figure>
+    <img src="notification.jpg" alt="Notification output" style="display:block;"> <figcaption>Notification handler receiving Artemis strings</figcaption>
+</figure>
 
 #### TASK 5
 I ran a short for loop sending 50 `GET_TIME_MILLIS` repeatedly and used the timestamps received to estimate throughput. I write the for loop in the juypter notebook, equvialently, it is talking the Artemis board 50 times via BLE.
@@ -236,7 +252,9 @@ From the printed timestamps, the average inter-message gap was approximately 58.
 
 data rate ≈ (messages/sec) × (bytes/message) = 153.43 bytes/sec
 
-<img src="get_time_millis.jpg" alt="Task 5 output" style="display:block;"> <figcaption>GET_TIME_MILLIS loop output</figcaption>
+<figure>
+    <img src="get_time_millis.jpg" alt="Task 5 output" style="display:block;"> <figcaption>GET_TIME_MILLIS loop output</figcaption>
+</figure>
 
 #### TASK 6
 I implemented an Arduino timestamp buffer (global array) of size 500(arbitray) and added `SEND_TIME_DATA` to send stored timestamps back to the laptop. You can request to for any integer number of times. It first store the time stamps in the buffer by running `millis()` the requested number of time. Then it would publish the buffer results one by one to my computer. I had additional logic for handling the buffer overflow, which send all the data once the buffer is full, then clear it and restart the timestamp collection. This method balances between the reliability of the data and availiability of data. Again, I had to add `SEND_TIME_DATA` to the `cmd_types.py` with the right order in the types file. 
@@ -293,7 +311,9 @@ case SEND_TIME_DATA:{
 }
 ```
 
-<img src="send_time_data.jpg" alt="SEND_TIME_DATA" style="display:block;"> <figcaption>SEND_TIME_DATA output</figcaption>
+<figure>
+    <img src="send_time_data.jpg" alt="SEND_TIME_DATA" style="display:block;"> <figcaption>SEND_TIME_DATA output</figcaption>
+</figure>
 
 #### TASK 7
 I added a second buffer array for temperature values (same length as timestamps = 500). Both are global arrays. Each index corresponds to a paired measurement. `GET_TEMP_READINGS` sends `T:<ms> , TEMP:<val>` on each line. It allow the users to request the number of times they want to get the data, and it fetch the current time and temp sequentially, so it ensures their value are synchorize. The publish and buffer overflow logic is handled just like TASK 6.  Again, I had to add `GET_TEMP_READINGS` to the `cmd_types.py` with the right order in the types file. 
@@ -345,7 +365,10 @@ case GET_TEMP_READINGS: {
     break;
 }
 ```
-<img src="get_temp_data.jpg" alt="Temp readings" style="display:block;"> <figcaption>Timestamp + temperature streaming</figcaption>
+
+<figure>
+    <img src="get_temp_data.jpg" alt="Temp readings" style="display:block;"> <figcaption>Timestamp + temperature streaming</figcaption>
+</figure>
 
 #### TASK 8 
 Method 1 (Task 5) is fetching and sending the data one at a time. It is definitely slower for recording because each sample need to depends on BLE command/response timing, you are wasting a lot of time on sending and recieving communication. It is however useful for simple debugging and low-rate telemetry when real-time interaction matters, especially, if we decided to have a really large buffer, the data might be stale by the time you get on the computer side. 
