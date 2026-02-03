@@ -171,7 +171,7 @@ ble.send_command(CMD.SEND_THREE_FLOATS, "11.0|-12.3|0.01")
 <img src="/Fast Robots Media/Lab 1/three_float.jpg" alt="Three floats output" style="display:block;"> <figcaption>SEND_THREE_FLOATS serial output</figcaption>
 
 #### TASK 3 
-I added `GET_TIME_MILLIS`, which replies with a timestamp string formatted as `T:<millis>`.
+I added `GET_TIME_MILLIS`, which replies with a timestamp string formatted as `T:<millis>`. The results of this task is shown in task 4. I also had to add `GET_TIME_MILLIS` to the `cmd_types.py` with the right order in the types file. 
 
 Artemis:
 ```c++
@@ -223,7 +223,7 @@ ble.send_command(CMD.GET_TIME_MILLIS, "")
 <img src="/Fast Robots Media/Lab 1/notification.jpg" alt="Notification output" style="display:block;"> <figcaption>Notification handler receiving Artemis strings</figcaption>
 
 #### TASK 5
-I ran a short for loop sending `GET_TIME_MILLIS` repeatedly and used the timestamps received to estimate throughput.
+I ran a short for loop sending 50 `GET_TIME_MILLIS` repeatedly and used the timestamps received to estimate throughput. I write the for loop in the juypter notebook, equvialently, it is talking the Artemis board 50 times via BLE.
 
 Python:
 ```python 
@@ -232,17 +232,17 @@ for i in range(50):
     ble.send_command(CMD.GET_TIME_MILLIS, "")
 ```
 
-From the printed timestamps, the average inter-message gap was approximately ___ ms, corresponding to ___ messages/sec. Each message payload is about ___ bytes (e.g., "T:123456" is ~8–9 bytes), giving an effective payload throughput of approximately:
+From the printed timestamps, the average inter-message gap was approximately 58.66 ms, corresponding to 17.05 messages/sec. Each message being 9 characters long, which means its payload is about 9 bytes (1 byte per character), giving an effective payload throughput of approximately:
 
-data rate ≈ (messages/sec) × (bytes/message) = ___ bytes/sec
+data rate ≈ (messages/sec) × (bytes/message) = 153.43 bytes/sec
 
 <img src="/Fast Robots Media/Lab 1/get_time_millis.jpg" alt="Task 5 output" style="display:block;"> <figcaption>GET_TIME_MILLIS loop output</figcaption>
 
 #### TASK 6
-I implemented an Arduino timestamp buffer (global array) and added `SEND_TIME_DATA` to send stored timestamps back to the laptop.
+I implemented an Arduino timestamp buffer (global array) of size 500(arbitray) and added `SEND_TIME_DATA` to send stored timestamps back to the laptop. You can request to for any integer number of times. It first store the time stamps in the buffer by running `millis()` the requested number of time. Then it would publish the buffer results one by one to my computer. I had additional logic for handling the buffer overflow, which send all the data once the buffer is full, then clear it and restart the timestamp collection. This method balances between the reliability of the data and availiability of data. Again, I had to add `SEND_TIME_DATA` to the `cmd_types.py` with the right order in the types file. 
 
 - Advantage: sampling happens locally without waiting for BLE round-trips.
-- Implementation: store up to capacity, then transmit.
+- Implementation: store up to capacity, then transmit and restart.
 
 Artemis:
 ```c++
@@ -296,7 +296,7 @@ case SEND_TIME_DATA:{
 <img src="/Fast Robots Media/Lab 1/send_time_data.jpg" alt="SEND_TIME_DATA" style="display:block;"> <figcaption>SEND_TIME_DATA output</figcaption>
 
 #### TASK 7
-I added a second buffer array for temperature values (same length as timestamps). Each index corresponds to a paired measurement. `GET_TEMP_READINGS` sends `T:<ms> , TEMP:<val>` on each line.
+I added a second buffer array for temperature values (same length as timestamps = 500). Both are global arrays. Each index corresponds to a paired measurement. `GET_TEMP_READINGS` sends `T:<ms> , TEMP:<val>` on each line. It allow the users to request the number of times they want to get the data, and it fetch the current time and temp sequentially, so it ensures their value are synchorize. The publish and buffer overflow logic is handled just like TASK 6.  Again, I had to add `GET_TEMP_READINGS` to the `cmd_types.py` with the right order in the types file. 
 
 Artemis:
 ```c++
@@ -348,23 +348,23 @@ case GET_TEMP_READINGS: {
 <img src="/Fast Robots Media/Lab 1/get_temp_data.jpg" alt="Temp readings" style="display:block;"> <figcaption>Timestamp + temperature streaming</figcaption>
 
 #### TASK 8 
-Method 1 (Task 5) is slower for recording because each sample depends on BLE command/response timing. It is useful for simple debugging and low-rate telemetry when real-time interaction matters.
+Method 1 (Task 5) is fetching and sending the data one at a time. It is definitely slower for recording because each sample need to depends on BLE command/response timing, you are wasting a lot of time on sending and recieving communication. It is however useful for simple debugging and low-rate telemetry when real-time interaction matters, especially, if we decided to have a really large buffer, the data might be stale by the time you get on the computer side. 
 
-Method 2 (Tasks 6–7) records data faster because sampling is local; BLE is only used afterward to transmit stored results. This is ideal for burst logging, characterization, and experiments where high-rate sampling matters more than immediate feedback. The downside is delayed availability of the data on the laptop, and transmission can still be limited by notification throughput.
+Method 2 (Tasks 6–7) is fetching at volumn, and sending one at time. It records data faster because the sampling is local; BLE is only used afterward to transmit stored results. This is could be ideal for burst logging and experiments where high-rate sampling matters more than immediate realtime feedback. The downside is delayed availability of the data on the laptop as I have mentioned, and transmission can still be limited by notification throughput.
 
 How quickly can method 2 record data?
-It is primarily limited by the sensor read + loop overhead on the Artemis. In my test, recording ___ samples took approximately ___ ms, or roughly ___ samples/sec.
+It is primarily limited by the sensor read + loop overhead on the Artemis. In my test with sending 400 request for `SEND_TIME_DATA`, recording 400 samples took approximately 13 ms, or roughly 0.03 ms/sample, which is almost 2000 times faster. 
 
 Memory estimate (384 kB RAM):
-Each timestamp is 4 bytes (unsigned long), each temp is 4 bytes (float) → 8 bytes per paired sample. Ignoring overhead, the upper bound is approximately:
+Each timestamp is 4 bytes (int), each temp is 4 bytes (float) → 8 bytes per paired sample. Include the global variables I have, which is 34152 bytes, but ignoring other overhead, the theortically upper bound is approximately:
 
-384,000 bytes / 8 ≈ 48,000 samples (before accounting for program + BLE stack + other globals).
+349848 bytes / 8 ≈ 43731 sample pairs could potentially be stored in the array before the board runs out dynamic memory.
 A more realistic safe capacity is lower depending on current global/static memory usage reported by the Arduino IDE.
 
 ### Discussion and Conclusion
-1. Learned how BLE services/characteristics map to read/write/notify behavior and how the Artemis acts as a peripheral device.
-2. Implemented a command-based protocol using RobotCommand and verified multiple payload types (string + float + time).
-3. The main debugging challenge was ensuring the correct characteristic was used for notifications (TX string), and pacing notifications so packets weren’t dropped at high rates.
+1. I learned how BLE services/characteristics map to read/write/notify behavior and how the Artemis acts as a peripheral device. I also learned to write commands to control the Artemis board using lower level libraries like `RobotCommand.h`. Finally I learned about the limits on how fast Artemis's temperature sensor can be pulled, which is really fast. 
+2. I Implemented a interesting way on handling the buffer overflow for TASK 6-7, it balanced between availability of data as well as reliability of data.
+3. The main debugging challenge was make sure that the environment is set up to run the jupyter notebook. I spend way too long on it, when it was just an easy fix. But now I really remember it. Also I thought about perhaps sending the buffer information in one message, which would depend on how long I could make a Estring, theorically I can be it 255 bytes with the Arduino BLE limit, which for TASK 5-6, that's 20-30 messages depending on the length of the time stamp. Realistically, it would not impact the reliability of the data, because the data is already recorded in the buffer, but it can decrease the delay of the delivery of the data.  
 
 
 ### Collaboration

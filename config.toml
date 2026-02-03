@@ -16,12 +16,12 @@ default_language = "en"
 taxonomies = [{ name = "tags", feed = true }]
 
 [markdown]
-# highlight_code = true
-# math = true
-# render_html = true
+highlight_code = true
+math = true
+#render_html = true
 # highlight_theme = "css"
 # highlight_themes_css = [
-# 	{ theme = "solarized-dark", filename = "syntax-theme-dark.css" },
+#	{ theme = "solarized-dark", filename = "syntax-theme-dark.css" },
 # 	{ theme = "solarized-light", filename = "syntax-theme-light.css" }
 # ]
 smart_punctuation = true
