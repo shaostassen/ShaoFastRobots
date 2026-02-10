@@ -428,13 +428,25 @@ The main loop runs much faster than the IMU produces data, so the IMU is the bot
 
 ### Data storage
 
-I use separate float arrays for time, raw accel roll/pitch, LPF roll/pitch, gyro roll/pitch/yaw, and complementary filter roll/pitch—10 arrays total. With 4 bytes per float, that is 40 bytes per sample.
+I use separate float arrays for time(this is int), raw accel roll/pitch and gyro roll/pitch/yaw. With 4 bytes per float(6) + delimiting character (5) , that is 44 bytes per sample.
 
-Lab 2 global variables use 131,832 bytes. The Artemis has 384 kB RAM, leaving roughly 261,384 Bytes for dynamic allocation. At 40 bytes per sample, this allows storing about 5334 samples. At ~330 Hz sample rate, that corresponds to roughly 16 seconds of continuous IMU data.
+Lab 2 global variables use 131,832 bytes. The Artemis has 384 kB RAM, leaving roughly 252 kB for dynamic allocation. At 44 bytes per sample, this allows storing about 5700 samples. At ~330 Hz(see below for the calculation) sample rate, that corresponds to roughly 17 seconds of continuous IMU data.
 
 ### 5 seconds of IMU data
 
 I collected at least 5 seconds of IMU data and sent it over Bluetooth to verify the pipeline. 
+
+Here is the beginning and end of the csv for the data I collected for about 5.1 second. 
+<figure>
+  <img src="begin.jpg" alt="begin" style="display:block; width:100%; max-width:600px;">
+  <figcaption>Beginning of the IMU data collected for 5+ seconds</figcaption>
+</figure>
+<figure>
+  <img src="end.jpg" alt="end" style="display:block; width:100%; max-width:600px;">
+  <figcaption>End of the IMU data collected for 5+ seconds</figcaption>
+</figure>
+
+There is a total of 1663 samples collected in 5 seconds, this gives about 1663/5 = 332.6 Hz for data transfer. 
 
 ## RC Stunts
 
