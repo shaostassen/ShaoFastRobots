@@ -248,7 +248,7 @@ plt.show()
   <figcaption>Raw pitch and roll vs. time with RC car in proximity</figcaption>
 </figure>
 
-The plots above show raw accelerometer-derived pitch and roll over about 6 seconds. Both signals stay near 0° but exhibit high-frequency oscillations—roughly ±1° for pitch and a slightly larger range for roll—indicating sensor noise and vibration from the nearby running car. This raw data is what drives the use of a low-pass filter to reduce noise, which I will analyze in the next section.
+The plots above show raw accelerometer-derived pitch and roll over about 6 seconds. Both signals stay near 0° but exhibit high-frequency oscillations—roughly ±1° for both pitch and roll, indicating sensor noise and vibration from a proximity of the RC car. This raw data is what drives the use of a low-pass filter to reduce noise, which I will analyze in the next section.
 
 ### FFT and Low-Pass Filter
 
@@ -258,9 +258,9 @@ I performed FFT analysis to characterize accelerometer noise and chose a cutoff 
 
 To determine an appropriate cutoff frequency for the low-pass filter, I analyzed the accelerometer-derived pitch and roll signals in the frequency domain using the Fast Fourier Transform (FFT). Before computing the FFT, I subtracted the mean of each signal to remove the dominant DC component caused by gravity, allowing the vibration and noise content to be more clearly observed.
 
-The resulting frequency spectra show that the majority of the signal energy is concentrated at very low frequencies, corresponding to slow changes in orientation. Beyond this region, the spectrum becomes relatively flat and noisy, indicating high-frequency vibrations rather than meaningful motion. When the RC car was running nearby, noticeable energy appeared primarily below approximately **5 Hz**, with no strong, structured peaks at higher frequencies. Frequencies above this range are dominated by broadband noise caused by motor vibrations and environmental disturbances.
+The resulting frequency spectra show that the majority of the signal energy is concentrated at very low frequencies, corresponding to slow changes in orientation. Beyond this region, the spectrum becomes relatively flat and noisy, indicating high-frequency vibrations rather than meaningful motion. When the RC car was running nearby, noticeable energy appeared primarily below approximately **0 - 10 Hz**, with no strong, structured peaks at higher frequencies. 
 
-Based on this observation, I selected a cutoff frequency near **5 Hz** for the low-pass filter. This cutoff preserves the low-frequency components associated with real robot motion while attenuating higher-frequency noise. Choosing a cutoff that is too low would oversmooth the signal and suppress legitimate motion (such as a quick tilt or turn), while choosing a cutoff that is too high would allow excessive vibration noise to remain in the signal.
+Based on this observation, I decided to pick a middle value for the a cutoff frequency near **5 Hz** for the low-pass filter. This cutoff preserves the low-frequency components associated with real robot motion while attenuating higher-frequency noise. Choosing a cutoff that is too low would oversmooth the signal and suppress legitimate motion (such as a quick tilt or turn), while choosing a cutoff that is too high would allow excessive vibration noise to remain in the signal.
 
 
 ## Low-Pass Filter Design and Effect on the Data
@@ -285,6 +285,18 @@ $\[
 \alpha = \frac{T}{T + RC}
 \]$
 
+Solving this theorical value, I use this code:
+```python
+t_array = np.array(times) / 1e6
+fs = 1 / np.mean(np.diff(t_array))
+T = 1 / fs
+
+fc = 5.0
+
+RC = 1 / (2 * math.pi * fc)
+alpha = T / (T + RC)
+```
+And I get alpha = 0.083869 using the cutoff frequency of 5 Hz.
 In practice, rather than explicitly computing $\( \alpha \)$, I implemented the low-pass filter using a digital Butterworth filter, which internally accounts for the sampling frequency and cutoff frequency. This approach provides a more consistent frequency response and better attenuation characteristics than a simple first-order filter.
 
 
@@ -381,6 +393,8 @@ yaw_g   += yaw_rate   * dt;
 
 For the most part, the gyroscope tracks quick rotations smoothly but drifts over time due to integration error. The accelerometer is more accurate at low frequencies but is noisy. A complementary filter would combines both to get stable and accurate orientation. 
 
+Currently, I am at the higest sampling frequency with no delay, I tried to putting `sleep` in the sample data call, which would decrease the sampling frequency. In general, the estimated angles showed increased lag and reduced responsiveness to quick motions, this makes sense, because at larger time steps, you miss the rapid changes, and this made my  high-frequency vibrations to appear as low-frequency drift.
+
 ## Complementary Filter
 
 I fused the low-pass filtered accelerometer angles with the integrated gyroscope angles using a complementary filter:
@@ -411,8 +425,14 @@ const float alphaComp = 0.05f;
   <img src="second.jpg" alt="Best Complementary filter" style="display:block; width:100%; max-width:600px;">
   <figcaption>Best Complementary filter: gyro vs. LPF accelerometer vs. fused</figcaption>
 </figure>
-
 Now this looks better! 
+
+### Working range and accuracy
+
+**Working range:** The complementary filter performs well across the typical operating range of pitch and roll—roughly ±90°. Beyond that, for the positi the accelerometer-based angles become ill-defined (e.g., when the board is nearly vertical, the atan2 formulation approaches singularities), and the gyroscope integration accumulates more drift. This was knowledge from microcontroller class.
+
+**Accuracy:** With `alphaComp = 0.05` and `alphaLPF = 0.10`, the fused output tracks the LPF accelerometer really well while staying smoother than the raw accel. The filter accuracy is ultimately limited by the accelerometer (calibration, noise) at low frequencies and by the gyroscope (bias, integration error) at high frequencies. But I think from my graph, it seems to have really good accuracy.
+
 
 ## Sampling Data
 
@@ -426,15 +446,123 @@ I optimized the main loop to sample the IMU as fast as possible:
 
 The main loop runs much faster than the IMU produces data, so the IMU is the bottleneck. Comparing `loop_count` (main loop count) to `imu_samples` (samples collected) shows the loop cycles many times per IMU sample.
 
+```c++
+void
+loop()
+{
+    // Listen for connections
+    BLEDevice central = BLE.central();
+    if (central) {
+        // While central is connected
+        while (central.connected()) {
+
+          loop_count++;   
+
+            // Non-blocking IMU sampling
+            if (recordIMU && sample_idx < MAX_SAMPLES) {
+              if (myICM.dataReady()) {
+                myICM.getAGMT();
+
+                // Timing
+                uint32_t now_us = micros();
+                float dt = (now_us - t_last_us) / 1e6f;
+                t_last_us = now_us;
+
+                // Protect against weird dt (first sample / overflow / etc.)
+                if (dt <= 0 || dt > 0.1f) dt = 0.0f;
+
+                // Accel -> pitch/roll (deg)
+                float pitch_a = atan2(myICM.accX(), myICM.accZ()) * 180.0f / M_PI;
+                float roll_a  = atan2(myICM.accY(), myICM.accZ()) * 180.0f / M_PI;
+
+                // Gyro rates (deg/s) with your axis mapping:
+                float pitch_rate = -myICM.gyrY();
+                float roll_rate  =  myICM.gyrX();
+                float yaw_rate   =  myICM.gyrZ();
+
+                // Initialize persistent states ONCE per recording
+                if (!imu_state_initialized) {
+                  pitch_g_state = pitch_a;
+                  roll_g_state  = roll_a;
+                  yaw_g_state   = 0.0f;
+
+                  // pitch_lpf_state = pitch_a;
+                  // roll_lpf_state  = roll_a;
+
+                  // pitch_comp_state = pitch_a;
+                  // roll_comp_state  = roll_a;
+
+                  imu_state_initialized = true;
+                }
+
+                // Integrate gyro angles
+                pitch_g_state += pitch_rate * dt;
+                roll_g_state  += roll_rate  * dt;
+                yaw_g_state   += yaw_rate   * dt;
+
+                // // Low-pass accel angles
+                // pitch_lpf_state = alphaLPF * pitch_a + (1.0f - alphaLPF) * pitch_lpf_state;
+                // roll_lpf_state  = alphaLPF * roll_a  + (1.0f - alphaLPF) * roll_lpf_state;
+
+                // // Complementary filter (gyro prediction + accel correction)
+                // pitch_comp_state = (1.0f - alphaComp) * (pitch_comp_state + pitch_rate * dt) + alphaComp * pitch_lpf_state;
+                // roll_comp_state  = (1.0f - alphaComp) * (roll_comp_state  + roll_rate  * dt) + alphaComp * roll_lpf_state;
+
+                // Store into arrays
+                int i = sample_idx;
+                time_buffer[i]      = now_us;
+
+                pitch_buffer[i]     = pitch_a;          // raw accel angle
+                roll_buffer[i]      = roll_a;
+
+                pitchg_buffer[i]    = pitch_g_state;    // integrated gyro angle
+                rollg_buffer[i]     = roll_g_state;
+                yawg_buffer[i]      = yaw_g_state;
+
+                // pitchLPF_buffer[i]  = pitch_lpf_state;  // filtered accel
+                // rollLPF_buffer[i]   = roll_lpf_state;
+
+                // pitchcomp_buffer[i] = pitch_comp_state; // fused
+                // rollcomp_buffer[i]  = roll_comp_state;
+
+                sample_idx++;
+                imu_samples++;
+
+                // Stats
+                dt_last = dt;
+                dt_avg = dt_avg + (dt - dt_avg) / imu_samples;         
+              }
+            }
+            // Send data
+            write_data();
+
+            // Read data
+            read_data();
+        }
+    }
+}
+```
+
+Notice I only decided to send time, raw pitch and roll from accelerometer and pitch, roll and yaw from gyroscope, this is because, I could compute the low pass filtered values and complementary values in the python server. This design choice is made to allow me to push through more data as quickly as possible. 
+
 ### Data storage
 
-I use separate float arrays for time(this is int), raw accel roll/pitch and gyro roll/pitch/yaw. With 4 bytes per float(6) + delimiting character (5) , that is 44 bytes per sample.
+I use separate float arrays for time(this is int), raw accel roll/pitch and gyro roll/pitch/yaw. With 4 bytes per float(6) + delimiting character (5) , that is 44 bytes per sample. In particular, comparing to alternative option, for example representing float or int as string take up more space if the number is more than 4 digits. And this is true for all of our data, therefore, I believe I am using the most efficient way to store these value. 
 
 Lab 2 global variables use 131,832 bytes. The Artemis has 384 kB RAM, leaving roughly 252 kB for dynamic allocation. At 44 bytes per sample, this allows storing about 5700 samples. At ~330 Hz(see below for the calculation) sample rate, that corresponds to roughly 17 seconds of continuous IMU data.
 
 ### 5 seconds of IMU data
 
 I collected at least 5 seconds of IMU data and sent it over Bluetooth to verify the pipeline. 
+In this section, it both demonstrate I can send at 5 second of IMU data, and showing the stored IMU data array with timestamp with a start and end flag. 
+
+```
+ble.send_command(CMD.START_IMU, "") # start flag 
+time.sleep(5)
+ble.send_command(CMD.STOP_IMU, "") # end flag
+time.sleep(0.2)               
+ble.send_command(CMD.SEND_IMU, "") # actual method for sending data over BLE
+```
 
 Here is the beginning and end of the csv for the data I collected for about 5.1 second. 
 <figure>
