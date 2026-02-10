@@ -424,30 +424,17 @@ I optimized the main loop to sample the IMU as fast as possible:
 2. **Removed debug prints** in the IMU read path to reduce overhead.
 3. **Start/stop flags** so recording only runs when requested via Bluetooth commands.
 
-The main loop runs much faster than the IMU produces data, so the IMU is the bottleneck. Comparing `Total_Loops` (main loop count) to `IMU_Count` (samples collected) shows the loop cycles many times per IMU sample.
+The main loop runs much faster than the IMU produces data, so the IMU is the bottleneck. Comparing `loop_count` (main loop count) to `imu_samples` (samples collected) shows the loop cycles many times per IMU sample.
 
 ### Data storage
 
 I use separate float arrays for time, raw accel roll/pitch, LPF roll/pitch, gyro roll/pitch/yaw, and complementary filter roll/pitch—10 arrays total. With 4 bytes per float, that is 40 bytes per sample.
 
-Lab 1b global variables use 30,648 bytes. The Artemis has 384 kB RAM, leaving roughly 353 kB for dynamic allocation. At 40 bytes per sample, this allows storing on the order of 8,000+ samples. At ~350 Hz sample rate, that corresponds to roughly 25+ seconds of continuous IMU data.
+Lab 2 global variables use 131,832 bytes. The Artemis has 384 kB RAM, leaving roughly 261,384 Bytes for dynamic allocation. At 40 bytes per sample, this allows storing about 5334 samples. At ~330 Hz sample rate, that corresponds to roughly 16 seconds of continuous IMU data.
 
 ### 5 seconds of IMU data
 
-I collected at least 5 seconds of IMU data and sent it over Bluetooth to verify the pipeline. Using the first and last timestamps in the CSV:
-
-```python
-import pandas as pd
-
-df = pd.read_csv("proximityFinal.csv")
-first_time = df["Time"].iloc[0]
-last_time = df["Time"].iloc[-1]
-time_diff_sec = (last_time - first_time) / 1000  # ms -> s
-avg_step_ms = (last_time - first_time) / len(df["Time"])
-
-print(f"Duration: {time_diff_sec:.2f} s")
-print(f"Avg step: {avg_step_ms:.2f} ms")
-```
+I collected at least 5 seconds of IMU data and sent it over Bluetooth to verify the pipeline. 
 
 ## RC Stunts
 
@@ -458,3 +445,11 @@ Below are videos of the RC car stunts powered by battery.
 
 <iframe width="450" height="315" src="https://www.youtube.com/embed/e-gonb3QiyY" allowfullscreen></iframe>
 <figcaption>RC car stunt 2</figcaption>
+
+### Collaboration
+
+I collaborated with: Ananya Jajodia.
+
+I referenced: Lucca Correia's site for FFT debugging and Sampling data section.
+
+ChatGPT was used for: code debugging + plot generation + website formatting.
