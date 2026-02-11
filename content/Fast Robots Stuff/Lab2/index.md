@@ -258,9 +258,9 @@ I performed FFT analysis to characterize accelerometer noise and chose a cutoff 
 
 To determine an appropriate cutoff frequency for the low-pass filter, I analyzed the accelerometer-derived pitch and roll signals in the frequency domain using the Fast Fourier Transform (FFT). Before computing the FFT, I subtracted the mean of each signal to remove the dominant DC component caused by gravity, allowing the vibration and noise content to be more clearly observed.
 
-The resulting frequency spectra show that the majority of the signal energy is concentrated at very low frequencies, corresponding to slow changes in orientation. Beyond this region, the spectrum becomes relatively flat and noisy, indicating high-frequency vibrations rather than meaningful motion. When the RC car was running nearby, noticeable energy appeared primarily below approximately **0 - 10 Hz**, with no strong, structured peaks at higher frequencies. 
+The resulting frequency spectra show that the majority of the signal energy is concentrated at very low frequencies, corresponding to slow changes in orientation. Beyond this region, the spectrum becomes relatively flat and noisy, indicating high-frequency vibrations rather than meaningful motion. When the RC car was running nearby, noticeable energy appeared primarily below approximately **0 - 8 Hz**, with no strong, structured peaks at higher frequencies. 
 
-Based on this observation, I decided to pick a middle value for the a cutoff frequency near **5 Hz** for the low-pass filter. This cutoff preserves the low-frequency components associated with real robot motion while attenuating higher-frequency noise. Choosing a cutoff that is too low would oversmooth the signal and suppress legitimate motion (such as a quick tilt or turn), while choosing a cutoff that is too high would allow excessive vibration noise to remain in the signal.
+Based on this observation, I decided to pick a end value of where most of that noise is for the a cutoff frequency near **8 Hz** for the low-pass filter. This cutoff preserves the low-frequency components associated with real robot motion while attenuating higher-frequency noise. Choosing a cutoff that is too low would oversmooth the signal and suppress legitimate motion (such as a quick tilt or turn), while choosing a cutoff that is too high would allow excessive vibration noise to remain in the signal.
 
 
 ## Low-Pass Filter Design and Effect on the Data
@@ -296,7 +296,7 @@ fc = 5.0
 RC = 1 / (2 * math.pi * fc)
 alpha = T / (T + RC)
 ```
-And I get alpha = 0.083869 using the cutoff frequency of 5 Hz.
+And I get alpha = 0.129 using the cutoff frequency of 8 Hz.
 In practice, rather than explicitly computing $\( \alpha \)$, I implemented the low-pass filter using a digital Butterworth filter, which internally accounts for the sampling frequency and cutoff frequency. This approach provides a more consistent frequency response and better attenuation characteristics than a simple first-order filter.
 
 
@@ -312,16 +312,10 @@ Below are the frequency-domain plots and raw vs. LPF comparisons.
   <figcaption>Raw vs. low-pass filtered accelerometer data</figcaption>
 </figure>
 
-<div style="display:flex; gap:15px; justify-content:center; flex-wrap:wrap;">
-  <figure style="margin:0;">
-    <img src="pitch_vs_low.jpg" alt="Pitch raw vs LPF" style="width:100%; max-width:350px;">
-    <figcaption>Pitch: raw vs. LPF</figcaption>
-  </figure>
-  <figure style="margin:0;">
-    <img src="roll_vs_low.jpg" alt="Roll raw vs LPF" style="width:100%; max-width:350px;">
-    <figcaption>Roll: raw vs. LPF</figcaption>
-  </figure>
-</div>
+<figure>
+  <img src="freq_raw_lpf.jpg" alt="Freq Raw vs LPF" style="display:block;width:100%; max-width:600px;">
+  <figcaption>FFT: Raw vs. LPF</figcaption>
+</figure>~
 
 Additional vibration and FFT analysis:
 
