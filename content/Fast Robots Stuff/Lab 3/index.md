@@ -97,9 +97,9 @@ The VL53L1X technically supports three distance modes:
 
 Below is the initial test I did after hooking up both of the ToF sensors and having them both function simultaneously. Note this satisfies Task 8, so I jumped ahead. Refer to the code snippet in the I2C Address section for how I got both of them to work.
 
-<iframe width="450" height="315" src="[https://youtube.com/embed/NNu_KvDo6iw](https://youtube.com/embed/NNu_KvDo6iw)" allowfullscreen></iframe> <figcaption>Two ToF test</figcaption>
+<iframe width="450" height="315" src="https://youtube.com/embed/NNu_KvDo6iw" allowfullscreen></iframe> <figcaption>Two ToF test</figcaption>
 
-<iframe width="450" height="315" src="[https://youtube.com/embed/TP_kfJYFPFA](https://youtube.com/embed/TP_kfJYFPFA)" allowfullscreen></iframe> <figcaption>Serial Monitor - Two ToF test</figcaption>
+<iframe width="450" height="315" src="https://youtube.com/embed/TP_kfJYFPFA" allowfullscreen></iframe> <figcaption>Serial Monitor - Two ToF test</figcaption>
 
 ## ToF Sensor Speed and Non-Blocking Code
 
@@ -349,6 +349,8 @@ Because the IMU calculates data much faster than the ToF sensors, the IMU update
 <img src="tof_imu.jpg" alt="Distance vs Time" style="display:block; width:100%; max-width:600px;">
 <figcaption>Distance and IMU Complementary Pitch and Roll vs. Time for over 10 seconds</figcaption>
 </figure>
+
+As seen in the graph above, all three sensors (2 ToFs and 1 IMU) are successfully running in parallel without blocking each other.
 
 ## Collaboration
 
