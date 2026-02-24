@@ -238,13 +238,11 @@ I collected static data at four precise distances: 100mm, 200mm, 500mm, and 1000
 </figure>
 </div>
 
-Discussion on Accuracy and The "Whiteboard Effect"
-
 Analyzing these graphs reveals a disparity between Short and Long mode, which is heavily exacerbated by the reflective whiteboard target:
 
 Short Mode is Highly Accurate: Across all four distances (100mm, 200mm, 500mm, and 1000mm), Short mode performed really well. The data lines are flat, stable, and cluster very tightly around the true distance. For instance, at 1000mm, both sensors tracked cleanly between 980mm and 1000mm. At 500mm, they were nearly perfectly aligned with the 500mm mark.
 
-Long Mode Saturation (The Whiteboard Effect): In stark contrast, Long mode failed at close ranges. At 100mm, the Long mode data is pretty noisy, oscillating randomly between 50mm and 200mm. Even at 1000mm, Long mode under-reads the actual distance by nearly 100mm and exhibits high-frequency jitter.
+Long Mode: In stark contrast, Long mode failed at close ranges. At 100mm, the Long mode data is pretty noisy, oscillating randomly between 50mm and 200mm. Even at 1000mm, Long mode under-reads the actual distance by nearly 100mm and exhibits high-frequency jitter.
 
 Now, this is a bit unfair for long mode because it is designed to look for faint signals from up to 4 meters away, so it increases its sensitivity and leaves its optical "shutter" open longer. Pointing this highly sensitive mode at a glossy, highly reflective whiteboard at a close distance of 100mm effectively "blinds" the sensor.
 
