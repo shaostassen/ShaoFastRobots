@@ -19,6 +19,9 @@ Here is my full circuit schematic include work from lab 1-4.
 <figcaption>System Circuit Schematic</figcaption>
 </figure>
 
+### Battery Discussion
+We use two separate batteries—one for the Artemis and one for the motor drivers—to isolate our logic circuitry from electrical noise and voltage drops. DC motors are significant inductive loads; when they rapidly change speed or reverse direction, they can pull large spikes of current and generate back-EMF. If the Artemis were powered by the same supply, these fluctuations could cause the microcontroller to brown-out, reset, or register false readings on the sensors.
+
 ## Lab Tasks
 ### Soldering the Circuit
 Below is an image of the finished, soldered physical circuit. (Note: The circuit had not been mounted into the chassis before my initial PWM tests; I just forgot to photograph it prior to this step!)
@@ -31,6 +34,17 @@ Below is an image of the finished, soldered physical circuit. (Note: The circuit
 ### Power Supply and Oscilloscope Hookup
 
 Before integrating the drivers into the car, I tested the PWM outputs using an oscilloscope and an external power supply. The power supply was set to 3.7V with a conservative current limit to simulate the 850mAh Li-Ion battery, which prevents any real damage in the event of a short circuit or a bad soldering job. 
+
+Here is the image of the setup:
+<figure>
+<img src="IMG_7946.PNG" alt="circuit" style="display:block; width:100%; max-width:600px;">
+<figcaption>Oscilloscope Hookup</figcaption>
+</figure>
+
+<figure>
+<img src="IMG_7947.PNG" alt="circuit" style="display:block; width:100%; max-width:600px;">
+<figcaption>Power Supply Hookup</figcaption>
+</figure>
 
 To verify the PWM generation, I used the following basic code to send a duty cycle of approximately 23% (60/255) to pin 15, representing the forward direction:
 
