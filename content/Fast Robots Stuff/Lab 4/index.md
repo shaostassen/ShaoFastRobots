@@ -9,10 +9,11 @@ tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontr
 ## Prelab
 ### Wire Schematic
 
-To control the motors, I utilized the PWM-capable pins on the Artemis Nano. I assigned pins 15 and 14 for the Left Motor (forward and backward, respectively) and 2 and 3 for the Right Motor. These pins were chosen to keep the wiring organized and relatively localized on the board, leaving the other side available for future sensor expansion.
+To control the motors, I utilized the PWM-capable pins on the Artemis Nano. I refer to Lucca Correial's website for identify which pins can do PWM. I assigned pins 15 and 14 for the Left Motor (forward and backward, respectively) and 2 and 3 for the Right Motor. These pins were chosen to keep the wiring organized and relatively localized on the board.
 
-To ensure the motors receive enough current without overheating the motor drivers, the inputs and outputs of each dual motor driver were parallel-coupled. This effectively combines the two channels of a single IC, doubling the average current capacity sent to each DC motor.
+From lecture and further research, parallel-couple the inputs and outputs of each dual motor driver ensure the motors receive enough current without overheating the motor drivers. This effectively combines the two channels of a single IC, doubling the average current capacity sent to each DC motor.
 
+Here is my full circuit schematic include work from lab 1-4. 
 <figure>
 <img src="wire_diagram.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;">
 <figcaption>System Circuit Schematic</figcaption>
@@ -29,7 +30,7 @@ Below is an image of the finished, soldered physical circuit. (Note: The circuit
 
 ### Power Supply and Oscilloscope Hookup
 
-Before integrating the drivers into the car, I tested the PWM outputs using an oscilloscope and an external power supply. The power supply was set to 3.7V with a conservative current limit to simulate the 850mAh Li-Ion battery, which prevents any real damage in the event of a short circuit or a bad soldering job.
+Before integrating the drivers into the car, I tested the PWM outputs using an oscilloscope and an external power supply. The power supply was set to 3.7V with a conservative current limit to simulate the 850mAh Li-Ion battery, which prevents any real damage in the event of a short circuit or a bad soldering job. 
 
 To verify the PWM generation, I used the following basic code to send a duty cycle of approximately 23% (60/255) to pin 15, representing the forward direction:
 
@@ -51,34 +52,37 @@ void loop() {
 }
 
 ```
-
+Here is video showing my probe setup, as well as the results:
 <iframe width="450" height="315" src="https://youtube.com/embed/MVw43_S0BW8" allowfullscreen></iframe>
 <figcaption>Left Motor Driver PWM Test</figcaption>
 
+The analogWrite(MOTOR_INL1,60) line indicated a 23.5% (60/255) duty cycle to pin 15. Oscilloscope graph:
 <figure>
 <img src="oscilloscope1.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;">
 <figcaption>Oscilloscope capturing the PWM signal</figcaption>
 </figure>
 
+Now I used a for loop to incrementally increase the PWM from 0 to 255 on the left motor, and this is a video showing this:
 <iframe width="450" height="315" src="https://youtube.com/embed/DooZhPy4oLc" allowfullscreen></iframe>
 <figcaption>Regulated Left Motor Driver PWM Test</figcaption>
 
+Here is the example graph for the PWM being regulated:
 <figure>
 <img src="oscilloscope2.PNG" alt="circuit" style="display:block; width:100%; max-width:600px;">
 <figcaption>Oscilloscope capturing the PWM signal</figcaption>
 </figure>
 
+Switch to the right motor, and do the same regulating test:
 <iframe width="450" height="315" src="https://youtube.com/embed/LsvBeuKERr4" allowfullscreen></iframe>
 <figcaption>Regulated Right Motor Driver PWM Test</figcaption>
 
 ### Motor Testing
 
-After validating the signal, I dismantled the Force1 RC car. I decided not to remove the stock PCB, thinking the flat surface would be useful for mounting my components (although I ultimately didn't take much advantage of it for this lab). I then cut the motor leads and wired up the left motor driver first, keeping the chassis elevated so the wheels could spin freely.
+After validating the signal, I dismantled the RC car. I decided not to remove the stock PCB, thinking the flat surface would be useful for mounting my components (although I ultimately didn't take much advantage of it for this lab). I then cut the motor leads and wired up the left motor driver first, keeping the chassis elevated so the wheels could spin freely.
 
-During this phase, I ran into a frustrating bug while testing the second motor driver. I wrote the exact same PWM code to verify the motor functioned correctly, but it refused to spin. After extensive troubleshooting, I finally connected the `VIN` and `GND` leads of both motor drivers together into the power supply, and it worked perfectly—even though I was only actively controlling one driver.
+During this phase, I ran into a frustrating bug while testing the second motor driver. I wrote the exact same PWM code to verify the motor functioned correctly, I can also the motor try to spin from the hum sound, but it refused to spin. After extensive troubleshooting, I finally connected the `VIN` and `GND` leads of both motor drivers together into the power supply, and it worked perfectly—even though I was only actively controlling one driver.
 
-This is a classic grounding issue. In complex or high-power robotics—like the 3lb autonomous combat robots built for competition—ensuring a shared, common ground between your logic controller (the Artemis) and your motor drivers is critical. Without a shared ground reference, the PWM signal from the Artemis essentially "floats." The motor driver cannot accurately determine what constitutes a logic HIGH (3.3V) or a logic LOW (0V), meaning the motors won't activate.
-
+Here is some of the results of the PWM test on actual motors:
 <iframe width="450" height="315" src="https://youtube.com/embed/XDPilbXST54" allowfullscreen></iframe>
 <figcaption>Right Motor Driver Test (Elevated)</figcaption>
 
@@ -95,7 +99,7 @@ Once both sides were verified, I transitioned power from the bench supply to the
 
 ### Complete Hardware Integration on Car
 
-All components were packed securely into the chassis. The motor drivers were zip-tied toward the center to keep wire runs to the motors short. The Artemis and IMU were mounted near the middle to keep the center of gravity balanced, and the two ToF sensors were placed to ensure clear lines of sight. I made sure no components stuck out past the wheels so the car could safely roll or flip without damaging the electronics.
+All components were packed securely into the chassis. The IMU were zip-tied in the front of the bot on the flat surface of the battery case. The motor drivers sits a bit back from there. I put both batteries in the battery case. The Artemis is mounted in the back of the car, and the two ToF sensors were placed in the front and the left side to ensure clear lines of sight. In this way, I try to keep all the high voltage component away from the sensors, try to keep the EMI as low as possible. I made sure no components stuck out past the wheels so the car could safely roll or flip without damaging the electronics. (Failed driving tests, ie. running into the wall, have shown, this is indeed reliable.)
 
 <figure>
 <img src="done.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;">
@@ -162,7 +166,7 @@ To find the minimum PWM value required to overcome the gearbox's static friction
 
 On a full charge, the minimum PWM to move both forward and backward was about 40-41. In an earlier test (shown in the first video below), I decremented the PWM from high to low and found a slightly higher minimum limit of 44. This discrepancy is likely due to a lower battery charge at the time. Because PWM is a percentage of the total voltage, a dying battery provides a lower average voltage to the motors, meaning a higher PWM value is required to achieve the same physical torque.
 
-Executing an on-axis turn required a significantly higher minimum PWM of 145. This is due to the physics of skid steering: to turn in place, the wheels are forced to drag laterally across the ground, generating vastly more static friction than moving in a straight line. It is worth noting that I conducted this turning test on a different surface with a higher coefficient of friction, so the minimum PWM for turning on the standard lab floor may be lower.
+Executing an on-axis turn required a significantly higher minimum PWM of 135. This is due to the physics of skid steering: to turn in place, the wheels are forced to drag laterally across the ground, generating vastly more static friction than moving in a straight line. It is worth noting that I conducted this turning test on a different surface with a higher coefficient of friction, so the minimum PWM for turning on the standard lab floor may be lower.
 
 ```python
 for i in range(15):
@@ -271,7 +275,7 @@ Your browser does not support the video tag.
 </video>
 
 ## Open Loop Testing
-
+Finally, I try to move the car in a race track manner, by have it move forward, turn left, move around the curve, turn left, move forward again, then turn. In general this drive is not great, but it achieve its goal.
 <video width="640" height="360" controls>
 <source src="open_loop.mp4" type="video/mp4">
 Your browser does not support the video tag.
