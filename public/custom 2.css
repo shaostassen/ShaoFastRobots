@@ -1,0 +1,13 @@
+.blob {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #6c7cff, transparent 70%);
+  filter: blur(60px);
+  animation: float 20s infinite alternate;
+}
+
+@keyframes float {
+  from { transform: translate(0, 0); }
+  to { transform: translate(200px, 100px); }
+}

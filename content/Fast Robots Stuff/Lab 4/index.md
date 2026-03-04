@@ -19,6 +19,9 @@ Here is my full circuit schematic include work from lab 1-4.
 <figcaption>System Circuit Schematic</figcaption>
 </figure>
 
+### Battery Discussion
+We use two separate batteries—one for the Artemis and one for the motor drivers—to isolate our logic circuitry from electrical noise and voltage drops. DC motors are significant inductive loads; when they rapidly change speed or reverse direction, they can pull large spikes of current and generate back-EMF. If the Artemis were powered by the same supply, these fluctuations could cause the microcontroller to brown-out, reset, or register false readings on the sensors.
+
 ## Lab Tasks
 ### Soldering the Circuit
 Below is an image of the finished, soldered physical circuit. (Note: The circuit had not been mounted into the chassis before my initial PWM tests; I just forgot to photograph it prior to this step!)
@@ -31,6 +34,19 @@ Below is an image of the finished, soldered physical circuit. (Note: The circuit
 ### Power Supply and Oscilloscope Hookup
 
 Before integrating the drivers into the car, I tested the PWM outputs using an oscilloscope and an external power supply. The power supply was set to 3.7V with a conservative current limit to simulate the 850mAh Li-Ion battery, which prevents any real damage in the event of a short circuit or a bad soldering job. 
+
+Here is the image of the setup:
+<div style="display: flex; gap: 20px; align-items: flex-start;">
+  <figure style="margin: 0; flex: 1;">
+    <img src="IMG_7946.PNG" alt="circuit" style="display:block; width:100%; max-width:600px;">
+    <figcaption style="text-align: center;">Oscilloscope Hookup</figcaption>
+  </figure>
+
+  <figure style="margin: 0; flex: 1;">
+    <img src="IMG_7947.PNG" alt="circuit" style="display:block; width:100%; max-width:600px;">
+    <figcaption style="text-align: center;">Power Supply Hookup</figcaption>
+  </figure>
+</div>
 
 To verify the PWM generation, I used the following basic code to send a duty cycle of approximately 23% (60/255) to pin 15, representing the forward direction:
 
@@ -194,24 +210,18 @@ Here are the videos documenting the lower limit tests:
 </div>
 
 <div>
-<video width="100%" height="250" controls>
-<source src="turn_limit2.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video>
+<iframe width="100%" height="250" src="https://youtube.com/embed/_9iMhKC3L0A" allowfullscreen></iframe>
+<figcaption>Turning Limit Test</figcaption>
 </div>
 
 <div>
-<video width="100%" height="250" controls>
-<source src="forward_limit.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video>
+<iframe width="100%" height="250" src="https://youtube.com/embed/2j2Tr3IEzgk" allowfullscreen></iframe>
+<figcaption>Forward Limit Test</figcaption>
 </div>
 
 <div>
-<video width="100%" height="250" controls>
-<source src="backward_limit.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video>
+<iframe width="100%" height="250" src="https://youtube.com/embed/zOV7ENlsKYM" allowfullscreen></iframe>
+<figcaption>Backward Limit Test</figcaption>
 </div>
 
 </div>
@@ -264,22 +274,19 @@ With the calibration applied, the car successfully followed a straight line foun
 <figcaption>Example of the Starting Point</figcaption>
 </figure>
 
-<video width="640" height="360" controls>
-<source src="cal1.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video>
 
-<video width="640" height="360" controls>
-<source src="cal2.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video>
+
+<iframe width="100%" height="250" src="https://youtube.com/embed/761I6qX16ww" allowfullscreen></iframe>
+<figcaption>Straight Test Before Calibration</figcaption>
+
+<iframe width="100%" height="250" src="https://youtube.com/embed/Fx5qrLB3bY8" allowfullscreen></iframe>
+<figcaption>Straight Test After Calibration</figcaption>
 
 ## Open Loop Testing
 Finally, I try to move the car in a race track manner, by have it move forward, turn left, move around the curve, turn left, move forward again, then turn. In general this drive is not great, but it achieve its goal.
-<video width="640" height="360" controls>
-<source src="open_loop.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video>
+
+<iframe width="100%" height="250" src="https://youtube.com/embed/8wYWEQr-wOY" allowfullscreen></iframe>
+<figcaption>Open Loop Test</figcaption>
 
 ## Discussion
 
