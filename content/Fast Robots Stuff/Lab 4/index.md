@@ -36,17 +36,15 @@ Below is an image of the finished, soldered physical circuit. (Note: The circuit
 Before integrating the drivers into the car, I tested the PWM outputs using an oscilloscope and an external power supply. The power supply was set to 3.7V with a conservative current limit to simulate the 850mAh Li-Ion battery, which prevents any real damage in the event of a short circuit or a bad soldering job. 
 
 Here is the image of the setup:
-<div style="display: flex; gap: 20px; align-items: flex-start;">
-  <figure style="margin: 0; flex: 1;">
-    <img src="IMG_7946.PNG" alt="circuit" style="display:block; width:100%; max-width:600px;">
-    <figcaption style="text-align: center;">Oscilloscope Hookup</figcaption>
-  </figure>
+<figure>
+<img src="IMG_7946.PNG" alt="circuit" style="display:block; width:100%; max-width:600px;">
+<figcaption>Oscilloscope Hookup</figcaption>
+</figure>
 
-  <figure style="margin: 0; flex: 1;">
-    <img src="IMG_7947.PNG" alt="circuit" style="display:block; width:100%; max-width:600px;">
-    <figcaption style="text-align: center;">Power Supply Hookup</figcaption>
-  </figure>
-</div>
+<figure>
+<img src="IMG_7947.PNG" alt="circuit" style="display:block; width:100%; max-width:600px;">
+<figcaption>Power Supply Hookup</figcaption>
+</figure>
 
 To verify the PWM generation, I used the following basic code to send a duty cycle of approximately 23% (60/255) to pin 15, representing the forward direction:
 
