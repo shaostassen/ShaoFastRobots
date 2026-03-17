@@ -16,7 +16,7 @@ The goal is to implement a robust linear PID controller to drive the robot quick
 
 To prevent `Serial.print` or Bluetooth delays from slowing down the PID loop, debugging data is stored locally in arrays during the run.
 
-The test sequence is controlled via Python over BLE. `START_LINEAR_PID_DATA` triggers the control loop with the 304mm setpoint. `SET_PID` allows real-time tuning of **Kp**, **Ki**, and **Kd** without recompiling. Once finished, `STOP_LINEAR_PID_DATA` halts the motors and transmits the data to Jupyter for visualization.
+The test sequence is controlled via Python over BLE. `START_LINEAR_PID_DATA` triggers the control loop with the 304mm setpoint. `SET_PID` allows real-time tuning of **Kp**, **Ki**, and **Kd** without recompiling. Once finished, `STOP_LINEAR_PID_DATA` halts the motors and transmits the data to Python for visualization. This is almost exactly like how I have been transfer data in previous lab using commands.
 
 <figure>
 <img src="debug.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;">
@@ -58,7 +58,7 @@ The PID output maps an effort of "1" to the minimum PWM needed to overcome stati
 
 ### Proportional (P) Control Tuning
 
-Starting 3000mm away with a 304mm setpoint creates a massive initial error (\~2696mm). A standard **Kp** (like 1.0) would dangerously saturate the motors. A viable gain range to keep commands within 0-255 bounds is between **Kp = 0.005** (conservative) and **0.009** (aggressive).
+Starting 3000mm away with a 304mm setpoint creates a massive initial error (\~2696mm).  **Kp** of 1 would dangerously saturate the motors. A viable gain range to keep commands within 0-255 bounds is between **Kp = 0.005** (conservative) and **0.009** (aggressive).
 
 My initial tests were from 1800mm due to the early sensor issues.
 
