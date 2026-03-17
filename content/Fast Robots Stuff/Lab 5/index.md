@@ -7,28 +7,35 @@ tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontr
 +++
 
 ## Objective
+
 The purpose of this lab is to implement a robust linear PID controller to drive the robot as fast as possible toward a wall, stopping exactly 304mm (1 foot) away. To account for slow sensor sampling rates, linear extrapolation is introduced to decouple the PID control loop frequency from the Time-of-Flight (ToF) sensor's data generation rate.
 
----
+-----
 
 ## Prelab: Bluetooth Architecture and Debugging
 
-To prevent blocking delays from `Serial.print` or Bluetooth transmissions from slowing down the high-speed PID control loop, all debugging data is stored locally in arrays (`tof_time_buffer`, `tof1_buffer`, `pid_error_buffer`, `pid_pwm_buffer`) during the run. 
+To prevent blocking delays from `Serial.print` or Bluetooth transmissions from slowing down the high-speed PID control loop, all debugging data is stored locally in arrays (`tof_time_buffer`, `tof1_buffer`, `pid_error_buffer`, `pid_pwm_buffer`) during the run.
 
-The test sequence is entirely controlled via Python over BLE. The command `START_LINEAR_PID_DATA` triggers the control loop, passing the 304mm setpoint. A separate `SET_PID` command allows for real-time tuning of the $K_p$, $K_i$, and $K_d$ gains without needing to recompile and flash the Artemis board. Once the test concludes, `STOP_LINEAR_PID_DATA` triggers a hard stop to the motors and transmits the data arrays back to the Jupyter Notebook for visualization.
+The test sequence is entirely controlled via Python over BLE. The command `START_LINEAR_PID_DATA` triggers the control loop, passing the 304mm setpoint. A separate `SET_PID` command allows for real-time tuning of the **Kp**, **Ki**, and **Kd** gains without needing to recompile and flash the Artemis board. Once the test concludes, `STOP_LINEAR_PID_DATA` triggers a hard stop to the motors and transmits the data arrays back to the Jupyter Notebook for visualization.
 
----
+\<figure\>
+\<img src="debug.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;"\>
+\<figcaption\>Here is an example of ToF data being sent over the network for debugging.\</figcaption\>
+\</figure\>
+
+-----
 
 ## Position Control Implementation
 
-### ToF Sensor Configuration and Photon Starvation
-Initial testing from 3 meters away resulted in massive data noise (photon starvation) at the start of the run. To resolve this, the front ToF sensor was configured to Long Distance mode with a significantly increased timing budget:
-* `DistanceMode`: Long
+### ToF Sensor Configuration and Testing Challenges
 
-While this provided clean data from 3 meters down to the target, it reduced the sensor sampling rate to roughly 20Hz.
+Initial testing was incredibly frustrating because I wanted to use the Long `distanceMode` for linear PID so I could potentially start up to 4 meters away. However, the ToF sensor continuously failed to read the correct distance when placed on the ground past 1.8 meters, which was insufficient for the linear PID tests. After many hours of debugging different components, rewriting the code three times, and swapping back and forth between two cars, I realized the issue. Both cars' ToF sensors were pointing slightly downward. Additionally, the carpet and floor surface I was testing on absorbed or scattered the IR waves strongly, making the readings highly inaccurate. I resolved this simply by moving my testing to the hallway, which instantly fixed the sensor reliability issues.
+
+While this setup provided clean data from 3 meters down to the target, it reduced the sensor sampling rate to roughly 20Hz.
 
 ### Motor Deadband and Scaling Calibration
-Because the robot needs to make micro-adjustments as it approaches the target, a `driveCalibrated()` function was written to handle motor deadband. 
+
+Because the robot needs to make micro-adjustments as it approaches the target, a `driveCalibrated()` function was written to handle motor deadband.
 
 ```cpp
 void driveCalibrated(float left_speed, float right_speed) {
@@ -46,30 +53,51 @@ void driveCalibrated(float left_speed, float right_speed) {
         pwm_l = constrain(pwm_l, min_pwm_left, 255); 
         // ... (Directional logic and right motor logic follows)
 ```
+
 The PID output is mapped so that a requested effort of "1" physically translates to the minimum PWM required to overcome static friction (roughly 40 PWM for this chassis). The raw input is constrained *before* the motor scaling factor is applied to ensure the robot drives perfectly straight even when the PID controller demands maximum output.
 
 ### Proportional (P) Control Tuning
-With a starting distance of 3000mm and a setpoint of 304mm, the initial error is extremely large (~2696mm). If a standard $K_p$ value (like 1.0) was used, the control effort would massively saturate the motors, causing the robot to violently charge the wall. 
+
+With a starting distance of 3000mm and a setpoint of 304mm, the initial error is extremely large (\~2696mm). If a standard **Kp** value (like 1.0) was used, the control effort would massively saturate the motors, causing the robot to violently charge the wall.
 
 A viable proportional gain range was calculated to keep the initial motor commands within the 0-255 bounds.
-* **Conservative (Slow):** $K_p = 0.005$
-* **Aggressive (Fast):** $K_p = 0.009$
 
-*[Insert Video: P-Control Test Run]*
+  * **Conservative (Slow):** **Kp = 0.005**
+  * **Aggressive (Fast):** **Kp = 0.009**
 
-*[Insert Plot: ToF Distance vs. Time and Motor PWM vs. Time showing a smooth deceleration curve]*
+This first section showcases my initial tests from 1800mm away, a constraint caused by the early sensor issues.
 
-While purely Proportional control proved fairly accurate, higher speeds resulted in overshoot, requiring a small Derivative ($K_d$) term to act as a brake as the error rapidly decreased.
+\<iframe width="450" height="315" src="[https://youtube.com/embed/vyQKNND2o0w](https://youtube.com/embed/vyQKNND2o0w)" allowfullscreen\>\</iframe\>
+\<figcaption\>1800mm P Test\</figcaption\>
 
----
+\<figure\>
+\<img src="initP.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;"\>
+\<figcaption\>P-only PID control, ToF Distance vs. Time \</figcaption\>
+\</figure\>
+
+While purely Proportional control proved fairly accurate, higher speeds resulted in overshoot, requiring a Derivative (**Kd**) term to act as a brake as the error rapidly decreased. By adding this, I was able to increase the P term even higher.
+
+\<iframe width="450" height="315" src="[https://youtube.com/embed/g93l-az-CnU](https://youtube.com/embed/g93l-az-CnU)" allowfullscreen\>\</iframe\>
+\<figcaption\>1800mm PD Test\</figcaption\>
+
+\<figure\>
+\<img src="tuneD.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;"\>
+\<figcaption\>PD control, ToF Distance vs. Time \</figcaption\>
+\</figure\>
+
+My final tuned gains were **Kp = 0.0025**, **Kd = 20000.0**, and **Ki = 0**. I did not end up using the I-term because there was no observable steady-state error.
+
+-----
 
 ## Linear Extrapolation
 
 ### The Sampling Rate Problem
+
 The ToF sensor returns new data every 55ms (18-20Hz). However, the main `loop()` and the PID calculation can execute hundreds of times per second. Without extrapolation, the PID controller uses "stale" distance data for 50ms at a time, resulting in jerky motor commands and discrete steps in the derivative calculation.
 
 ### Implementation
-To decouple the rates, the `readToF()` function was modified to calculate the PID effort every single loop cycle, regardless of whether a new ToF reading was ready. 
+
+To decouple the rates, the `readToF()` function was modified to calculate the PID effort every single loop cycle, regardless of whether a new ToF reading was ready.
 
 If no new data is available, the system calculates the robot's velocity based on the last two known ToF readings and their timestamps, and projects the current distance:
 
@@ -95,18 +123,66 @@ $$d_{est} = d_{last} + (v \cdot \Delta t)$$
 ```
 
 ### Extrapolated Results
-With extrapolation active, the PID loop runs continuously at over 150Hz. The robot smoothly ramps down its motor speed between sensor flashes, allowing for significantly higher top speeds without risking a crash. The plotted data clearly shows the true sensor readings arriving at ~20Hz, while the motor commands adjust smoothly at high frequency.
 
-*[Insert Video: PD-Control with Extrapolation]*
+With extrapolation active, the PID loop runs continuously at over 150Hz. The robot smoothly ramps down its motor speed between sensor flashes, allowing for significantly higher top speeds without risking a crash. The plotted data clearly shows the true sensor readings arriving at \~20Hz, while the motor commands adjust smoothly at high frequency. I implemented extrapolation on my best linear PID controller and recorded three repeated trials.
 
-*[Insert Plot: Raw vs. Extrapolated Data and Motor Output]*
+\<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;"\>
+\<div style="flex: 0 0 48%; min-width: 300px;"\>
+\<iframe width="100%" height="315" src="[https://youtube.com/embed/dOP3MGeF\_IE](https://youtube.com/embed/dOP3MGeF_IE)" allowfullscreen\>\</iframe\>
+\<figcaption style="text-align: center; font-style: italic;"\>Trial 1 Video\</figcaption\>
+\</div\>
+\<div style="flex: 0 0 48%; min-width: 300px;"\>
+\<figure style="margin: 0;"\>
+\<img src="trial1.jpg" alt="Trial 1 Plot" style="display:block; width:100%;"\>
+\<figcaption style="text-align: center; font-style: italic;"\>Trial 1: ToF Distance vs. Time\</figcaption\>
+\</figure\>
+\</div\>
+\</div\>
 
-https://youtube.com/embed/vyQKNND2o0w
-https://youtube.com/embed/g93l-az-CnU
+\<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;"\>
+\<div style="flex: 0 0 48%; min-width: 300px;"\>
+\<iframe width="100%" height="315" src="[https://youtube.com/embed/33lLNpuxZKE](https://youtube.com/embed/33lLNpuxZKE)" allowfullscreen\>\</iframe\>
+\<figcaption style="text-align: center; font-style: italic;"\>Trial 2 Video\</figcaption\>
+\</div\>
+\<div style="flex: 0 0 48%; min-width: 300px;"\>
+\<figure style="margin: 0;"\>
+\<img src="trial2.jpg" alt="Trial 2 Plot" style="display:block; width:100%;"\>
+\<figcaption style="text-align: center; font-style: italic;"\>Trial 2: ToF Distance vs. Time\</figcaption\>
+\</figure\>
+\</div\>
+\</div\>
 
-https://youtube.com/embed/dOP3MGeF_IE
-https://youtube.com/embed/33lLNpuxZKE
-https://youtube.com/embed/v3NTideadpo
+\<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;"\>
+\<div style="flex: 0 0 48%; min-width: 300px;"\>
+\<iframe width="100%" height="315" src="[https://youtube.com/embed/v3NTideadpo](https://youtube.com/embed/v3NTideadpo)" allowfullscreen\>\</iframe\>
+\<figcaption style="text-align: center; font-style: italic;"\>Trial 3 Video\</figcaption\>
+\</div\>
+\<div style="flex: 0 0 48%; min-width: 300px;"\>
+\<figure style="margin: 0;"\>
+\<img src="trial3.jpg" alt="Trial 3 Plot" style="display:block; width:100%;"\>
+\<figcaption style="text-align: center; font-style: italic;"\>Trial 3: ToF Distance vs. Time\</figcaption\>
+\</figure\>
+\</div\>
+\</div\>
 
-https://youtube.com/embed/sTJlFlL0Tps
+Finally, I pushed the car around while the linear PID was active to test how well it adapted to changing states and external disturbances.
+
+\<iframe width="100%" height="315" src="[https://youtube.com/embed/sTJlFlL0Tps](https://youtube.com/embed/sTJlFlL0Tps)" allowfullscreen\>\</iframe\>
+\<figcaption style="text-align: center; font-style: italic;"\>Disturbance Test Video\</figcaption\>
+
+-----
+
+## Discussion and Additional Implementations
+
+Beyond the core PID and extrapolation math, making this system robust required several lower-level software considerations. To ensure the robot drove straight even when the PID demanded maximum effort, I implemented **pre-constraining** on the PID output before applying the differential **motor scaling factors**. I also optimized the **Bluetooth telemetry**, ensuring the `read_data()` and `write_data()` handlers were entirely **non-blocking** so the main control loop could maintain its high-frequency execution. 
+
+-----
+
+## Collaboration
+
+I collaborated on this project with Ananya Jajodia on Troubleshooting my car
+
+I referenced Aiden Derocher's site for debug and testing help.
+
+ChatGPT was used for some website formatting.
 
