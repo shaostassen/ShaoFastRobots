@@ -125,3 +125,14 @@ Below are the results of the tuned PID controller handling various setpoint comm
 \</figure\>
 \</div\>
 \</div\>
+
+
+https://youtube.com/shorts/xDcn3u4P5s4
+https://youtube.com/shorts/NCYYelEjF5c
+
+https://youtube.com/shorts/wg8QhRoUuI0
+https://youtube.com/shorts/aPiQhUuWHdg
+
+https://youtube.com/shorts/MvP56cXlcOk
+https://youtube.com/shorts/zwCbHPWFi0w
+

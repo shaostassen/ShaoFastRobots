@@ -18,10 +18,10 @@ To prevent blocking delays from `Serial.print` or Bluetooth transmissions from s
 
 The test sequence is entirely controlled via Python over BLE. The command `START_LINEAR_PID_DATA` triggers the control loop, passing the 304mm setpoint. A separate `SET_PID` command allows for real-time tuning of the **Kp**, **Ki**, and **Kd** gains without needing to recompile and flash the Artemis board. Once the test concludes, `STOP_LINEAR_PID_DATA` triggers a hard stop to the motors and transmits the data arrays back to the Jupyter Notebook for visualization.
 
-\<figure\>
-\<img src="debug.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;"\>
-\<figcaption\>Here is an example of ToF data being sent over the network for debugging.\</figcaption\>
-\</figure\>
+<figure\>
+<img src="debug.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;"\>
+<figcaption\>Here is an example of ToF data being sent over the network for debugging.\</figcaption\>
+</figure\>
 
 -----
 
@@ -67,23 +67,23 @@ A viable proportional gain range was calculated to keep the initial motor comman
 
 This first section showcases my initial tests from 1800mm away, a constraint caused by the early sensor issues.
 
-\<iframe width="450" height="315" src="[https://youtube.com/embed/vyQKNND2o0w](https://youtube.com/embed/vyQKNND2o0w)" allowfullscreen\>\</iframe\>
-\<figcaption\>1800mm P Test\</figcaption\>
+<iframe width="450" height="315" src="[https://youtube.com/embed/vyQKNND2o0w](https://youtube.com/embed/vyQKNND2o0w)" allowfullscreen\>\</iframe\>
+<figcaption\>1800mm P Test\</figcaption\>
 
-\<figure\>
-\<img src="initP.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;"\>
-\<figcaption\>P-only PID control, ToF Distance vs. Time \</figcaption\>
-\</figure\>
+<figure\>
+<img src="initP.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;"\>
+<figcaption\>P-only PID control, ToF Distance vs. Time \</figcaption\>
+</figure\>
 
 While purely Proportional control proved fairly accurate, higher speeds resulted in overshoot, requiring a Derivative (**Kd**) term to act as a brake as the error rapidly decreased. By adding this, I was able to increase the P term even higher.
 
-\<iframe width="450" height="315" src="[https://youtube.com/embed/g93l-az-CnU](https://youtube.com/embed/g93l-az-CnU)" allowfullscreen\>\</iframe\>
-\<figcaption\>1800mm PD Test\</figcaption\>
+<iframe width="450" height="315" src="[https://youtube.com/embed/g93l-az-CnU](https://youtube.com/embed/g93l-az-CnU)" allowfullscreen\>\</iframe\>
+<figcaption\>1800mm PD Test\</figcaption\>
 
-\<figure\>
-\<img src="tuneD.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;"\>
-\<figcaption\>PD control, ToF Distance vs. Time \</figcaption\>
-\</figure\>
+<figure\>
+<img src="tuneD.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;"\>
+<figcaption\>PD control, ToF Distance vs. Time \</figcaption\>
+</figure\>
 
 My final tuned gains were **Kp = 0.0025**, **Kd = 20000.0**, and **Ki = 0**. I did not end up using the I-term because there was no observable steady-state error.
 
@@ -126,49 +126,49 @@ $$d_{est} = d_{last} + (v \cdot \Delta t)$$
 
 With extrapolation active, the PID loop runs continuously at over 150Hz. The robot smoothly ramps down its motor speed between sensor flashes, allowing for significantly higher top speeds without risking a crash. The plotted data clearly shows the true sensor readings arriving at \~20Hz, while the motor commands adjust smoothly at high frequency. I implemented extrapolation on my best linear PID controller and recorded three repeated trials.
 
-\<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;"\>
-\<div style="flex: 0 0 48%; min-width: 300px;"\>
-\<iframe width="100%" height="315" src="[https://youtube.com/embed/dOP3MGeF\_IE](https://youtube.com/embed/dOP3MGeF_IE)" allowfullscreen\>\</iframe\>
-\<figcaption style="text-align: center; font-style: italic;"\>Trial 1 Video\</figcaption\>
-\</div\>
-\<div style="flex: 0 0 48%; min-width: 300px;"\>
-\<figure style="margin: 0;"\>
-\<img src="trial1.jpg" alt="Trial 1 Plot" style="display:block; width:100%;"\>
-\<figcaption style="text-align: center; font-style: italic;"\>Trial 1: ToF Distance vs. Time\</figcaption\>
-\</figure\>
-\</div\>
-\</div\>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;"\>
+<div style="flex: 0 0 48%; min-width: 300px;"\>
+<iframe width="100%" height="315" src="[https://youtube.com/embed/dOP3MGeF\_IE](https://youtube.com/embed/dOP3MGeF_IE)" allowfullscreen\>\</iframe\>
+<figcaption style="text-align: center; font-style: italic;"\>Trial 1 Video\</figcaption\>
+</div\>
+<div style="flex: 0 0 48%; min-width: 300px;"\>
+<figure style="margin: 0;"\>
+<img src="trial1.jpg" alt="Trial 1 Plot" style="display:block; width:100%;"\>
+<figcaption style="text-align: center; font-style: italic;"\>Trial 1: ToF Distance vs. Time\</figcaption\>
+</figure\>
+</div\>
+</div\>
 
-\<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;"\>
-\<div style="flex: 0 0 48%; min-width: 300px;"\>
-\<iframe width="100%" height="315" src="[https://youtube.com/embed/33lLNpuxZKE](https://youtube.com/embed/33lLNpuxZKE)" allowfullscreen\>\</iframe\>
-\<figcaption style="text-align: center; font-style: italic;"\>Trial 2 Video\</figcaption\>
-\</div\>
-\<div style="flex: 0 0 48%; min-width: 300px;"\>
-\<figure style="margin: 0;"\>
-\<img src="trial2.jpg" alt="Trial 2 Plot" style="display:block; width:100%;"\>
-\<figcaption style="text-align: center; font-style: italic;"\>Trial 2: ToF Distance vs. Time\</figcaption\>
-\</figure\>
-\</div\>
-\</div\>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;"\>
+<div style="flex: 0 0 48%; min-width: 300px;"\>
+<iframe width="100%" height="315" src="[https://youtube.com/embed/33lLNpuxZKE](https://youtube.com/embed/33lLNpuxZKE)" allowfullscreen\>\</iframe\>
+<figcaption style="text-align: center; font-style: italic;"\>Trial 2 Video\</figcaption\>
+</div\>
+<div style="flex: 0 0 48%; min-width: 300px;"\>
+<figure style="margin: 0;"\>
+<img src="trial2.jpg" alt="Trial 2 Plot" style="display:block; width:100%;"\>
+<figcaption style="text-align: center; font-style: italic;"\>Trial 2: ToF Distance vs. Time\</figcaption\>
+</figure\>
+</div\>
+</div\>
 
-\<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;"\>
-\<div style="flex: 0 0 48%; min-width: 300px;"\>
-\<iframe width="100%" height="315" src="[https://youtube.com/embed/v3NTideadpo](https://youtube.com/embed/v3NTideadpo)" allowfullscreen\>\</iframe\>
-\<figcaption style="text-align: center; font-style: italic;"\>Trial 3 Video\</figcaption\>
-\</div\>
-\<div style="flex: 0 0 48%; min-width: 300px;"\>
-\<figure style="margin: 0;"\>
-\<img src="trial3.jpg" alt="Trial 3 Plot" style="display:block; width:100%;"\>
-\<figcaption style="text-align: center; font-style: italic;"\>Trial 3: ToF Distance vs. Time\</figcaption\>
-\</figure\>
-\</div\>
-\</div\>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;"\>
+<div style="flex: 0 0 48%; min-width: 300px;"\>
+<iframe width="100%" height="315" src="[https://youtube.com/embed/v3NTideadpo](https://youtube.com/embed/v3NTideadpo)" allowfullscreen\>\</iframe\>
+<figcaption style="text-align: center; font-style: italic;"\>Trial 3 Video\</figcaption\>
+</div\>
+<div style="flex: 0 0 48%; min-width: 300px;"\>
+<figure style="margin: 0;"\>
+<img src="trial3.jpg" alt="Trial 3 Plot" style="display:block; width:100%;"\>
+<figcaption style="text-align: center; font-style: italic;"\>Trial 3: ToF Distance vs. Time\</figcaption\>
+</figure\>
+</div\>
+</div\>
 
 Finally, I pushed the car around while the linear PID was active to test how well it adapted to changing states and external disturbances.
 
-\<iframe width="100%" height="315" src="[https://youtube.com/embed/sTJlFlL0Tps](https://youtube.com/embed/sTJlFlL0Tps)" allowfullscreen\>\</iframe\>
-\<figcaption style="text-align: center; font-style: italic;"\>Disturbance Test Video\</figcaption\>
+<iframe width="100%" height="315" src="[https://youtube.com/embed/sTJlFlL0Tps](https://youtube.com/embed/sTJlFlL0Tps)" allowfullscreen\>\</iframe\>
+<figcaption style="text-align: center; font-style: italic;"\>Disturbance Test Video\</figcaption\>
 
 -----
 
