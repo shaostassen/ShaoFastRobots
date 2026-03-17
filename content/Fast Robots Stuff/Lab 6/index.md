@@ -139,7 +139,12 @@ When I was tuning the integral terms of the PID controller on the carpet, I obse
 <iframe width="450" height="315" src="https://youtube.com/embed/zwCbHPWFi0w" allowfullscreen></iframe>
 <figcaption>High Pitch Sound on Carpet with No Motion</figcaption>
 
-After some investigation and further testing, I realized this meant the battery was dying and just needed to be charged.
+After investigation, I realized this meant the battery was dying and simply needed to be charged.
+
+According to the ICM-20948 datasheet, the gyroscope has a programmable full-scale range (±250, ±500, ±1000, or ±2000 dps). During a rapid pivot, my robot easily spins faster than 250 dps. If left on the default ±250 dps setting, a fast turn would saturate the sensor, capping the output and causing my derivative "brake" to underestimate the speed. Using the ±2000 dps range provides ample headroom to capture the maximum rotational velocity.
+
+Because I bypassed standard error derivation and used the raw gyrZ() reading for Kd, any high-frequency mechanical vibration or electrical noise gets directly multiplied by Kd, causing motor jitter. I relied on the ICM-20948's built-in Digital Low-Pass Filter (DLPF) to clean up the raw data before feeding it into the PID math.
+
 
 ## Collaboration
 
