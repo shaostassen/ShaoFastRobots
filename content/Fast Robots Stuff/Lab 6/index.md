@@ -75,13 +75,13 @@ This allows the derivative term to act smoothly as a rotational brake without in
 
 Control relies on differential drive, passing `control_effort` to the left motor and `-control_effort` to the right motor using the calibrated motor functions from Lab 5. During initial testing, I accidentally created a positive feedback loop (the "Death Spin") because turning the robot physically right yielded a negative IMU angle, causing the error to grow rather than shrink. Flipping the motor command signs instantly fixed this.
 
-During tuning, the integral term (**Ki**) was kept at 0 to avoid integrator wind-up, as steady-state error is minimal for free-spinning wheels on a smooth floor. I did, however, implement wind-up protection (`constrain(integral_sum, -50.0, 50.0);`) to future-proof the controller for varied floor surfaces (like thick carpet) where friction might cause persistent small errors.
+During tuning, the integral term (**Ki**) was kept at 0 to avoid integrator wind-up at first, as steady-state error is minimal for free-spinning wheels on a smooth floor. I did implement wind-up protection (`constrain(integral_sum, -50.0, 50.0);`), later than I noticed persistent small errors between my PD controller and the setpoints, so I added the integral term. 
 
 I increased the proportional gain (**Kp**) until the robot snapped to the target quickly, then applied the derivative gain (**Kd**) to dampen the resulting oscillations.
 
-  * **Final Kp:** `[Insert Final Kp]`
-  * **Final Kd:** `[Insert Final Kd]`
-  * **Final Ki:** `0.0`
+  * **Final Kp:** `10.0`
+  * **Final Kd:** `0.5`
+  * **Final Ki:** `0.5`
 
 ### System Response and Results
 
