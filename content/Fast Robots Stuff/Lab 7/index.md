@@ -8,15 +8,15 @@ tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontr
 
 ## Drag and Mass Estimations
 
-To implement a Kalman Filter, we first approximate the open-loop robot system as a first-order system using Newton's second law, factoring in linear drag $d$ and motor input $u$:
+Approximating the robot as a first-order system using Newton's second law, factoring in linear drag $d$ and motor input $u$:
 
 $$F = m\ddot{x} = -d\dot{x} + u$$
 
-The dynamics in continuous state-space form ($\dot{x} = Ax + Bu$) with state vector $x = \begin{bmatrix} x \\ \dot{x} \end{bmatrix}$ are:
+The dynamics in continuous state-space form ($\dot{x} = Ax + Bu$) with state vector $x = \begin{bmatrix} x \\\\ \dot{x} \end{bmatrix}$ are:
 
-$$\begin{bmatrix} \dot{x} \\ \ddot{x} \end{bmatrix} = \begin{bmatrix} 0 & 1 \\ 0 & -d/m \end{bmatrix} \begin{bmatrix} x \\ \dot{x} \end{bmatrix} + \begin{bmatrix} 0 \\ 1/m \end{bmatrix} u$$
+$$\begin{bmatrix} \dot{x} \\\\ \ddot{x} \end{bmatrix} = \begin{bmatrix} 0 & 1 \\\\ 0 & -\frac{d}{m} \end{bmatrix} \begin{bmatrix} x \\\\ \dot{x} \end{bmatrix} + \begin{bmatrix} 0 \\\\ \frac{1}{m} \end{bmatrix} u$$
 
-To extract the lumped parameters $d$ and $m$, I recorded three open-loop step responses at 150 PWM. Single trajectories exhibit non-Gaussian Time-of-Flight (ToF) noise, so I averaged the datasets to create a clean consensus trajectory. Fitting an exponential decay to this average yielded a 70% rise time ($t_{0.7} = 1.05$ s) and steady-state velocity ($V_{ss} = 2.45$ m/s).
+I recorded three open-loop step responses at 150 PWM to extract parameters $d$ and $m$. Averaging these trajectories mitigated non-Gaussian Time-of-Flight (ToF) noise. Fitting an exponential decay to this consensus trajectory yielded a 70% rise time ($t_{0.7} = 1.05$ s) and steady-state velocity ($V_{ss} = 2.45$ m/s).
 
 Assuming a normalized unit step input ($u = 1$), the parameters are calculated as:
 
@@ -26,9 +26,9 @@ $$m = \frac{-d \cdot t_{0.7}}{\ln(0.3)} = \frac{-0.408 \cdot 1.05}{-1.204} = 0.3
 
 Plugging these into our continuous $A$ and $B$ matrices yields:
 
-$$A = \begin{bmatrix} 0 & 1 \\ 0 & -1.146 \end{bmatrix}, \quad B = \begin{bmatrix} 0 \\ 2.809 \end{bmatrix}$$
+$$A = \begin{bmatrix} 0 & 1 \\\\ 0 & -1.146 \end{bmatrix}, \quad B = \begin{bmatrix} 0 \\\\ 2.809 \end{bmatrix}$$
 
-Because we only measure distance (ToF data) and not velocity, our observation matrix $C$ isolates the first state:
+Measuring only distance, our observation matrix $C$ isolates the first state:
 
 $$C = \begin{bmatrix} 1 & 0 \end{bmatrix}$$
 
@@ -49,7 +49,7 @@ $$C = \begin{bmatrix} 1 & 0 \end{bmatrix}$$
 
 Here is a video of one of the trajectories while I was collecting data for a step response:
 
-<iframe width="450" height="315" src="[https://youtube.com/embed/74Vm-SvuMSU](https://youtube.com/embed/74Vm-SvuMSU)" allowfullscreen></iframe>
+<iframe width="450" height="315" src="https://youtube.com/embed/74Vm-SvuMSU" allowfullscreen></iframe>
 <figcaption>Data Collection Video</figcaption>
 
 <figure>
@@ -63,15 +63,13 @@ Here is a video of one of the trajectories while I was collecting data for a ste
 
 ### System Timing and Discretization
 
-The onboard prediction loop runs at 50 Hz ($\Delta t = 0.0209$ s), while the ToF sensor updates at \~10 Hz ($\Delta t = 0.0985$ s). The continuous model must be discretized using the fast loop interval to prevent the filter from artificially accelerating the physics.
+The continuous model must be discretized using the fast onboard prediction loop (50 Hz, $\Delta t = 0.0209$ s) rather than the slower ToF sensor rate (\~10 Hz, $\Delta t = 0.0985$ s) to prevent artificially accelerating the physics.
 
-Discretizing with the fast loop $\Delta t = 0.0209$ s via the first-order Taylor expansion ($A_d = I + A\Delta t$ and $B_d = B\Delta t$):
+Discretizing via the first-order Taylor expansion ($A_d = I + A\Delta t$ and $B_d = B\Delta t$):
 
-$$A_d = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} + \begin{bmatrix} 0 & 1 \\ 0 & -1.146 \end{bmatrix}(0.0209) = \begin{bmatrix} 1 & 0.0209 \\ 0 & 0.976 \end{bmatrix}$$
+$$A_d = \begin{bmatrix} 1 & 0 \\\\ 0 & 1 \end{bmatrix} + \begin{bmatrix} 0 & 1 \\\\ 0 & -1.146 \end{bmatrix}(0.0209) = \begin{bmatrix} 1 & 0.0209 \\\\ 0 & 0.976 \end{bmatrix}$$
 
-$$B_d = \begin{bmatrix} 0 \\ 2.809 \end{bmatrix}(0.0209) = \begin{bmatrix} 0 \\ 0.0587 \end{bmatrix}$$
-
-If I had incorrectly used the slower Data $\Delta t$ (0.0985 s), the model would simulate nearly 100 milliseconds of acceleration during a 20-millisecond cycle, causing severe velocity overestimation.
+$$B_d = \begin{bmatrix} 0 \\\\ 2.809 \end{bmatrix}(0.0209) = \begin{bmatrix} 0 \\\\ 0.0587 \end{bmatrix}$$
 
 ```python
 import numpy as np
@@ -109,18 +107,18 @@ def kalman_filter(mu, sigma, u, y_meas, has_new_data):
 ### Simulation Debugging
 
 <figure>
-<img src="fist_attempt.jpg" alt="Unit Mismatch Graph" style="display:block; width:100%; max-width:600px; margin: 0 auto;">
+<img src="first_attempt.jpg" alt="Unit Mismatch Graph" style="display:block; width:100%; max-width:600px; margin: 0 auto;">
 <figcaption>Simulation Attempt 1: Unit Mismatch resulting in apparent zero velocity.</figcaption>
 </figure>
 
-**1. Unit Mismatch:** Initially, the $A$ and $B$ matrices predicted velocity in standard SI units (m/s), but the raw data was plotted in mm/s. The accurate prediction of -3.1 m/s appeared as a flat line on a scale of -3000 mm/s. This was resolved by calculating the matrices using millimeters.
+**1. Unit Mismatch:** The matrices initially predicted velocity in m/s, while raw data was plotted in mm/s, causing the accurate -3.1 m/s prediction to appear as a flat line on a -3000 mm/s scale. Recalculating matrices in millimeters fixed this.
 
 <figure>
 <img src="second_attempt.jpg" alt="Delta t Mismatch Graph" style="display:block; width:100%; max-width:600px; margin: 0 auto;">
 <figcaption>Simulation Attempt 2: Discretization timing mismatch causing extreme acceleration.</figcaption>
 </figure>
 
-**2. Discretization Mismatch:** After fixing units, the simulated velocity reached steady-state in 0.25 s instead of the actual 1.06 s. This occurred because $A_d$ and $B_d$ were mistakenly discretized using the 0.1 s ToF rate, but evaluated on a 0.018 s interpolation grid, resulting in a 5x artificial acceleration. Recalculating with the correct $\Delta t = 0.0209$ s resolved this.
+**2. Discretization Mismatch:** The simulated velocity reached steady-state too quickly (0.25s vs 1.06s) because $A_d$ and $B_d$ were mistakenly discretized using the 0.1s ToF rate instead of the simulation grid's interval. Using the correct $\Delta t = 0.0209$ s resolved the 5x artificial acceleration.
 
 ### Sensor Noise Characterization and Final Tuning
 
@@ -140,14 +138,10 @@ Stationary tests revealed distance-dependent noise: $\sigma_{start} \approx 19.2
 To prevent violent derivative kick at high speeds, I tuned the measurement covariance ($\Sigma_z$) for the worst-case scenario.
 
 $$
-\Sigma_u = \begin{bmatrix} 100.0 & 0 \\ 0 & 100.0 \end{bmatrix}, \quad \Sigma_z = \begin{bmatrix} 400.0 \end{bmatrix}
+\Sigma_u = \begin{bmatrix} 100.0 & 0 \\\\ 0 & 100.0 \end{bmatrix}, \quad \Sigma_z = \begin{bmatrix} 400.0 \end{bmatrix}
 $$
 
-The mathematical justification for this decision lies in the Kalman Gain equation:
-
-$$K = \Sigma_p C^T (C \Sigma_p C^T + \Sigma_z)^{-1}$$
-
-By setting $\Sigma_z = 400.0 \gg \Sigma_u = 100.0$, the denominator grows significantly, shrinking the Kalman Gain $K$. According to the state update equation $\mu = \mu_p + K(y - C\mu_p)$, a small $K$ minimizes the impact of noisy sensor residuals. This forces the system to trust the physical prediction ($\mu_p$), allowing the velocity estimate to slice cleanly through the massive noise cloud.
+In the Kalman Gain equation, setting $\Sigma_z = 400.0 \gg \Sigma_u = 100.0$ drastically shrinks the gain $K$. Consequently, the update equation ($\mu = \mu_p + K(y - C\mu_p)$) minimizes the impact of noisy sensor residuals. The system heavily trusts the physical prediction ($\mu_p$), allowing the velocity estimate to slice cleanly through the initial noise cloud.
 
 <figure>
 <img src="third_attempt.jpg" alt="Properly Tuned KF Graph" style="display:block; width:100%; max-width:600px; margin: 0 auto;">
@@ -217,32 +211,32 @@ void executeControl() {
 <figcaption>Phase 1: Extreme oscillation caused by Lab 5 derivative gains applied to the fast loop.</figcaption>
 </figure>
 
-**Phase 1: Timing Mismatch:** Applying Lab 5 PD gains ($K_p = 0.025$, $K_d = 20000.0$) to the 50 Hz loop caused violent oscillations. This is explained by the discrete derivative math:
-
-$$u_d(t) = K_d \frac{e_k - e_{k-1}}{\Delta t}$$
-
-In Lab 5, $\Delta t \approx 0.098$ s. In Lab 7, $\Delta t \approx 0.020$ s. Reducing $\Delta t$ by a factor of 5 functionally multiplied the derivative kick by 5.
+**Phase 1: Timing Mismatch:** Applying Lab 5 PD gains ($K_p = 0.025$, $K_d = 20000$) to the 50 Hz loop caused violent oscillations. Because the new $\Delta t$ (0.020s) was five times smaller than the old ToF interval (0.098s), the discrete derivative ($K_d \frac{de}{dt}$) effectively multiplied the derivative kick by 5.
 
 <figure>
 <img src="no_kd_low_kp.jpg" alt="Zero Kd Coasting" style="display:block; width:100%; max-width:600px; margin: 0 auto;">
 <figcaption>Phase 2: Proportional-only control resulting in a slow approach and failure to stop.</figcaption>
 </figure>
 
-**Phase 2: Coasting Baseline:** Disabling the derivative term ($K_d = 0.0$) and using a conservative $K_p = 0.015$ eliminated oscillations. However, lacking a derivative "brake," the robot coasted through the 304 mm target setpoint and crashed.
+**Phase 2: Coasting Baseline:** Disabling the derivative term ($K_d = 0$) and using $K_p = 0.015$ eliminated oscillations, but without a derivative "brake," the robot coasted through the 304 mm target and crashed.
 
 <figure>
 <img src="finetuned.jpg" alt="Tuned KF Response" style="display:block; width:100%; max-width:600px; margin: 0 auto;">
 <figcaption>Phase 3: Final tuned response utilizing the Kalman Filter for smooth, aggressive braking.</figcaption>
 </figure>
 
-**Phase 3: Kalman Velocity Control:** To resolve the derivative noise without losing braking power, I finalized the control law by directly substituting the Kalman Filter's velocity state ($\mu_1$) for the noisy discrete derivative calculation:
+**Phase 3: Kalman Velocity Control:** To safely restore braking power, I substituted the Kalman Filter's smoothed velocity state ($\mu_1$) for the noisy discrete derivative calculation:
 
 $$u(t) = K_p(x_{target} - \mu_0) - K_d(\mu_1)$$
 
-Because $\mu_1$ is inherently smoothed by the state-space physics model, this eliminates derivative chatter entirely. As the robot approaches the 300 mm mark, the $\mu_1$ term applies a clean, active electronic braking force, bringing the robot to a perfectly controlled stop.
+This eliminated derivative chatter entirely. Approaching the 300 mm mark, $\mu_1$ applies a clean electronic braking force for a perfectly controlled stop.
 
-<iframe width="450" height="315" src="[https://youtube.com/embed/HNZxEkrY4M4](https://youtube.com/embed/HNZxEkrY4M4)" allowfullscreen></iframe>
+<iframe width="450" height="315" src="https://youtube.com/embed/HNZxEkrY4M4" allowfullscreen></iframe>
 <figcaption>Linear PID Test with Tuned Kalman Filter</figcaption>
+
+### Final Remark
+
+While implementation was challenging, the resulting performance was highly satisfying. I achieved rapid initial acceleration (starting at max 255 PWM and decreasing to 100 PWM within the first second), covering significant distance quickly before the filter seamlessly executed the braking maneuver.
 
 ## Collaboration
 
