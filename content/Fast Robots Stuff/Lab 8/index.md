@@ -6,11 +6,45 @@ weight = 5
 tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontroller" ]
 +++
 
+
 ## Introduction: The Transition from Flip to Drift
 
 For this lab, I initially attempted Task A: The Flip. While I successfully wrote a two-phase state machine and integrated heading-hold to keep the robot straight, executing the flip reliably outside of the lab environment proved physically impossible. The stunt relies heavily on a high coefficient of friction ($\mu$) provided by the lab's sticky pads. When transitioning from full forward to full reverse (-255 PWM) on normal floors, the wheels simply broke traction and skidded, failing to generate the rotational torque necessary to vault the chassis.
 
 Due to these hardware and environmental constraints, I pivoted to Task B: The Drift, leveraging a closed-loop PD controller to execute a high-speed 180-degree turn.
+
+<figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
+  
+  <div style="flex: 1; text-align: center;">
+    <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/_3aq1grE6aE" frameborder="0" allowfullscreen></iframe>
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Flip Trial 1</figcaption>
+  </div>
+
+  <div style="flex: 1; text-align: center;">
+    <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/auJoESy14xQ" frameborder="0" allowfullscreen></iframe>
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Flip Trial 2</figcaption>
+  </div>
+
+  <div style="flex: 1; text-align: center;">
+    <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/71280ro7Dq0" frameborder="0" allowfullscreen></iframe>
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Flip Trial 3</figcaption>
+  </div>
+
+</figure>
+
+<figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
+  
+  <div style="flex: 1; text-align: center;">
+    <img style="width: 100%; height: auto; border-radius: 8px;" src="flip1.jpg" alt="Trial 1 Telemetry">
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Trial 1 Telemetry</figcaption>
+  </div>
+
+  <div style="flex: 1; text-align: center;">
+    <img style="width: 100%; height: auto; border-radius: 8px;" src="flip2.jpg" alt="Trial 2 Telemetry">
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Trial 2 Telemetry</figcaption>
+  </div>
+
+</figure>
 
 ## Drift Implementation
 
@@ -45,11 +79,38 @@ if (spin_effort > 0 && spin_effort < min_pwm_right) {
 spin_effort = constrain(spin_effort, -255.0, 255.0);
 ```
 
+<figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
+  <div style="flex: 1; text-align: center;">
+    <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/PVKqU6e2cDs" frameborder="0" allowfullscreen></iframe>
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Drift Trial 1</figcaption>
+  </div>
+
+  <div style="flex: 1; text-align: center;">
+    <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/Zq9pKDQsBf4" frameborder="0" allowfullscreen></iframe>
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Drift Trial 2</figcaption>
+  </div>
+</figure>
+
+<figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
+  
+  <div style="flex: 1; text-align: center;">
+    <img style="width: 100%; height: auto; border-radius: 8px;" src="drift1.jpg" alt="Trial 1 Telemetry">
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Trial 1 Telemetry</figcaption>
+  </div>
+
+  <div style="flex: 1; text-align: center;">
+    <img style="width: 100%; height: auto; border-radius: 8px;" src="drift2.jpg" alt="Trial 2 Telemetry">
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Trial 2 Telemetry</figcaption>
+  </div>
+
+</figure>
+
+
 ## Kalman Filter Integration & Debugging
 
 Integrating the fast prediction step of the Kalman Filter with the stunt logic revealed two major implementation bugs that had to be solved.
 
-### 1\. The Sawtooth Prediction Bug
+### 1. The Sawtooth Prediction Bug
 
 Initially, my Kalman Filter exhibited a "sawtooth" pattern. Between sensor readings, the predicted distance increased, only to violently snap downward when a new ToF reading arrived. This was caused by a sign error in the physics model: forward PWM was being added to the distance state rather than subtracted. Fixing the input calculation to `u = {-current_pwm / 150.0f}` smoothed the trajectory entirely.
 
@@ -67,19 +128,37 @@ void update_kalman(bool has_new_data, float measured_distance, float current_pwm
 When testing the drift at a 1800mm trigger distance, the robot would instantly spin at the starting line. I discovered that because the ToF sensor polling function (`readToF()`) was locked inside the active state loop, the global distance variable `dist_k` initialized at `0.0`. I moved the sensor polling directly into the main `loop()` to run continuously in the background alongside the IMU, ensuring an accurate distance was loaded into the Kalman Filter the microsecond the stunt commanded a reset.
 
 ## Results and Telemetry
+<figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
+  
+  <div style="flex: 1; text-align: center;">
+    <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/dKT_YRsMmIQ" frameborder="0" allowfullscreen></iframe>
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Flip Trial 1</figcaption>
+  </div>
 
-\<iframe width="450" height="315" src="YOUR\_YOUTUBE\_LINK\_HERE" allowfullscreen\>\</iframe\>
-\<figcaption\>Drift Execution Video\</figcaption\>
+  <div style="flex: 1; text-align: center;">
+    <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/5R7PGEOX3fw" frameborder="0" allowfullscreen></iframe>
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Flip Trial 2</figcaption>
+  </div>
 
-\<img src="YOUR\_GRAPH\_IMAGE\_HERE.png" alt="Drift Telemetry" style="display:block;"\>
-\<figcaption\>Drift Telemetry: Kalman Distance, Yaw Angle, and Motor PWM over Time\</figcaption\>
+  <div style="flex: 1; text-align: center;">
+    <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/BBu2gk1pCd8" frameborder="0" allowfullscreen></iframe>
+    <figcaption style="margin-top: 5px; font-size: 0.9em;">Flip Trial 3</figcaption>
+  </div>
+</figure>
+
+<img src="drift_good.jpg" alt="Successful Trial Telemetry" style="display:block; width:100%; max-width:600px; margin: 0 auto; border-radius: 8px;">
+<figcaption style="text-align: center; margin-top: 5px;">Successful Trial Telemetry</figcaption>
+
 
 The graphs successfully demonstrate the three phases of the stunt. The blue KF Distance curve drops linearly during the initial sprint, pauses during the differential spin (Phase 1), and drops again on the return trip. The red Yaw line cleanly tracks the 180-degree rotation, and the step changes in the PWM graph showcase the transition from linear drive to differential spin and back.
 
 ## Blooper Video
 
-\<iframe width="450" height="315" src="YOUR\_BLOOPER\_LINK\_HERE" allowfullscreen\>\</iframe\>
-\<figcaption\>Blooper: Motor stalling mid-spin before deadband compensation was added.\</figcaption\>
+<iframe width="450" height="315" src="YOUR\_BLOOPER\_LINK\_HERE" allowfullscreen\>\</iframe\>
+<figcaption\>Blooper: Motor stalling mid-spin before deadband compensation was added.\</figcaption\>
+
+
+
 
 ## Summary and Challenges
 
