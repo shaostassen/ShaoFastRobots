@@ -60,15 +60,14 @@ void executeStunt() {
     }
 }
 ```
+<iframe width="450" height="315" src="https://youtube.com/embed/_3aq1grE6aE" allowfullscreen></iframe>
+<figcaption>Flip Trial 1</figcaption>
 
-<iframe style="display: block; width: 100%; max-width: 800px; aspect-ratio: 16/9; border: none; margin-bottom: 5px;" src="https://www.youtube.com/embed/_3aq1grE6aE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-<p style="margin-top: 0; margin-bottom: 30px; font-size: 0.9em; color: #555;">Flip Trial 1</p>
+<iframe width="450" height="315" src="https://youtube.com/embed/auJoESy14xQ" allowfullscreen></iframe>
+<figcaption>Flip Trial 2</figcaption>
 
-<iframe style="display: block; width: 100%; max-width: 800px; aspect-ratio: 16/9; border: none; margin-bottom: 5px;" src="https://www.youtube.com/embed/auJoESy14xQ" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-<p style="margin-top: 0; margin-bottom: 30px; font-size: 0.9em; color: #555;">Flip Trial 2</p>
-
-<iframe style="display: block; width: 100%; max-width: 800px; aspect-ratio: 16/9; border: none; margin-bottom: 5px;" src="https://www.youtube.com/embed/71280ro7Dq0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-<p style="margin-top: 0; margin-bottom: 30px; font-size: 0.9em; color: #555;">Flip Trial 3</p>
+<iframe width="450" height="315" src="https://youtube.com/embed/71280ro7Dq0" allowfullscreen></iframe>
+<figcaption>Flip Trial 3</figcaption>
 
 <figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
 <div style="flex: 1; text-align: center;">
@@ -175,16 +174,11 @@ void executeDrift() {
 
 ### Failed Closed-Loop Drifts
 
-<figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
-<div style="flex: 1; text-align: center;">
-<iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/PVKqU6e2cDs" frameborder="0" allowfullscreen></iframe>
-<figcaption style="margin-top: 5px; font-size: 0.9em;">Failed Drift 1</figcaption>
-</div>
-<div style="flex: 1; text-align: center;">
-<iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/Zq9pKDQsBf4" frameborder="0" allowfullscreen></iframe>
-<figcaption style="margin-top: 5px; font-size: 0.9em;">Failed Drift 2</figcaption>
-</div>
-</figure>
+<iframe width="450" height="315" src="https://youtube.com/embed/PVKqU6e2cDs" allowfullscreen></iframe>
+<figcaption>Failed Drift 1</figcaption>
+
+<iframe width="450" height="315" src="https://youtube.com/embed/Zq9pKDQsBf4" allowfullscreen></iframe>
+<figcaption>Failed Drift 2</figcaption>
 
 <figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
 <div style="flex: 1; text-align: center;">
@@ -205,21 +199,6 @@ The closed-loop attempts revealed two major failure modes:
 ### The Successful Open-Loop Pivot
 
 After hours of tuning, I realized my left and right motors were highly inconsistent, making a perfectly balanced PD spin incredibly difficult to achieve at high speeds. Due to time constraints, I pivoted to an open-loop sequenced approach orchestrated directly via Bluetooth Python commands.
-
-<figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
-<div style="flex: 1; text-align: center;">
-<iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/dKT_YRsMmIQ" frameborder="0" allowfullscreen></iframe>
-<figcaption style="margin-top: 5px; font-size: 0.9em;">Open Loop Drift 1</figcaption>
-</div>
-<div style="flex: 1; text-align: center;">
-<iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/5R7PGEOX3fw" frameborder="0" allowfullscreen></iframe>
-<figcaption style="margin-top: 5px; font-size: 0.9em;">Open Loop Drift 2</figcaption>
-</div>
-<div style="flex: 1; text-align: center;">
-<iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/BBu2gk1pCd8" frameborder="0" allowfullscreen></iframe>
-<figcaption style="margin-top: 5px; font-size: 0.9em;">Open Loop Drift 3</figcaption>
-</div>
-</figure>
 
 ```python
 # Phase 1: Sprint Forward
@@ -252,6 +231,15 @@ await asyncio.sleep(2.3)
 
 ble.send_command(CMD.STOP, "")
 ```
+
+<iframe width="450" height="315" src="https://youtube.com/embed/dKT_YRsMmIQ" allowfullscreen></iframe>
+<figcaption>Open Loop Drift 1</figcaption>
+
+<iframe width="450" height="315" src="https://youtube.com/embed/5R7PGEOX3fw" allowfullscreen></iframe>
+<figcaption>Open Loop Drift 2</figcaption>
+
+<iframe width="450" height="315" src="https://youtube.com/embed/BBu2gk1pCd8" allowfullscreen></iframe>
+<figcaption>Open Loop Drift 3</figcaption>
 
 While slower and less fluid than a continuous closed-loop maneuver, the open-loop sequence resulted in highly reliable, successful runs. As seen in the videos, the robot executes a strong initial linear sprint, comes to a distinct physical stop to kill its forward momentum, and then performs a clean, in-place 180-degree pivot. By allowing the chassis to fully settle between movements, the robot completely avoids the sliding and wall-clipping issues of the dynamic attempts, enabling it to aggressively sprint back to the start line with high repeatability.
 
