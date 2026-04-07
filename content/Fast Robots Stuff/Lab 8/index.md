@@ -61,24 +61,14 @@ void executeStunt() {
 }
 ```
 
-<figure style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; margin: 0;">
-  
-  <div style="flex: 1 1 300px; text-align: center; max-width: 100%;">
-    <iframe style="width: 100%; aspect-ratio: 16/9; border: none;" src="https://www.youtube.com/embed/_3aq1grE6aE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    <figcaption style="margin-top: 5px; font-size: 0.9em;">Flip Trial 1</figcaption>
-  </div>
+<iframe style="display: block; width: 100%; max-width: 800px; aspect-ratio: 16/9; border: none; margin-bottom: 5px;" src="https://www.youtube.com/embed/_3aq1grE6aE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<p style="margin-top: 0; margin-bottom: 30px; font-size: 0.9em; color: #555;">Flip Trial 1</p>
 
-  <div style="flex: 1 1 300px; text-align: center; max-width: 100%;">
-    <iframe style="width: 100%; aspect-ratio: 16/9; border: none;" src="https://www.youtube.com/embed/auJoESy14xQ" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    <figcaption style="margin-top: 5px; font-size: 0.9em;">Flip Trial 2</figcaption>
-  </div>
+<iframe style="display: block; width: 100%; max-width: 800px; aspect-ratio: 16/9; border: none; margin-bottom: 5px;" src="https://www.youtube.com/embed/auJoESy14xQ" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<p style="margin-top: 0; margin-bottom: 30px; font-size: 0.9em; color: #555;">Flip Trial 2</p>
 
-  <div style="flex: 1 1 300px; text-align: center; max-width: 100%;">
-    <iframe style="width: 100%; aspect-ratio: 16/9; border: none;" src="https://www.youtube.com/embed/71280ro7Dq0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    <figcaption style="margin-top: 5px; font-size: 0.9em;">Flip Trial 3</figcaption>
-  </div>
-
-</figure>
+<iframe style="display: block; width: 100%; max-width: 800px; aspect-ratio: 16/9; border: none; margin-bottom: 5px;" src="https://www.youtube.com/embed/71280ro7Dq0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<p style="margin-top: 0; margin-bottom: 30px; font-size: 0.9em; color: #555;">Flip Trial 3</p>
 
 <figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
 <div style="flex: 1; text-align: center;">
