@@ -1,10 +1,10 @@
-\+++
++++
 title = "Lab 8: Stunts"
 date = 2026-04-07
 weight = 5
 [taxonomies]
 tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontroller" ]
-\+++
++++
 
 ## Introduction: The Transition from Flip to Drift
 
