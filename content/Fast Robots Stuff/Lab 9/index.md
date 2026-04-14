@@ -12,12 +12,22 @@ At the start of this lab, I encountered a cascade of system failures lingering f
 
 ## Orientation Control Implementation
 
-To begin mapping, I implemented a positional PID controller utilizing the IMU's DMP. By calculating the error between our target angle and current yaw, the robot could snap to specific orientations.
+To begin mapping, I implemented an orientational PID controller utilizing the IMU's DMP. By calculating the error between our target angle and current yaw, the robot could snap to specific orientations.
+
+<iframe width="450" height="315" src="https://youtube.com/embed/qVtZ4U6Ni5k" allowfullscreen></iframe>
+<figcaption>Pre-Tuning PID: Shows a decent turn, but with excessive overshoot and oscillation.</figcaption>
+
+<iframe width="450" height="315" src="https://youtube.com/embed/0nv9n97dZTE" allowfullscreen></iframe>
+<figcaption>Post-Tuning PID: Decreased P term and increased D term result in a very crisp, reliable turn.</figcaption>
 
 Orientation control proved highly effective for reliable on-axis turns. By commanding the robot through a series of $90^\circ$ turns and driving straight, I tested its odometry by mapping a 2x3 feet rectangular path. The results below show a clean, stable path with minimal rotational drift, validating that the positional PID was well-tuned.
 
-\<img src="/Fast Robots Media/Lab 9/Rectangle\_Test.png" alt="2x3 Rectangle Test" style="display:block;"\>
-\<figcaption\>2x3 Feet Rectangle On-Axis Turn Test\</figcaption\>
+<figure>
+<img src="box.jpg" alt="2x3 feet rectangular path" style="display:block; width:100%; max-width:600px;">
+<figcaption>2x3 Feet Rectangle On-Axis Turn Test</figcaption>
+</figure>
+
+If we were to execute an on-axis turn in the middle of an empty 4x4 meter room, an angular drift of just $3^\circ$ would translate to a positional error of approximately $2\text{m} \times \tan(3^\circ) \approx 0.1\text{m}$ (10 cm) at the walls. Assuming the drift averages out symmetrically across a full $360^\circ$ sweep, the average mapping error would remain extremely low, while the maximum worst-case error at the corners would peak around 10-15 cm.
 
 ### Angular Speed Control (Alternative)
 
@@ -43,16 +53,14 @@ void runSpeedPID(float target_speed) {
     }
 }
 ```
-
-## Distance Data Collection
+Distance Data Collection
 
 To construct the map, I wrote two distinct methods for distance data collection to see which yielded better results.
+Method 1: The Quick Scan (360∘)
 
-### Method 1: The Quick Scan ($360^\circ$)
+The first approach was a fast, single-rotation scan using a single ToF sensor. The robot used the positional PID to step in 12∘ increments, rotating a total of 360∘ (30 steps). To prioritize speed, I implemented a tight ±3∘ error tolerance. Once the robot entered this window, it immediately recorded the distance and moved to the next setpoint without explicitly killing the motors.
+C++
 
-The first approach was a fast, single-rotation scan using a single ToF sensor. The robot used the positional PID to step in $12^\circ$ increments, rotating a total of $360^\circ$ (30 steps). To prioritize speed, I implemented a tight $\pm 3^\circ$ error tolerance. Once the robot entered this window, it immediately recorded the distance and moved to the next setpoint without explicitly killing the motors.
-
-```cpp
 // --- QUICK SCAN 360 LOGIC ---
 while (rot_counter <= 30 && BLE.central().connected()) {
     readIMUFIFO();
@@ -84,20 +92,67 @@ while (rot_counter <= 30 && BLE.central().connected()) {
     }
 }
 stopMotors();
-```
 
 While fast, this method occasionally captured noisy data because the chassis was still actively vibrating when the ToF reading was triggered.
 
-\<img src="/Fast Robots Media/Lab 9/Old\_Polar.png" alt="Single Rotation Polar Scan" style="display:block;"\>
-\<figcaption\>Polar Plot of the Quick Scan Data\</figcaption\>
+<iframe width="450" height="315" src="https://youtube.com/embed/rwoKBCO3qzA" allowfullscreen></iframe>
+<figcaption>Robot Scanning Using Method 1</figcaption>
 
-### Method 2: The Dual-Sensor $720^\circ$ Sweep
+<figure>
+<img src="pid_1.jpg" alt="Method 1 PID Data" style="display:block; width:100%; max-width:600px;">
+<figcaption>Yaw and Motor PWM telemetry during Method 1 data collection</figcaption>
+</figure>
 
-To maximize accuracy, I wrote a much more robust data collection method that continuously logged PID telemetry at $20\text{Hz}$ while recording discrete map points every two seconds over a full $720^\circ$ rotation (two complete sweeps).
+<figure>
+<img src="trail1_polar.jpg" alt="Method 1 Polar Plot" style="display:block; width:100%; max-width:600px;">
+<figcaption>Polar Plot of Method 1 data across 4 primary spots</figcaption>
+</figure>
+Data Merging and Final Mapping
 
-The logic runs the positional PID to turn the robot in $12^\circ$ increments. Every 2 seconds, the robot checks the status of *both* ToF sensors (Front and Side) and saves their distances alongside the *exact* current yaw from the IMU, rather than the target yaw. This guarantees the Python transformation matrices are mathematically perfect regardless of slight overshoots.
+Because the robot is equipped with two ToF sensors (Front and Side offset by −90∘), I executed the full 720∘ rotation at multiple locations in the arena. I grouped the wrapped angles and took the .median() of the overlapping points to mathematically filter out odometry drift and transient sensor noise.
 
-```cpp
+To convert the raw ToF data into the global arena coordinate system, two transformation matrices were required. First, I accounted for the physical offset of the Front ToF sensor relative to the robot's center of rotation (30mm along the x^ axis).
+Tsensor_robot​=​100​010​3001​​
+
+Next, a rotational transformation matrix was applied to convert the robot's local angular yaw coordinate into global x^ and y^​ map coordinates.
+Trobot_world​(θ)=​cosθsinθ0​−sinθcosθ0​robot_xrobot_y1​​
+
+<figure>
+<img src="trail1_without_origin.jpg" alt="Method 1 Map without Origin" style="display:block; width:100%; max-width:600px;">
+<figcaption>Method 1 Global Map (4 spots, excluding origin)</figcaption>
+</figure>
+
+<figure>
+<img src="trail1.jpg" alt="Method 1 Map with Origin" style="display:block; width:100%; max-width:600px;">
+<figcaption>Method 1 Global Map (4 spots + origin point)</figcaption>
+</figure>
+Hardware Inversions and Angle Correction
+
+When initially applying these matrices, the resulting map was mathematically mirrored across the y=−x diagonal and rotated incorrectly. This distortion occurred due to two physical hardware quirks:
+
+    Z-Axis Inversion: The IMU is mounted with its Z-axis pointing toward the floor. By the right-hand rule, it reads positive values when rotating clockwise. However, standard trigonometry strictly expects counter-clockwise angles to be positive.
+
+    Starting Orientation: The robot began its scans facing the +X axis (0∘), but the base transformation matrix assumed it started facing the +Y axis (90∘).
+
+To fix this globally, I inverted the raw yaw data in Python and locked the target starting angle to 0∘. I also inverted the Side sensor's physical offset to prevent it from projecting backward into the mirrored coordinate space.
+Python
+
+# 1. Global Hardware Fix (Z-axis points down)
+df['Yaw_deg'] = -df['Yaw_deg']
+
+# 2. Lock starting angle to +X axis (0 degrees)
+initial_yaw = df['Yaw_deg'].iloc[0]
+yaw_bias = 0.0 - initial_yaw
+df['Biased_Yaw_deg'] = df['Yaw_deg'] + yaw_bias
+
+# 3. Apply inverted offset for Sensor 2
+base_tof2_offset = 90.0 
+
+Method 2: The Dual-Sensor 720∘ Sweep
+
+To maximize accuracy, I wrote a more robust data collection method that continuously logged PID telemetry at 20Hz while recording discrete map points every two seconds over a full 720∘ rotation. The code checks the status of both ToF sensors and saves their distances alongside the exact current yaw from the IMU, ensuring the transformation matrices are mathematically precise.
+C++
+
 // --- 2. RECORD CONTINUOUS TELEMETRY (Every 50ms / 20Hz) ---
 if (current_time - last_cont_time >= 50 && cont_idx < MAX_CONT_SAMPLES) {
     time_cont[cont_idx] = current_time;
@@ -136,70 +191,44 @@ if (current_time - last_rot_time >= 2000 && disc_idx < MAX_DISC_SAMPLES) {
     rot_counter++;
     last_rot_time = current_time;
 }
-```
 
-\<img src="/Fast Robots Media/Lab 9/Continuous\_PID\_Performance.png" alt="720 Sweep PID Performance" style="display:block;"\>
-\<figcaption\>Continuous PID Telemetry logged during the 720° Sweep\</figcaption\>
+<iframe width="450" height="315" src="https://youtube.com/embed/oM6GScy9wHg" allowfullscreen></iframe>
+<figcaption>Robot Scanning Using Method 2</figcaption>
 
-## Data Merging and Final Mapping
+<figure>
+<img src="pid_2.jpg" alt="Method 2 PID Data" style="display:block; width:100%; max-width:600px;">
+<figcaption>Continuous telemetry from Method 2, detailing motor effort and the P, I, and D components tracking the setpoint.</figcaption>
+</figure>
 
-Because the robot is equipped with two ToF sensors (Front and Side offset by $-90^\circ$), I executed the full $720^\circ$ rotation at five different locations in the arena. I grouped the wrapped angles and took the `.median()` of the overlapping points to mathematically filter out odometry drift and transient sensor noise.
+<figure>
+<img src="trail2_polar.jpg" alt="Method 2 Polar Plot" style="display:block; width:100%; max-width:600px;">
+<figcaption>Polar plot overlaying both ToF sensors across the 4 primary locations.</figcaption>
+</figure>
 
-To convert the raw ToF data into the global arena coordinate system, two transformation matrices were required. First, I accounted for the physical offset of the Front ToF sensor relative to the robot's center of rotation ($30\text{mm}$ along the $\hat{x}$ axis).
+<figure>
+<img src="trail2.jpg" alt="Method 2 Initial Map" style="display:block; width:100%; max-width:600px;">
+<figcaption>Baseline Cartesian map using Method 2 data (4 spots + origin).</figcaption>
+</figure>
 
-\<div id="math-p1"\>\</div\>
-\<script\>
-document.addEventListener("DOMContentLoaded", function () {
-katex.render(String.raw`T_{sensor\_robot} = \begin{bmatrix} 1 &amp; 0 &amp; 30 \\ 0 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix}`, document.getElementById("math-p1"), {
-displayMode: true
-});
-});
-\</script\>
+<figure>
+<img src="trail2_with_more_points.jpg" alt="Method 2 Map with Extra Points" style="display:block; width:100%; max-width:600px;">
+<figcaption>Map including two additional spots at (0.5, -2) and (-1.5, -1). This is the best mapping as it reveals the narrow outlet at the bottom of the arena.</figcaption>
+</figure>
 
-Next, a rotational transformation matrix was applied to convert the robot's local angular yaw coordinate into global $\hat{x}$ and $\hat{y}$ map coordinates.
+<figure>
+<img src="trail2_1vs2.jpg" alt="ToF1 vs ToF2 Map" style="display:block; width:100%; max-width:600px;">
+<figcaption>Comparing ToF1 vs ToF2 independently shows the front sensor detected the bottom outlet better, while the side sensor captured the top-left square more cleanly. Combining them yields the optimal result.</figcaption>
+</figure>
 
-\<div id="math-rotz"\>\</div\>
-\<script\>
-document.addEventListener("DOMContentLoaded", function () {
-katex.render(String.raw`T_{robot\_world}(\theta) = \begin{bmatrix} \cos\theta &amp; -\sin\theta &amp; robot\_x \\ \sin\theta &amp; \cos\theta &amp; robot\_y \\ 0 &amp; 0 &amp; 1 \end{bmatrix}`, document.getElementById("math-rotz"), {
-displayMode: true
-});
-});
-\</script\>
+<figure>
+<img src="trail2_with_one_rotation.jpg" alt="Method 2 Single Rotation Map" style="display:block; width:100%; max-width:600px;">
+<figcaption>Filtering the dataset to use only the first 360∘ rotation resulted in surprisingly less noise, as it avoided accumulated odometry drift.</figcaption>
+</figure>
 
-### Hardware Inversions and Angle Correction
+<figure>
+<img src="good_map.jpg" alt="Method 2 Map with Walls" style="display:block; width:100%; max-width:600px;">
+<figcaption>Final comprehensive map with overlaid wall segments derived from our optimal dataset.</figcaption>
+</figure>
+Collaboration
 
-When initially applying these matrices, the resulting map was mathematically mirrored across the $y = -x$ diagonal and rotated incorrectly.
-
-<br>
-[ ***INSERT INTERMEDIATE GRAPHS HERE*** ]
-<br><br>
-
-This distortion occurred due to two physical hardware quirks:
-
-1.  **Z-Axis Inversion:** The IMU is mounted with its Z-axis pointing toward the floor. By the right-hand rule, it reads positive values when rotating clockwise. However, standard trigonometry (`np.cos` and `np.sin`) strictly expects counter-clockwise angles to be positive. Feeding clockwise data into counter-clockwise math inverted the map inside-out.
-2.  **Starting Orientation:** The robot began its scans facing the $+X$ axis ($0^\circ$), but the base transformation matrix assumed it started facing the $+Y$ axis ($90^\circ$).
-
-To fix this globally without manually tweaking offsets for every CSV file, I inverted the raw yaw data in Python and locked the target starting angle to $0^\circ$. Because the universe was flipped to fix the math, I also had to invert the Side sensor's physical offset (from $-90^\circ$ to $+90^\circ$) to prevent it from projecting backward.
-
-```python
-# 1. Global Hardware Fix (Z-axis points down)
-df['Yaw_deg'] = -df['Yaw_deg']
-
-# 2. Lock starting angle to +X axis (0 degrees)
-initial_yaw = df['Yaw_deg'].iloc[0]
-yaw_bias = 0.0 - initial_yaw
-df['Biased_Yaw_deg'] = df['Yaw_deg'] + yaw_bias
-
-# 3. Apply inverted offset for Sensor 2
-base_tof2_offset = 90.0 
-```
-
-By applying these hardware corrections, the dual-sensor $720^\circ$ data projected perfectly into global coordinates, yielding an incredibly dense and accurate room map. Finally, I overlaid the estimated wall segments directly onto the scatter plot to visualize the bounds of the arena.
-
-\<img src="/Fast Robots Media/Lab 9/Final\_Wall\_Map.png" alt="Final Arena Map" style="display:block;"\>
-\<figcaption\>Final Static Room Map with Filtered Dual-Sensor Data and Estimated Wall Segments\</figcaption\>
-
-## Collaboration
-
-I collaborated extensively on this project with Ananya Jajodia to overcome initial hardware setbacks, and with Jack Long and Trevor Dales. AI tools were utilized to assist in formatting Python plotting scripts and organizing graph subplots.
+I collaborated extensively on this project with Ananya Jajodia, and referred to Jack Long and Lucca Correia's site for quality mapping verification. ChatGPT was utilized to assist in formatting Python plotting scripts and organizing graph subplots.
