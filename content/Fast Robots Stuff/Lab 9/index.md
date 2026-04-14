@@ -13,7 +13,6 @@ At the end of last lab, I encountered a cascade of system failures, this lingere
 ## Orientation Control Implementation
 
 To begin mapping, I utilized the orientational PID controller utilizing the IMU's DMP implemented in lab 6. By calculating the error between the target angle and current yaw, the robot could snap to specific orientations.
-
 <iframe width="450" height="315" src="https://youtube.com/embed/qVtZ4U6Ni5k" allowfullscreen></iframe>
 <figcaption>Pre-Tuning PID: Shows a decent turn, but with excessive overshoot and oscillation.</figcaption>
 
@@ -116,11 +115,11 @@ While fast, and taking 5-point distance and yaw averaging, this method still occ
 
 To map the arena using Method 1, I converted the 1D averaged distances into 2D global coordinates. This required two transformation matrices. First, I accounted for the physical offset of the Front ToF sensor relative to the IMU sensor (there 2 sensor is basically the same spot).
 
-$$T_{sensor\_robot} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+$$T_{sensor\_robot} = \begin{bmatrix} 1 & 0 & 0 \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
 
 Next, a rotational transformation matrix was applied to convert the robot's local angular yaw coordinate into global x^ and y^​ map coordinates based on where the robot was placed in the room.
 
-$$T_{robot\_world}(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & robot\_x \\ \sin\theta & \cos\theta & robot\_y \\ 0 & 0 & 1 \end{bmatrix}$$
+$$T_{robot\_world}(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & robot\_x \\\\ \sin\theta & \cos\theta & robot\_y \\\\ 0 & 0 & 1 \end{bmatrix}$$
 
 <figure>
 
