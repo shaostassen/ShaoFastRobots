@@ -12,7 +12,7 @@ At the end of last lab, I encountered a cascade of system failures, this lingere
 
 ## Orientation Control Implementation
 
-To begin mapping, I utilized the orientational PID controller utilizing the IMU's DMP implemented in lab 6. By calculating the error between our target angle and current yaw, the robot could snap to specific orientations.
+To begin mapping, I utilized the orientational PID controller utilizing the IMU's DMP implemented in lab 6. By calculating the error between the target angle and current yaw, the robot could snap to specific orientations.
 
 <iframe width="450" height="315" src="https://youtube.com/embed/qVtZ4U6Ni5k" allowfullscreen></iframe>
 <figcaption>Pre-Tuning PID: Shows a decent turn, but with excessive overshoot and oscillation.</figcaption>
@@ -29,7 +29,7 @@ Orientation control proved highly effective for reliable on-axis turns. By comma
 <figcaption>2x3 Feet Rectangle On-Axis Turn Test</figcaption>
 </figure>
 
-If we were to execute an on-axis turn in the middle of an empty 4x4 meter room, an angular drift of just $3^\circ$ would translate to a positional error of approximately $2\text{m} \times \tan(3^\circ) \approx 0.1\text{m}$ (10 cm) at the walls. Assuming the drift averages out symmetrically across a full $360^\circ$ sweep, the average mapping error would remain extremely low, while the maximum worst-case error at the corners would peak around 10-15 cm.
+If I was to execute an on-axis turn in the middle of an empty 4x4 meter room, an angular drift of just $3^\circ$ would translate to a positional error of approximately $2\text{m} \times \tan(3^\circ) \approx 0.1\text{m}$ (10 cm) at the walls. Assuming the drift averages out symmetrically across a full $360^\circ$ sweep, the average mapping error would remain extremely low, while the maximum worst-case error at the corners would peak around 10-15 cm.
 
 ### Angular Speed Control (Alternative)
 
@@ -59,12 +59,14 @@ void runSpeedPID(float target_speed) {
 ## Distance Data Collection
 
 To construct the map, I wrote two distinct methods for distance data collection to see which yielded better results.
-Method 1: The Quick Scan (360∘)
 
-The first approach was a fast, single-rotation scan using a single ToF sensor. The robot used the orientation PID to step in 12∘ increments, rotating a total of 360∘ (30 steps). To prioritize speed, I implemented a tight ±3∘ error tolerance. Once the robot entered this window, it immediately recorded 5 distances and moved to the next setpoint without explicitly killing the motors.
+### Method 1: The Quick Scan ($360^\circ$)
+
+The first approach was a fast, single-rotation scan using a single ToF sensor. The robot used the orientation PID to step in $12^\circ$ increments, rotating a total of $360^\circ$ (30 steps). To prioritize speed, I implemented a tight $\pm 3^\circ$ error tolerance. 
+
+Once the robot entered this window, it did not explicitly kill the motors. Because the chassis was still actively vibrating, I needed a way to filter out transient sensor noise. To solve this, I programmed the robot to rapidly record 5 consecutive distance readings at each setpoint and calculate their average. This averaged distance was recorded before the robot moved to the next setpoint, significantly smoothing out the data.
 
 ```cpp
-// --- QUICK SCAN 360 LOGIC ---
 while (rot_counter <= 30 && BLE.central().connected()) {
     readIMUFIFO();
     get_roll_pitch_yaw(0); 
@@ -74,29 +76,28 @@ while (rot_counter <= 30 && BLE.central().connected()) {
     if (e > 180.0) e -= 360.0;
     else if (e < -180.0) e += 360.0;
 
-    // 3-degree error tolerance for fast scanning
     if (abs(e) > 3.0) {
-        // Run Positional PID to reach target
         int motor_out = runPID(e); 
         setMotors(motor_out, -motor_out);
     } else {
-        // Inside tolerance: immediately sample and move on
-        if (distanceSensor1.checkForDataReady()) {
-            tof_data[rot_counter] = distanceSensor1.getDistance();
-            distanceSensor1.clearInterrupt();
+        long sum_tof = 0;
+        for (int i = 0; i < 5; i++) {
+            while (!distanceSensor1.checkForDataReady()) {
+            }
+            sum_tof += distanceSensor1.getDistance();
+            distanceSensor1.clearInterrupt(); 
         }
+        tof_data[rot_counter] = sum_tof / 5.0;
         yaw_data[rot_counter] = curr_yaw;
-        
-        // Increment target for the next step without fully stopping
         target_turn += 12.0;
-        if (target_turn > 180.0) target_turn -= 360.0;
-        
+        if (target_turn > 180.0) target_turn -= 360.0; 
         rot_counter++;
     }
 }
 stopMotors();
+```
 
-While fast, this method occasionally captured noisy data because the chassis was still actively vibrating when the ToF reading was triggered.
+While fast, and taking 5-point distance and yaw averaging, this method still occasionally captured noisy data due to the continuous motion.
 
 <iframe width="450" height="315" src="https://youtube.com/embed/rwoKBCO3qzA" allowfullscreen></iframe>
 <figcaption>Robot Scanning Using Method 1</figcaption>
@@ -111,17 +112,18 @@ While fast, this method occasionally captured noisy data because the chassis was
 <figcaption>Polar Plot of Method 1 data across 4 primary spots</figcaption>
 </figure>
 
-Data Merging and Final Mapping
+### Data Merging and Final Mapping
 
-Because the robot is equipped with two ToF sensors (Front and Side offset by −90∘), I executed the full 720∘ rotation at multiple locations in the arena. I grouped the wrapped angles and took the .median() of the overlapping points to mathematically filter out odometry drift and transient sensor noise.
+To map the arena using Method 1, I converted the 1D averaged distances into 2D global coordinates. This required two transformation matrices. First, I accounted for the physical offset of the Front ToF sensor relative to the IMU sensor (there 2 sensor is basically the same spot).
 
-To convert the raw ToF data into the global arena coordinate system, two transformation matrices were required. First, I accounted for the physical offset of the Front ToF sensor relative to the robot's center of rotation (30mm along the x^ axis).
-Tsensor_robot​=​100​010​3001​​
+$$T_{sensor\_robot} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
 
-Next, a rotational transformation matrix was applied to convert the robot's local angular yaw coordinate into global x^ and y^​ map coordinates.
-Trobot_world​(θ)=​cosθsinθ0​−sinθcosθ0​robot_xrobot_y1​​
+Next, a rotational transformation matrix was applied to convert the robot's local angular yaw coordinate into global x^ and y^​ map coordinates based on where the robot was placed in the room.
+
+$$T_{robot\_world}(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & robot\_x \\ \sin\theta & \cos\theta & robot\_y \\ 0 & 0 & 1 \end{bmatrix}$$
 
 <figure>
+
 <img src="trail1_without_origin.jpg" alt="Method 1 Map without Origin" style="display:block; width:100%; max-width:600px;">
 <figcaption>Method 1 Global Map (4 spots, excluding origin)</figcaption>
 </figure>
@@ -130,7 +132,8 @@ Trobot_world​(θ)=​cosθsinθ0​−sinθcosθ0​robot_xrobot_y1​​
 <img src="trail1.jpg" alt="Method 1 Map with Origin" style="display:block; width:100%; max-width:600px;">
 <figcaption>Method 1 Global Map (4 spots + origin point)</figcaption>
 </figure>
-Hardware Inversions and Angle Correction
+
+### Hardware Inversions and Angle Correction
 
 When initially applying these matrices, the resulting map was mathematically mirrored across the y=−x diagonal and rotated incorrectly. This distortion occurred due to two physical hardware quirks:
 
@@ -138,7 +141,8 @@ When initially applying these matrices, the resulting map was mathematically mir
 
     Starting Orientation: The robot began its scans facing the +X axis (0∘), but the base transformation matrix assumed it started facing the +Y axis (90∘).
 
-To fix this globally, I inverted the raw yaw data in Python and locked the target starting angle to 0∘. I also inverted the Side sensors physical offset to prevent it from projecting backward into the mirrored coordinate space.
+To fix this globally, I inverted the raw yaw data in Python and locked the target starting angle to 0∘. I also inverted the side sensor's physical offset to prevent it from projecting backward into the mirrored coordinate space.
+
 ```python
 
 # 1. Global Hardware Fix (Z-axis points down)
@@ -153,11 +157,12 @@ df['Biased_Yaw_deg'] = df['Yaw_deg'] + yaw_bias
 base_tof2_offset = 90.0 
 ```
 
-Method 2: The Dual-Sensor 720∘ Sweep
-To maximize accuracy, I wrote a more robust data collection method that continuously logged PID telemetry at 20Hz while recording discrete map points every two seconds over a full 720∘ rotation. The code checks the status of both ToF sensors and saves their distances alongside the exact current yaw from the IMU, ensuring the transformation matrices are mathematically precise.
+### Method 2: The Dual-Sensor 720∘ Sweep
+To maximize accuracy over the quick scan, I wrote a more robust data collection method. This method continuously logged PID telemetry at 20Hz while recording discrete map points every two seconds over a full 720∘ rotation. Because the robot is equipped with two ToF sensors (Front and Side offset by −90∘), executing a 720∘ rotation meant every angle was scanned multiple times. I grouped the wrapped angles and took the .median() of the overlapping points to mathematically filter out odometry drift and transient sensor noise.
+
+The code checks the status of both ToF sensors and saves their distances alongside the exact current yaw from the IMU, ensuring the transformation matrices are mathematically precise.
 
 ```cpp
-// --- 2. RECORD CONTINUOUS TELEMETRY (Every 50ms / 20Hz) ---
 if (current_time - last_cont_time >= 50 && cont_idx < MAX_CONT_SAMPLES) {
     time_cont[cont_idx] = current_time;
     yaw_cont[cont_idx] = curr_yaw;
@@ -170,25 +175,20 @@ if (current_time - last_cont_time >= 50 && cont_idx < MAX_CONT_SAMPLES) {
     last_cont_time = current_time;
 }
 
-// --- 3. RECORD DISCRETE ToF DATA & TURN (Every 2000ms / 2s) ---
 if (current_time - last_rot_time >= 2000 && disc_idx < MAX_DISC_SAMPLES) {
-    // Check Sensor 1
     if (distanceSensor1.checkForDataReady()) {
         tof1_disc[disc_idx] = distanceSensor1.getDistance();
         distanceSensor1.clearInterrupt();
     } else { tof1_disc[disc_idx] = -1; }
-    
-    // Check Sensor 2
     if (distanceSensor2.checkForDataReady()) {
         tof2_disc[disc_idx] = distanceSensor2.getDistance();
         distanceSensor2.clearInterrupt();
     } else { tof2_disc[disc_idx] = -1; }
     
     time_disc[disc_idx] = current_time;
-    yaw_disc[disc_idx] = curr_yaw; // Record exact angle!
+    yaw_disc[disc_idx] = curr_yaw; 
     disc_idx++;
 
-    // Set up next 12 degree step
     target_turn += 12.0;
     if (target_turn > 180.0) target_turn -= 360.0;
     
@@ -234,6 +234,9 @@ if (current_time - last_rot_time >= 2000 && disc_idx < MAX_DISC_SAMPLES) {
 <img src="good_map.jpg" alt="Method 2 Map with Walls" style="display:block; width:100%; max-width:600px;">
 <figcaption>Final comprehensive map with overlaid wall segments derived from our optimal dataset.</figcaption>
 </figure>
-Collaboration
+
+By comparing the generated plots, I was able to optimize the final map. Plotting ToF1 and ToF2 independently revealed that the front sensor was better at detecting the narrow bottom outlet, while the side sensor better captured the top-left square geometry; combining them yielded a more comprehensive view. Interestingly, analyzing the 720∘ dataset showed that isolating just the first 360∘ rotation produced a cleaner map by eliminating the accumulated wheel-slip and odometry drift seen in the second 360 rotation. Implementing these decisions, along with gathering data at two extra spot—(0.5, -2) and (-1.5, -1)—resulted in a final map that accurately reconstructed the arena, aligning with the estimated wall segments.
+
+## Collaboration
 
 I collaborated extensively on this project with Ananya Jajodia, and referred to Jack Long and Lucca Correia's site for quality mapping verification. ChatGPT was utilized to assist in formatting Python plotting scripts and organizing graph subplots.
