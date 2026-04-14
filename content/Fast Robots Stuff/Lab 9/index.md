@@ -113,13 +113,13 @@ While fast, and taking 5-point distance and yaw averaging, this method still occ
 
 ### Data Merging and Final Mapping
 
-To map the arena using Method 1, I converted the 1D averaged distances into 2D global coordinates. This required two transformation matrices. First, I accounted for the physical offset of the Front ToF sensor relative to the IMU sensor (there 2 sensor is basically the same spot).
+To map the arena using Method 1, I converted the 1D averaged distances into 2D global coordinates. This required two transformation matrices. First, I accounted for the physical offset of the Front ToF sensor relative to the center of rotation.
 
-$$T_{sensor\_robot} = \begin{bmatrix} 1 & 0 & 0 \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 1 \end{bmatrix}$$
+$$T_{sensor} = \begin{bmatrix} TOF & 0 & 1 \end{bmatrix}$$
 
 Next, a rotational transformation matrix was applied to convert the robot's local angular yaw coordinate into global x^ and y^​ map coordinates based on where the robot was placed in the room.
 
-$$T_{robot\_world}(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & robot\_x \\\\ \sin\theta & \cos\theta & robot\_y \\\\ 0 & 0 & 1 \end{bmatrix}$$
+$$T_{rotation}(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & robot\_x \\\\ \sin\theta & \cos\theta & robot\_y \\\\ 0 & 0 & 1 \end{bmatrix}$$
 
 <figure>
 
