@@ -8,19 +8,21 @@ tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontr
 
 ## Initial Hardware and Software Challenges
 
-At the start of this lab, I encountered a cascade of system failures lingering from Lab 8. First, after redownloading my IMU library to fix a dependency issue, the DMP (Digital Motion Processor) was accidentally disabled, leaving me without reliable yaw tracking. Concurrently, an accidental reassignment of the ToF sensor's XSHUT pin in my configuration file prevented the sensors from booting entirely. Because troubleshooting these hardware and software bugs consumed a significant portion of my lab time, I collaborated with Ananya Jajodia and utilized her robot to complete a portion of the data collection for this lab.
+At the end of last lab, I encountered a cascade of system failures, this lingered into this lab. First, after redownloading my IMU library to fix a dependency issue, the DMP (Digital Motion Processor) was disabled, leaving me unable to use the DMP, which I was unware of. Concurrently, an accidental reassignment of the ToF sensor's XSHUT pin in my configuration file prevented the sensors from booting entirely. Because troubleshooting these hardware and software bugs consumed a significant portion of my lab time, I collaborated with Ananya Jajodia and utilized her robot to complete a portion of the data collection for this lab.
 
 ## Orientation Control Implementation
 
-To begin mapping, I implemented an orientational PID controller utilizing the IMU's DMP. By calculating the error between our target angle and current yaw, the robot could snap to specific orientations.
+To begin mapping, I utilized the orientational PID controller utilizing the IMU's DMP implemented in lab 6. By calculating the error between our target angle and current yaw, the robot could snap to specific orientations.
 
 <iframe width="450" height="315" src="https://youtube.com/embed/qVtZ4U6Ni5k" allowfullscreen></iframe>
 <figcaption>Pre-Tuning PID: Shows a decent turn, but with excessive overshoot and oscillation.</figcaption>
 
+After observing a decent orientation control, I decide to decrease the P term and increase D term just to get a slower and more reliable turn. 
+
 <iframe width="450" height="315" src="https://youtube.com/embed/0nv9n97dZTE" allowfullscreen></iframe>
 <figcaption>Post-Tuning PID: Decreased P term and increased D term result in a very crisp, reliable turn.</figcaption>
 
-Orientation control proved highly effective for reliable on-axis turns. By commanding the robot through a series of $90^\circ$ turns and driving straight, I tested its odometry by mapping a 2x3 feet rectangular path. The results below show a clean, stable path with minimal rotational drift, validating that the positional PID was well-tuned.
+Orientation control proved highly effective for reliable on-axis turns. By commanding the robot through a series of $90^\circ$ turns and driving straight, I tested its odometry by mapping a 2x3 feet rectangular path under the lab table. The results below show a clean, stable path with minimal rotational drift, validating that the positional PID was well-tuned.
 
 <figure>
 <img src="box.jpg" alt="2x3 feet rectangular path" style="display:block; width:100%; max-width:600px;">
@@ -31,7 +33,7 @@ If we were to execute an on-axis turn in the middle of an empty 4x4 meter room, 
 
 ### Angular Speed Control (Alternative)
 
-While positional control worked well, I also wrote a continuous angular speed controller to compare mapping methodologies. This logic utilized a low-pass filter on the Gyro's Z-axis to maintain a constant rotational velocity (e.g., $45^\circ/s$). Due to time constraints recovering from the initial hardware bugs, I did not fully implement or tune this on the physical robot, but the architecture is shown below.
+While positional control worked well, I also wrote a continuous angular speed controller to compare mapping methodologies. This logic utilized a low-pass filter on the Gyro's Z-axis to maintain a constant rotational velocity (e.g., $45^\circ/s$). Due to time constraints recovering from the initial hardware bugs, I did not fully tune this on the physical robot, but the architecture is shown below.
 
 ```cpp
 void runSpeedPID(float target_speed) {
@@ -53,14 +55,15 @@ void runSpeedPID(float target_speed) {
     }
 }
 ```
-Distance Data Collection
+
+## Distance Data Collection
 
 To construct the map, I wrote two distinct methods for distance data collection to see which yielded better results.
 Method 1: The Quick Scan (360∘)
 
-The first approach was a fast, single-rotation scan using a single ToF sensor. The robot used the positional PID to step in 12∘ increments, rotating a total of 360∘ (30 steps). To prioritize speed, I implemented a tight ±3∘ error tolerance. Once the robot entered this window, it immediately recorded the distance and moved to the next setpoint without explicitly killing the motors.
-C++
+The first approach was a fast, single-rotation scan using a single ToF sensor. The robot used the orientation PID to step in 12∘ increments, rotating a total of 360∘ (30 steps). To prioritize speed, I implemented a tight ±3∘ error tolerance. Once the robot entered this window, it immediately recorded 5 distances and moved to the next setpoint without explicitly killing the motors.
 
+```cpp
 // --- QUICK SCAN 360 LOGIC ---
 while (rot_counter <= 30 && BLE.central().connected()) {
     readIMUFIFO();
@@ -107,6 +110,7 @@ While fast, this method occasionally captured noisy data because the chassis was
 <img src="trail1_polar.jpg" alt="Method 1 Polar Plot" style="display:block; width:100%; max-width:600px;">
 <figcaption>Polar Plot of Method 1 data across 4 primary spots</figcaption>
 </figure>
+
 Data Merging and Final Mapping
 
 Because the robot is equipped with two ToF sensors (Front and Side offset by −90∘), I executed the full 720∘ rotation at multiple locations in the arena. I grouped the wrapped angles and took the .median() of the overlapping points to mathematically filter out odometry drift and transient sensor noise.
@@ -134,8 +138,8 @@ When initially applying these matrices, the resulting map was mathematically mir
 
     Starting Orientation: The robot began its scans facing the +X axis (0∘), but the base transformation matrix assumed it started facing the +Y axis (90∘).
 
-To fix this globally, I inverted the raw yaw data in Python and locked the target starting angle to 0∘. I also inverted the Side sensor's physical offset to prevent it from projecting backward into the mirrored coordinate space.
-Python
+To fix this globally, I inverted the raw yaw data in Python and locked the target starting angle to 0∘. I also inverted the Side sensors physical offset to prevent it from projecting backward into the mirrored coordinate space.
+```python
 
 # 1. Global Hardware Fix (Z-axis points down)
 df['Yaw_deg'] = -df['Yaw_deg']
@@ -147,12 +151,12 @@ df['Biased_Yaw_deg'] = df['Yaw_deg'] + yaw_bias
 
 # 3. Apply inverted offset for Sensor 2
 base_tof2_offset = 90.0 
+```
 
 Method 2: The Dual-Sensor 720∘ Sweep
-
 To maximize accuracy, I wrote a more robust data collection method that continuously logged PID telemetry at 20Hz while recording discrete map points every two seconds over a full 720∘ rotation. The code checks the status of both ToF sensors and saves their distances alongside the exact current yaw from the IMU, ensuring the transformation matrices are mathematically precise.
-C++
 
+```cpp
 // --- 2. RECORD CONTINUOUS TELEMETRY (Every 50ms / 20Hz) ---
 if (current_time - last_cont_time >= 50 && cont_idx < MAX_CONT_SAMPLES) {
     time_cont[cont_idx] = current_time;
@@ -191,6 +195,7 @@ if (current_time - last_rot_time >= 2000 && disc_idx < MAX_DISC_SAMPLES) {
     rot_counter++;
     last_rot_time = current_time;
 }
+```
 
 <iframe width="450" height="315" src="https://youtube.com/embed/oM6GScy9wHg" allowfullscreen></iframe>
 <figcaption>Robot Scanning Using Method 2</figcaption>
