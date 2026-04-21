@@ -7,50 +7,52 @@ tags = ["Robotics", "Python", "Sensors", "Bayes Filter", "Algorithms"]
 +++
 
 ## Overview
-The robot doesn't know where it is on its own, so it has to figure out its position from ToF sensor readings — this is localization, and probability is the right tool for the job. In this lab I implemented a Bayes filter, which keeps a running "belief" about where the robot thinks it is. Every time fresh sensor data or a control input comes in, the filter updates that belief through Bayesian inference. The goal was to get everything working in simulation before putting it on real hardware.
 
-## Grid Localization Parameters
-The robot's state is 3D: (x,y,θ)(x, y, \theta)
-(x,y,θ). The arena spans roughly -5.5 to 6.5 ft in xx
-x, -4.5 to 4.5 ft in yy
-y, and [−180°,+180°)[-180°, +180°)
-[−180°,+180°) in heading. Since we can't compute over a continuous space, the arena is chopped into a 3D grid of (12,9,18)(12, 9, 18)
-(12,9,18) cells, each 0.3048 m×0.3048 m×20°0.3048 \text{ m} \times 0.3048 \text{ m} \times 20°
-0.3048 m×0.3048 m×20°. Every cell holds a probability of the robot being there, and the whole grid sums to 1. After each update, the cell with the highest probability is our best guess at the robot's pose.
+The robot doesn't know where it is on its own, so it has to figure out its position from ToF sensor readings, this is called localization. In this lab I implemented a Bayes filter, which keeps a running "belief" about where the robot thinks it is. Every time fresh sensor data or a control input comes in, the filter updates that belief through Bayesian inference. The goal of this lab is to get everything working in simulation before putting it on real hardware.
+
+### Grid Localization Parameters
+
+The robot's state is 3D: $(x, y, \theta)$. The arena spans roughly -5.5 to 6.5 ft in $x$, -4.5 to 4.5 ft in $y$, and $[-180°, +180°)$ in heading. Since we can't compute over a continuous space, the arena is chopped into a 3D grid of $(12, 9, 18)$ cells, each $1 \text{ ft} \times 1 \text{ ft} \times 20°$. Every cell holds a probability of the robot being there, and the whole grid sums to 1. After each update, the cell with the highest probability is our best guess at the robot's pose.
 
 
 ## Bayes Filter Architecture
-The filter runs in a loop with two stages. The prediction step uses control inputs to forecast where the robot moved, and the update step corrects that guess by comparing expected sensor readings against the real ones.
+
+The filter runs in a loop with two stages. The **prediction step** uses control inputs to forecast where the robot moved, and the **update step** corrects that guess by comparing expected sensor readings against the real ones.
+
 <div style="width: fit-content; margin: 0 auto; text-align: left; background-color: #f4f4f4; padding: 15px; border-radius: 5px;">
-Algorithm Bayes_Filter(bel(xt−1),ut,zt)\text{Bayes\_Filter}(bel(x_{t-1}), u_t, z_t)
-Bayes_Filter(bel(xt−1​),ut​,zt​)
-    for all xtx_t
-xt​
-do&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bel‾(xt)=∑xt−1p(xt∣ut,xt−1) bel(xt−1)\overline{bel}(x_t) = \sum_{x_{t-1}} p(x_t \mid u_t, x_{t-1}) \, bel(x_{t-1})
-bel(xt​)=∑xt−1​​p(xt​∣ut​,xt−1​)bel(xt−1​)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bel(xt)=η p(zt∣xt) bel‾(xt)bel(x_t) = \eta \, p(z_t \mid x_t) \, \overline{bel}(x_t)
-bel(xt​)=ηp(zt​∣xt​)bel(xt​)&nbsp;&nbsp;&nbsp;&nbsp
-end for
-    return bel(xt)bel(x_t)
-bel(xt​)
+
+**Algorithm** $\text{Bayes\_Filter}(bel(x_{t-1}), u_t, z_t)$
+
+&nbsp;&nbsp;&nbsp;&nbsp;**for all** $x_t$ **do**
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\overline{bel}(x_t) = \sum_{x_{t-1}} p(x_t \mid u_t, x_{t-1}) \, bel(x_{t-1})$
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$bel(x_t) = \eta \, p(z_t \mid x_t) \, \overline{bel}(x_t)$
+&nbsp;&nbsp;&nbsp;&nbsp;**end for**
+&nbsp;&nbsp;&nbsp;&nbsp;**return** $bel(x_t)$
+
 </div>
 
-## Odometry Motion Model
-The control input uu
-u is broken into three pieces — an initial rotation, a straight-line translation, and a final rotation — which together describe any transition between two poses.
+### Odometry Motion Model
+
+The control input $u$ is broken into an initial rotation, a translation, and a final rotation, which together describe any transition between two poses.
 
 <figure>
 <img src="odometry.jpg" alt="Odometry Model Parameters" style="display:block; width:100%; max-width:600px; margin: 0 auto;">
 <figcaption>Odometry model parameters: $\delta_{rot1}$, $\delta_{trans}$, and $\delta_{rot2}$.</figcaption>
 </figure>
-δrot1=atan2⁡(yˉ′−yˉ, xˉ′−xˉ)−θˉ\delta_{rot1} = \operatorname{atan2}(\bar{y}' - \bar{y},\, \bar{x}' - \bar{x}) - \bar{\theta}δrot1​=atan2(yˉ​′−yˉ​,xˉ′−xˉ)−θˉ
-δtrans=(xˉ′−xˉ)2+(yˉ′−yˉ)2\delta_{trans} = \sqrt{(\bar{x}' - \bar{x})^2 + (\bar{y}' - \bar{y})^2}δtrans​=(xˉ′−xˉ)2+(yˉ​′−yˉ​)2​
-δrot2=θˉ′−θˉ−δrot1\delta_{rot2} = \bar{\theta}' - \bar{\theta} - \delta_{rot1}δrot2​=θˉ′−θˉ−δrot1​
+
+$$\delta_{rot1} = \operatorname{atan2}(\bar{y}' - \bar{y},\, \bar{x}' - \bar{x}) - \bar{\theta}$$
+
+$$\delta_{trans} = \sqrt{(\bar{x}' - \bar{x})^2 + (\bar{y}' - \bar{y})^2}$$
+
+$$\delta_{rot2} = \bar{\theta}' - \bar{\theta} - \delta_{rot1}$$
+
+
 
 ## Algorithm Implementation
-The Python snippets below outline my programmatic approach to the Bayes filter. 
 
 ### Compute Control & Motion Model
-`compute_control()` pulls the three kinematic parameters out of two consecutive poses. odom_motion_model() then evaluates how likely a given transition is by plugging the actual and expected controls into Gaussians.
+
+`compute_control()` pulls the three kinematic parameters out of two consecutive poses. `odom_motion_model()` then evaluates how likely a given transition is by plugging the actual and expected controls into Gaussians.
 
 ```python
 import math
@@ -81,8 +83,8 @@ def odom_motion_model(cur_pose, prev_pose, u):
 ```
 
 ### Prediction Step
-This is where computation blows up — a naive implementation loops over roughly 3.8 million transitions per tick. To keep things tractable, I skip any previous cell with belief below 0.00010.0001
-0.0001, since those barely contribute to the sum. The tradeoff is a small accuracy hit for a massive speedup. After accumulating the probabilities I normalize so the grid stays a valid distribution.
+
+This is the heavy computation stage. The grid has $12 \times 9 \times 18 = 1944$ cells, and a naive implementation considers every *(previous, current)* pair, so each tick loops over $1944^2 \approx 3.8$ million transitions. To keep things tractable, I skip any previous cell with belief below $0.0001$, since those barely contribute to the sum. The tradeoff is a small accuracy hit for a huge speedup. After accumulating the probabilities I normalize so the grid stays a valid distribution.
 
 ```python
 def prediction_step(cur_odom, prev_odom):
@@ -105,9 +107,10 @@ def prediction_step(cur_odom, prev_odom):
 ```
 
 ### Sensor Model & Update Step
-I vectorized the update step to avoid looping over every cell. By reshaping the raw sensor readings and broadcasting them against the cached mapper.obs_views array, NumPy computes all 18 sensor likelihoods across the entire grid in one shot. This was a huge speedup over the nested-loop version, and it still implements the same Bayesian update:
 
-p(zt∣xt,m)=∏k=118p(ztk∣xt,m)p(z_t \mid x_t, m) = \prod_{k=1}^{18} p(z_t^k \mid x_t, m)p(zt​∣xt​,m)=k=1∏18​p(ztk​∣xt​,m)
+I vectorized the update step to avoid looping over every cell. By reshaping the raw sensor readings and broadcasting them against the cached `mapper.obs_views` array, NumPy computes all 18 sensor likelihoods across the entire grid in one shot. This is a huge speedup over the nested-loop version if I used the sensor_model function and it still implements the same Bayesian update:
+
+$$p(z_t \mid x_t, m) = \prod_{k=1}^{18} p(z_t^k \mid x_t, m)$$
 
 ```python
 def update_step():
@@ -120,12 +123,13 @@ def update_step():
 ```
 
 ## Simulation & Results
-The video below shows the filter localizing along a pre-planned rectangular path. Red is the raw odometry estimate, green is ground truth, and blue is the Bayes filter's belief. You can see the odometry drifts badly on its own, but the filter pulls the estimate back toward ground truth as sensor data comes in. The white cells behind the robot visualize the belief grid — brighter means higher probability, and I'm ignoring anything below 0.0001.
+
+The video below shows the filter localizing along a pre-planned rectangular path. Red is the raw odometry estimate, green is ground truth, and blue is the Bayes filter's belief. The odometry drifts badly, you can see it shoot off the map entirely in the bottom right and overshoot again near the top, but the blue belief tracks green closely the whole way around the obstacle. The white cells behind the robot visualize the belief grid, brighter means higher probability, and I'm ignoring anything below $0.0001$.
 
 <iframe width="450" height="315" src="https://youtu.be/DMEheQDtAwY" allowfullscreen></iframe>
 <figcaption>Bayes simulation tracking ground truth vs. odometry.</figcaption>
 
-One thing I noticed: the filter works noticeably better near walls. ToF sensors are more stable at short ranges, so readings there carry more useful information. In the open middle of the arena there aren't many nearby features to lock onto, and the belief gets a bit fuzzier. Still, across the full trajectory the Bayes estimate consistently tracked ground truth far better than odometry alone.
+The filter works noticeably better near obstacles. This is probably because ToF sensors are more stable at short ranges, so readings there carry more useful information. In the open middle of the arena there aren't many nearby things to lock onto, and the belief gets a bit fuzzier. Still, across the full trajectory the Bayes estimate consistently tracked ground truth far better than odometry alone.
 
 ## Collaboration
 I referenced Lucca Correia's site while debugging the filter and putting together the video demo.
