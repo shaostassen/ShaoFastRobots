@@ -131,4 +131,4 @@ The video below shows the filter localizing along a pre-planned rectangular path
 The filter works noticeably better near obstacles. This is probably because ToF sensors are more stable at short ranges, so readings there carry more useful information. In the open middle of the arena there aren't many nearby things to lock onto, and the belief gets a bit fuzzier. Still, across the full trajectory the Bayes estimate consistently tracked ground truth far better than odometry alone.
 
 ## Collaboration
-I referenced Lucca Correia's site while debugging the filter and putting together the video demo.
+I referenced Lucca Correia's site while debugging the filter and putting together the video demo. I also used lec 17-20 of the class lecture to implement my Bayes Filter.
