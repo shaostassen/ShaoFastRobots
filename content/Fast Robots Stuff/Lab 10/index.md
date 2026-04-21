@@ -1,7 +1,7 @@
 +++
 title = "Lab 10: Grid Localization using Bayes Filter"
 date = 2026-04-20
-weight = 5
+weight = 3
 [taxonomies]
 tags = ["Robotics", "Python", "Sensors", "Bayes Filter", "Algorithms"]
 +++
