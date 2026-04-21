@@ -19,14 +19,13 @@ The robot's state is 3D: $(x, y, \theta)$. The arena spans roughly -5.5 to 6.5 f
 
 The filter runs in a loop with two stages. The **prediction step** uses control inputs to forecast where the robot moved, and the **update step** corrects that guess by comparing expected sensor readings against the real ones.
 
-<div style="width: fit-content; margin: 0 auto; text-align: left; background-color: #f4f4f4; padding: 15px; border-radius: 5px;">
+<div style="background-color: #f4f4f4; padding: 20px; border-radius: 5px; font-family: 'Courier New', monospace; max-width: 600px; margin: 0 auto;">
 
-**Algorithm** $\text{Bayes\_Filter}(bel(x_{t-1}), u_t, z_t)$
-
-&nbsp;&nbsp;&nbsp;&nbsp;**for all** $x_t$ **do**
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\overline{bel}(x_t) = \sum_{x_{t-1}} p(x_t \mid u_t, x_{t-1}) \, bel(x_{t-1})$
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$bel(x_t) = \eta \, p(z_t \mid x_t) \, \overline{bel}(x_t)$
-&nbsp;&nbsp;&nbsp;&nbsp;**end for**
+**Algorithm** Bayes_Filter( $bel(x_{t-1}),\ u_t,\ z_t$ ) <br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**for all** $x_t$ **do** <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\overline{bel}(x_t) = \sum_{x_{t-1}} p(x_t \mid u_t, x_{t-1}) \, bel(x_{t-1})$ <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$bel(x_t) = \eta \, p(z_t \mid x_t) \, \overline{bel}(x_t)$ <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**end for** <br>
 &nbsp;&nbsp;&nbsp;&nbsp;**return** $bel(x_t)$
 
 </div>
@@ -126,7 +125,7 @@ def update_step():
 
 The video below shows the filter localizing along a pre-planned rectangular path. Red is the raw odometry estimate, green is ground truth, and blue is the Bayes filter's belief. The odometry drifts badly, you can see it shoot off the map entirely in the bottom right and overshoot again near the top, but the blue belief tracks green closely the whole way around the obstacle. The white cells behind the robot visualize the belief grid, brighter means higher probability, and I'm ignoring anything below $0.0001$.
 
-<iframe width="450" height="315" src="https://youtu.be/DMEheQDtAwY" allowfullscreen></iframe>
+<iframe width="450" height="315" src="https://youtube.com/embed/DMEheQDtAwY" allowfullscreen></iframe>
 <figcaption>Bayes simulation tracking ground truth vs. odometry.</figcaption>
 
 The filter works noticeably better near obstacles. This is probably because ToF sensors are more stable at short ranges, so readings there carry more useful information. In the open middle of the arena there aren't many nearby things to lock onto, and the belief gets a bit fuzzier. Still, across the full trajectory the Bayes estimate consistently tracked ground truth far better than odometry alone.
