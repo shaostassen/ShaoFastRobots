@@ -144,7 +144,7 @@ I ran the update step at each of the four marked grid positions, plus an additio
 <details>
 <summary><strong>(-3, -2)</strong></summary>
 
-<img src="-3-3.jpg" alt="Localization at (-3, -2)" style="display:block;">
+<img src="-3-2.jpg" alt="Localization at (-3, -2)" style="display:block;">
 <figcaption>Belief vs. ground truth at (-3, -2)</figcaption>
 
 <iframe width="450" height="315" src="https://www.youtube.com/embed/rvKvDf84wlo" allowfullscreen></iframe>
@@ -200,13 +200,13 @@ I ran the update step at each of the four marked grid positions, plus an additio
 
 ## Best Localization Summary
 
-| Marked Pose (ft, ft, °) | Ground Truth (m, m, °) | Filter Belief (m, m, °) | Cell Probability |
-| --- | --- | --- | --- |
-| \((-3, -2, 0)\) | \((-0.914, -0.610, 0)\) | \((-0.914, -0.610, 10.000)\) | \(1.000\) |
-| \((0, 3, 0)\) | \((0.000, 0.914, 0)\) | \((0.000, 0.914, -10.000)\) | \(1.000\) |
-| \((5, -3, 0)\) | \((1.524, -0.914, 0)\) | \((1.524, -0.914, 10.000)\) | \(0.999\) |
-| \((5, 3, 0)\) | \((1.524, 0.914, 0)\) | \((1.524, 0.610, -10.000)\) | \(0.993\) |
-| \((0, 0, 0)\) | \((0.000, 0.000, 0)\) | \((0.000, 0.000, -10.000)\) | \(1.000\) |
+| Marked Pose (ft,ft,°) | Ground Truth (m,m,°) | Filter Belief (m,m,°) | Cell Probability |
+| --- | --- | ------ | --- |
+| \(-3, -2, 0\) | \(-0.914, -0.610, 0\) | \(-0.914, -0.610, 10.000\) | 1.000 |
+| \(0, 3, 0\) | \(0.000, 0.914, 0\) | \(0.000, 0.914, -10.000\) | 1.000 |
+| \(5, -3, 0\) | \(1.524, -0.914, 0\) | \(1.524, -0.914, 10.000\) | 0.999 |
+| \(5, 3, 0\) | \(1.524, 0.914, 0\) | \(1.524, 0.610, -10.000\) | 0.993 |
+| \(0, 0, 0\) | \(0.000, 0.000, 0\) | \(0.000, 0.000, -10.000\) | 1.000 |
 
 ## Discussion
 
