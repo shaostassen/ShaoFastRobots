@@ -200,8 +200,8 @@ I ran the update step at each of the four marked grid positions, plus an additio
 
 ## Best Localization Summary
 
-| Marked Pose (ft, ft, °) | Ground Truth (m, m, °) | Filter Belief (m, m, °) | Cell Probability |
-| ---- | ---- | ------- | --- |
+| Marked Pose (ft,ft,°) | Ground Truth (m,m,°) | Filter Belief (m, m, °) | Cell Probability |
+| --- | --- | ------- | --- |
 | \(-3, -2, 0\) | \(-0.914, -0.610, 0\) | \(-0.914, -0.610, 10.000\) | 1.000 |
 | \(0, 3, 0\) | \(0.000, 0.914, 0\) | \(0.000, 0.914, -10.000\) | 1.000 |
 | \(5, -3, 0\) | \(1.524, -0.914, 0\) | \(1.524, -0.914, 10.000\) | 0.999 |
