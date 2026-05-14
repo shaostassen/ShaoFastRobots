@@ -306,9 +306,8 @@ waypoint**, reusing the Lab 11 pattern: uniform-prior reset before each
 too slow for online use). Onboard PID handles both the in-place turn and
 the ToF-based straight leg; offboard Python plans the segments and
 `await`s `DONE` notifications from the firmware so the Bayes-filter
-compute doesn't compete with the 50 Hz control loop. The architecture
-follows [Lucca Correial's writeup](https://correial.github.io/LuccaFastRobots/).
-A single waypoint takes 8–12 seconds end-to-end, dominated by the 18
+compute doesn't compete with the 50 Hz control loop. A single waypoint 
+takes 8–12 seconds end-to-end, dominated by the 18
 turn-and-settle cycles of the localization scan. My best run hits the
 first 4–5 waypoints before cumulative heading drift (±5° per turn) points
 the car at a wall.
@@ -329,25 +328,13 @@ async def step_once(self):
     self.loc.update_step()
 ```
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/__PATH_PLANNING_ID__"
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pZiou_tTjP8"
   title="Path execution — best run" frameborder="0" allowfullscreen></iframe>
 
 ## Collaboration
 
-Thanks to **Dyllan Hofflich** for letting me run my PD code on his car and
-for the LQR derivation and tuning sessions — read his
-[Lab 12 report](https://spike-h.github.io/fastRobots/lab12.html) for the
-full state-space derivation and Kalman-vs-DMP comparison. Thanks to
-**Tina Cheng** for the tuning sessions, and to
-[Lucca Correial's Lab 12](https://correial.github.io/LuccaFastRobots/) for
-the path-planning architecture.
-
-## Conclusion
-
-What started as a one-person pendulum project on a stubborn front-heavy
-car turned into two deliverables: a path-execution pipeline that
-hits the first half of the waypoint list, and a collaborative LQR
-balance controller on Dyllan's car. The lessons: a 5-line complementary
-filter beats a hand-tuned Kalman at 50 Hz, gains have to clear motor
-deadband for the smallest error you care about, and a higher COM
-actually makes balance easier by lengthening the fall-time constant.
+Thanks to Dyllan Hofflich for letting me run my PD code on Ananya Jajodia's car and
+working together with Dyllan Hofflich and Tina Cheng on the LQR derivation and tuning sessions. 
+Thanks to Claude for helping debugging my inverted pendulum code and tuning process. 
+Thanks to Professor Helbling and the entire teaching team of Fast Robots for a great semester. 
+This is one of the best classes I have taken in college. 
