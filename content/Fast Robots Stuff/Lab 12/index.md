@@ -121,7 +121,7 @@ point:
 |---|---|---|
 | $K_p$ | 15.0 | 5° error → 75 PWM, above motor deadband |
 | $K_d$ | 1.0  | Rate damping to avoid oscillation |
-| $max_pwm$ | 255 | Full authority for large disturbances |
+| $max pwm$ | 255 | Full authority for large disturbances |
 | target pitch | +90° | Wheelie orientation in my IMU mounting |
 
 The reference's $K_p = 4$, $K_d = 0.2$ were sub-deadband: 5° → 20 PWM
@@ -153,7 +153,7 @@ unpredictably during fast maneuvers — translational acceleration from
 the cart kept contaminating the accelerometer pitch, the filter couldn't
 distinguish it from a true tilt, and the controller would saturate on
 phantom angles. After a couple of sessions tuning $\Sigma_u$ and
-$\Sigma_z$ to no avail, I went back to the **complementary filter** I
+$\Sigma_z$ to no avail, I went back to the complementary filter I
 already used in earlier labs:
 
 ```cpp
@@ -185,7 +185,7 @@ float pitch_rate = +latest_gx;
 ## Switching Strategies: From My Car to Dyllan's
 
 After days of fighting motor deadband and surface friction on my own car,
-I switch to **path planning** on the last day to have a complete
+I switch to path planning on the last day to have a complete
 deliverable. Coming back to the pendulum with Dyllan and Tina, we ran my PD
 code on Dyllan's car and it balanced for a couple of seconds, my controller was actually decent for Ananya's car. 
 We then committed to Dyllan's full LQR formulation and tuned it together; the results below come from his
@@ -197,23 +197,23 @@ car.
 
 Three reasons, all in his
 [Lab 12 report](https://spike-h.github.io/fastRobots/lab12.html). First,
-**cart velocity is a state**: his 3-state model
+cart velocity is a state: his 3-state model
 $[\dot x,\ \theta,\ \dot\theta]$ keeps $\dot x$ in the loop, estimated
 from a lowpass of commanded PWM as a "soft encoder." This preserves the
 mass-matrix off-diagonal coupling — the momentum-conservation effect
 where pushing the cart forward tilts the body back — that my 2-state
-model throws away. Second, **parallel-axis inertia handled rigorously**:
+model throws away. Second, parallel-axis inertia handled rigorously:
 he writes $\alpha = I_{b,\text{com}} + m_b L^2$ explicitly, which gives
 a physical fall-time constant $\tau \approx 70$ ms and tells us the
 control loop has to run at least 5× faster — a bandwidth target my
-borrowed-$\alpha_1$ model could not produce. Third, **calibration
-divides into $K$**: his notebook divides the LQR output by a measured
+borrowed-$\alpha_1$ model could not produce. Third, calibration
+divides into $K$: his notebook divides the LQR output by a measured
 $k_f$ (force-to-PWM), producing unit-correct gains straight from
 `solve_continuous_are` — the step that would have made my LQR
 implementation actually deployable.
 
-One physical insight came out of his flip-up attempt: **mass at the top
-makes balance easier**, because higher $I_{b,\text{com}}$ lengthens the
+One physical insight came out of his flip-up attempt: mass at the top
+makes balance easier, because higher $I_{b,\text{com}}$ lengthens the
 fall-time constant. We taped weights to the top for the final tuning
 runs and it visibly stabilized the pole — a fix that runs against the
 naive "lower COM is better" intuition.
@@ -298,10 +298,10 @@ threshold and the controller takes over the rest.
 
 Brief overview of the separate path-execution deliverable. The task is to
 navigate 9 waypoints across the mapped arena, from $(-4, -3)$ to $(0, 0)$
-in grid cells. I went with **turn-go-turn** between adjacent waypoints
+in grid cells. I went with turn-go-turn between adjacent waypoints
 (no global planning — the waypoints are hand-designed and have no walls
-between consecutive points) and a **Bayes-filter update at every
-waypoint**, reusing the Lab 11 pattern: uniform-prior reset before each
+between consecutive points) and a Bayes-filter update at every
+waypoint, reusing the Lab 11 pattern: uniform-prior reset before each
 360° scan, no prediction step (the provided $O(N^6)$ implementation is
 too slow for online use). Onboard PID handles both the in-place turn and
 the ToF-based straight leg; offboard Python plans the segments and
@@ -333,8 +333,4 @@ async def step_once(self):
 
 ## Collaboration
 
-Thanks to Dyllan Hofflich for letting me run my PD code on Ananya Jajodia's car and
-working together with Dyllan Hofflich and Tina Cheng on the LQR derivation and tuning sessions. 
-Thanks to Claude for helping debugging my inverted pendulum code and tuning process. 
-Thanks to Professor Helbling and the entire teaching team of Fast Robots for a great semester. 
-This is one of the best classes I have taken in college. 
+**Thanks to Dyllan Hofflich for letting me run my PD code on Ananya Jajodia's car and working together with Dyllan Hofflich and Tina Cheng on the LQR derivation and tuning sessions. Thanks to Claude for helping debugging my inverted pendulum code and tuning process. Thanks to Professor Helbling and the entire teaching team of Fast Robots for a great semester. This is one of the best classes I have taken in college.** 
