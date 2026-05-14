@@ -250,53 +250,100 @@ struct WheelieConfig {
 
 ## Results
 
+### My best controller
+Here's what my best inverted pendulum on Ananya's car. This is purely the code I developed on my own.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/497FraAeoGw"
+  title="Baseline hardware — pre-controller" frameborder="0" allowfullscreen></iframe>
+
 ### First attempt
+We found that the performance of the controller with the initial gain matrix was pretty bad, with the robot oscillating a lot and not being able to balance for more than a second if at all.
 
-With the borrowed $K_p = 4$, $K_d = 0.2$ the car briefly lifted during
-the launch, then stalled or over-rotated before reaching the trigger
-threshold. Even when I cheated by placing it vertical by hand the motors
-produced almost no audible response to small disturbances — every
-correction landed below the deadband. The controller was technically
-running but had no real authority.
-
-<iframe width="560" height="315" src="https://youtube.com/embed/jXx1CmFetPo"
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jXx1CmFetPo"
   title="First attempt — gains too low" frameborder="0" allowfullscreen></iframe>
 
 ### After tuning
-
-$K_p = 15$, $K_d = 1.0$ produced the qualitative response I wanted: small
-disturbances drew immediate motor action, larger ones got caught before
-becoming falls, and the car held within roughly ±10° of vertical. The
-motors stopped behaving like a sticky low-pass filter on the controller's
-output and started actually tracking it.
-
+Instead of trying to tune the Q and R matrices to get a better gain matrix, we decided to just manually tune the gain matrix by hand.
 <iframe width="560" height="315" src="https://www.youtube.com/embed/lLXaZBUH5W"
   title="Tuned gains" frameborder="0" allowfullscreen></iframe>
 
-### Flow A — manual placement
+### PID solution
 
-My most consistent result: place the car vertical by hand, then engage
-the controller. This decouples the balance problem from the launch problem
-and was the configuration we used for most gain-tuning.
+After struggling to get the LQR controller to work well, we attempted to implement a PID controller on a linearized system. It is a simple PID controller using the angle error from the DMP readings, we thought we had more experience tuning it from previous labs, but it just performed worse. 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Z2JP7KJSA-Y"
-  title="Flow A — PID balance from manual placement" frameborder="0" allowfullscreen></iframe>
+  title="PD solution running on Dyllan's car" frameborder="0" allowfullscreen></iframe>
 
-![Pitch and motor PWM during Flow A balance](TODO_flow_a_plot.png)
+### Launch attempts
 
-### Surface fix
+Two attempts at the full launch-to-balance logic. The launch FSM
+reaches the trigger threshold, but the dynamic was super noisy, and our balance controller cannot handle it very well. 
 
-The lab carpet absorbed the brake-to-reverse impulse — the wheels sank
-into the pile and never bit, so the car never generated enough
-reaction torque to lift. On a hard surface the launch reaches the trigger
-threshold and the controller takes over the rest.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/PDPNfGAy_Yk"
+  title="Launch attempt 1" frameborder="0" allowfullscreen></iframe>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/__SURFACE_FIX_ID__"
-  title="Wheelie launch on hard surface" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/zfL0Ur6ZpwA"
+  title="Launch attempt 2" frameborder="0" allowfullscreen></iframe>
 
-## Path Planning Strategy
+### Surface comparison: wood vs. carpet
 
-Brief overview of the separate path-execution deliverable. The task is to
+Surface friction matters more than I expected. On wood the wheels
+slip during accelerations, so the controller cannot change fast enough, and the car tends to be less stable. On carpet the wheels bite and the controller's
+output actually moves the cart, which is what makes balance sustainable.
+
+**Best result on wood:**
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/V-yTDILahfI"
+  title="Best result on wood" frameborder="0" allowfullscreen></iframe>
+
+**Best results on carpet:**
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/yngxeoroYk4"
+  title="Best result on carpet 1" frameborder="0" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/gSWJiIi1oww"
+  title="Best result on carpet 2" frameborder="0" allowfullscreen></iframe>
+
+### Final results — with weight on top
+
+The breakthrough was taping weights to the top of the chassis(with some further tuning of course). The
+higher $I_{b,\text{com}}$ lengthens the fall-time constant, which
+gives the controller more headroom to react to each disturbance.
+The pole has a much better stability. See the final
+clips at the bottom of
+[Dyllan's Lab 12 report](https://spike-h.github.io/fastRobots/lab12.html#it-kinda-works)
+for the best runs of the tuned LQR on his car with weight added.
+
+## Bonus Videos & Bloopers
+
+Some of the more failures and side experiments from the
+tuning sessions.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NFR8EhSzrFA"
+  title="Bonus 1" frameborder="0" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Ea4_m86Mnus"
+  title="Bonus 2" frameborder="0" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pruH4gw0J3s"
+  title="Bonus 3" frameborder="0" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/QDWJhuRDNK0"
+  title="Bonus 4" frameborder="0" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CdZ6i-P8unU"
+  title="Bonus 5" frameborder="0" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/gGT1McqVEnw"
+  title="Bonus 6" frameborder="0" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/497FraAeoGw"
+  title="Bonus 7" frameborder="0" allowfullscreen></iframe>
+
+## Tangent: Path Planning
+
+Overview of path planning. I worked on this for about six hours before joining Dyllan and Tina on 
+the Inverted Pendulum. The task is to
 navigate 9 waypoints across the mapped arena, from $(-4, -3)$ to $(0, 0)$
 in grid cells. I went with turn-go-turn between adjacent waypoints
 (no global planning — the waypoints are hand-designed and have no walls
@@ -324,7 +371,7 @@ async def step_once(self):
     await self.robot.drive_distance(trans)
 
     # 3. Re-localize: 360° scan + Bayes update
-    await self.loc.get_observation_data()    # 18 readings, 20° apart
+    await self.loc.get_observation_data() 
     self.loc.update_step()
 ```
 
