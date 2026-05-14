@@ -121,7 +121,7 @@ point:
 |---|---|---|
 | $K_p$ | 15.0 | 5° error → 75 PWM, above motor deadband |
 | $K_d$ | 1.0  | Rate damping to avoid oscillation |
-| $max pwm$ | 255 | Full authority for large disturbances |
+| max pwm | 255 | Full authority for large disturbances |
 | target pitch | +90° | Wheelie orientation in my IMU mounting |
 
 The reference's $K_p = 4$, $K_d = 0.2$ were sub-deadband: 5° → 20 PWM
@@ -182,45 +182,17 @@ latest_roll_acc  = atan2(latest_ax, latest_az) * 180.0f / M_PI;
 float pitch_rate = +latest_gx;
 ```
 
-## Switching Strategies: From My Car to Dyllan's
-
+## Switching Cars + Tuning
 After days of fighting motor deadband and surface friction on my own car,
 I switch to path planning on the last day to have a complete
 deliverable. Coming back to the pendulum with Dyllan and Tina, we ran my PD
 code on Dyllan's car and it balanced for a couple of seconds, my controller was actually decent for Ananya's car. 
 We then committed to Dyllan's full LQR formulation and tuned it together; the results below come from his
-car.
+car. Ultimately, it came down to whose code seemed to have a better balance results because what it is left was just tuning, and it seems like his code just provided a better starting point
 
+## Wheelie Launch State Machine - Attempt
 
-
-### Why Dyllan's LQR was a better starting point
-
-Three reasons, all in his
-[Lab 12 report](https://spike-h.github.io/fastRobots/lab12.html). First,
-cart velocity is a state: his 3-state model
-$[\dot x,\ \theta,\ \dot\theta]$ keeps $\dot x$ in the loop, estimated
-from a lowpass of commanded PWM as a "soft encoder." This preserves the
-mass-matrix off-diagonal coupling — the momentum-conservation effect
-where pushing the cart forward tilts the body back — that my 2-state
-model throws away. Second, parallel-axis inertia handled rigorously:
-he writes $\alpha = I_{b,\text{com}} + m_b L^2$ explicitly, which gives
-a physical fall-time constant $\tau \approx 70$ ms and tells us the
-control loop has to run at least 5× faster — a bandwidth target my
-borrowed-$\alpha_1$ model could not produce. Third, calibration
-divides into $K$: his notebook divides the LQR output by a measured
-$k_f$ (force-to-PWM), producing unit-correct gains straight from
-`solve_continuous_are` — the step that would have made my LQR
-implementation actually deployable.
-
-One physical insight came out of his flip-up attempt: mass at the top
-makes balance easier, because higher $I_{b,\text{com}}$ lengthens the
-fall-time constant. We taped weights to the top for the final tuning
-runs and it visibly stabilized the pole — a fix that runs against the
-naive "lower COM is better" intuition.
-
-## Wheelie Launch State Machine
-
-The launch sequence is the "rip the rug" pattern: drive forward to build
+The launch sequence: drive forward to build
 linear momentum, brake hard to plant the front wheels, then reverse the
 motors. The wheels yank the contact point backward while the car's
 inertia keeps it moving forward, and the mismatch generates a
@@ -229,8 +201,6 @@ a wheelie. Once $|\theta| > 30°$, the FSM hands off to the balance
 controller. The FSM has one interesting state (`BALANCE`); everything
 else is event-driven timing, with timeouts dropping back to `IDLE` if
 the launch fails.
-
-![Launch + balance state machine](state_machine.png)
 
 ```cpp
 struct WheelieConfig {
@@ -253,13 +223,13 @@ struct WheelieConfig {
 ### My best controller
 Here's what my best inverted pendulum on Ananya's car. This is purely the code I developed on my own.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/497FraAeoGw"
+<iframe width="560" height="315" src="https://youtube.com/embed/o3lsaoRkGiI"
   title="Baseline hardware — pre-controller" frameborder="0" allowfullscreen></iframe>
 
 ### First attempt
 We found that the performance of the controller with the initial gain matrix was pretty bad, with the robot oscillating a lot and not being able to balance for more than a second if at all.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/jXx1CmFetPo"
+<iframe width="560" height="315" src="https://www.youtube.com/embed/497FraAeoGw"
   title="First attempt — gains too low" frameborder="0" allowfullscreen></iframe>
 
 ### After tuning
@@ -271,7 +241,7 @@ Instead of trying to tune the Q and R matrices to get a better gain matrix, we d
 
 After struggling to get the LQR controller to work well, we attempted to implement a PID controller on a linearized system. It is a simple PID controller using the angle error from the DMP readings, we thought we had more experience tuning it from previous labs, but it just performed worse. 
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Z2JP7KJSA-Y"
+<iframe width="560" height="315" src="https://youtube.com/embed/Z2JP7KJSA-Y"
   title="PD solution running on Dyllan's car" frameborder="0" allowfullscreen></iframe>
 
 ### Launch attempts
@@ -311,8 +281,8 @@ higher $I_{b,\text{com}}$ lengthens the fall-time constant, which
 gives the controller more headroom to react to each disturbance.
 The pole has a much better stability. See the final
 clips at the bottom of
-[Dyllan's Lab 12 report](https://spike-h.github.io/fastRobots/lab12.html#it-kinda-works)
-for the best runs of the tuned LQR on his car with weight added.
+[Dyllan's Lab 12 report](https://spike-h.github.io/fastRobots/lab12.html)
+for the best runs of the tuned LQR with weight added.
 
 ## Bonus Videos & Bloopers
 
