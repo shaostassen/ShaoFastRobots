@@ -142,7 +142,7 @@ the starting point:
 |---|---|---|
 | $K_p$ | 15.0 | 5° error → 75 PWM, just above motor deadband |
 | $K_d$ | 1.0  | Strong rate damping to avoid oscillation near target |
-| $\text{max\_pwm}$ | 255 | Full authority — needed to recover from 20°+ disturbances |
+| $max_pwm$ | 255 | Full authority — needed to recover from 20°+ disturbances |
 | target pitch | +90° | Endo orientation in my IMU mounting |
 
 The earlier defaults of $K_p = 4$, $K_d = 0.2$ from the reference were too
@@ -219,6 +219,37 @@ float roll_rate  = +latest_gy;
 
 In the new convention endo reads as **+90°**, wheelie as **−90°**, flat as
 0, so I set `target_pitch_deg = +90` everywhere.
+
+## Switching Strategies: From My Car to Dyllan's
+
+After days of fighting motor deadband and carpet friction on my own
+chassis, I shelved the balance work and pivoted to **path planning** so
+I'd have a complete deliverable (own section below). Coming back to the
+pendulum with Dyllan and Tina, we tested my PD code on Dyllan's car and
+it balanced for a couple of seconds — my controller wasn't the limiting
+factor, my chassis was. We then committed to Dyllan's full-LQR
+formulation and tuned that together; the results below come from his
+hardware running his controller, with both of us at the gain dials.
+
+### Why Dyllan's LQR was a better starting point than my PD
+
+Two concrete reasons, both visible in his
+[Lab 12 report](https://spike-h.github.io/fastRobots/lab12.html). First,
+**cart velocity is a state**: his 3-state model
+$[\dot x,\ \theta,\ \dot\theta]$ keeps $\dot x$ in the loop (estimated
+from a lowpass of commanded PWM), preserving the off-diagonal coupling
+in the mass matrix — the momentum effect my 2-state model throws away.
+Second, **PWM-to-force calibration divides into $K$**: his notebook
+divides the LQR gain by a measured $k_f$, producing unit-correct gains
+straight from `solve_continuous_are`. Without that step, my LQR output
+was dimensionally inconsistent with PWM and I had to abandon it for
+hand-tuned PD. His derivation also gave a physical fall-time constant
+$\tau \approx 70$ ms — a bandwidth target I never had.
+
+One physical insight from his flip-up attempt: **adding mass at the top**
+makes balance easier because higher $I_{b,\text{com}}$ lengthens $\tau$.
+We applied that to the final tuning runs — same gains, weights taped to
+the top — and it visibly stabilized the pole.
 
 ## Endo Launch State Machine
 
@@ -304,16 +335,107 @@ threshold and the controller takes over.
 <iframe width="560" height="315" src="https://www.youtube.com/embed/__SURFACE_FIX_ID__"
   title="Endo launch on hard surface" frameborder="0" allowfullscreen></iframe>
 
+## Path Planning Strategy
+
+The task is to navigate 9 waypoints across the mapped arena, from
+$(-4, -3)$ to $(0, 0)$ in grid-cell coordinates. I broadly followed
+[Lucca Correial's Lab 12 writeup](https://correial.github.io/LuccaFastRobots/),
+making four explicit choices:
+
+| Concern | My choice | Why |
+|---|---|---|
+| Global planning | None — direct turn-go-turn between adjacent waypoints | Waypoints are hand-designed, no walls between them |
+| Localization | Full Bayes update (Lab 11) at every waypoint, uniform prior before each scan | No reliable odometry on the real robot |
+| Motion primitives | Onboard orientation PID for turns, onboard ToF-linear PID for legs | Both already tuned from Labs 5–6 |
+| Architecture | Offboard plans, onboard executes; Python `await`s `DONE` notifications | Decouples Bayes cost from the 50 Hz control loop |
+
+The offboard `step_once()` routine, an `async` method on a `PathPlanner`
+class, runs one waypoint at a time:
+
+```python
+async def step_once(self):
+    # 1. Current pose = argmax of latest belief
+    argmax_cell = np.unravel_index(np.argmax(self.loc.bel),
+                                   self.loc.bel.shape)
+    current_pose = self.loc.mapper.from_map(*argmax_cell)
+
+    # 2. Turn-go-turn to next waypoint
+    rot1, trans = self._plan_segment(current_pose, self.target_waypoint)
+    await self.robot.turn_to_heading(current_pose[2] + rot1)
+    await self.robot.drive_distance(trans)
+
+    # 3. Re-localize: 360° scan + Bayes update
+    await self.loc.get_observation_data()  # 18 readings, 20° apart
+    self.loc.update_step()
+
+    # 4. Advance if within tolerance
+    new_pose = self.loc.mapper.from_map(
+        *np.unravel_index(np.argmax(self.loc.bel), self.loc.bel.shape))
+    if np.linalg.norm(new_pose[:2] - self.target_waypoint[:2]) < 0.2:
+        self._advance_waypoint()
+```
+
+`turn_to_heading` sends `Kp|Ki|Kd|setpoint` to the firmware and blocks
+on the completion notification:
+
+```python
+async def ble_turn_to_yaw_int(target_yaw_int_deg, timeout_s=7.0):
+    state['ori_done'] = None
+    payload = f'{KP_ORI}|{KI_ORI}|{KD_ORI}|{target_yaw_int_deg}'
+    ble.send_command(CMD.START_ORIENT_PID, payload)
+    t0 = time.time()
+    while state['ori_done'] is None:
+        if time.time() - t0 > timeout_s:
+            ble.send_command(CMD.STOP_ORIENT_PID, '')
+            raise TimeoutError
+        await asyncio.sleep(0.02)
+    return state['ori_done']
+```
+
+The firmware emits `ORI_DONE` once orientation error has stayed within
+±1.5° for 400 ms, then brakes hard for 100 ms — the same settle scheme
+as the Lab 11 mapping scan, which keeps the 18 localization readings
+clean and motionless.
+
+### Timing and reliability
+
+A waypoint takes 8–12 seconds end-to-end, dominated by the 18
+turn-and-settle cycles of the localization scan (~5–8 s). The Bayes
+update is under 100 ms; I skip the prediction step since
+`localization_extras.py` is $O(N^6)$ and reset to a uniform prior
+instead. Reliability is limited by cumulative heading drift — ±5° per
+turn even with on-axle gyro integration. Localization usually recovers
+the *position* estimate, but the *next* turn restarts from the wrong
+absolute reference. My best run hits the first 4–5 waypoints before the
+heading error grows large enough to point the car at a wall.
+
+<!-- Path planning run video -->
+<iframe width="560" height="315" src="https://www.youtube.com/embed/__PATH_PLANNING_ID__"
+  title="Path execution — best run" frameborder="0" allowfullscreen></iframe>
+
+## Collaboration
+
+Big thanks to **Dyllan Hofflich** for letting me run my PD code on his car
+when mine couldn't generate enough launch impulse, and for the LQR
+derivation and tuning sessions we did together — read his
+[Lab 12 report](https://spike-h.github.io/fastRobots/lab12.html) for the
+full state-space derivation, the Kalman-vs-DMP comparison, and the
+top-weight trick. Thanks to **Tina Cheng** for the tuning sessions, and to
+**Lucca Correial's**
+[Lab 12 sample solution](https://correial.github.io/LuccaFastRobots/) for
+the offboard/onboard split pattern I followed for path planning.
+
 ## Conclusion
 
-Pursuing the endo over the traditional wheelie turned out to be right for
-my car. The front-heavy weight distribution that frustrates conventional
-wheelie attempts is an advantage here: less impulse to lift the lighter
-rear, and once vertical the COM sits close to the front axle support
-point. Beyond the dynamics choice, the biggest lessons were practical:
-not every nonlinear problem needs a Kalman observer (a 5-line
-complementary filter is enough), and the difference between a working
-controller and a non-working one is often as simple as "is your gain
-large enough to overcome the motor deadband for the smallest error you
-care about." That last insight saved me from chasing structural changes
-to the controller when the fix was a factor of 3 in $K_p$.
+What started as a one-person inverted-pendulum project on a stubborn
+front-heavy chassis turned into two parallel deliverables: a path
+execution pipeline that hits the first half of the waypoint list, and a
+collaborative LQR balance controller that finally stuck — on Dyllan's
+car rather than mine. The biggest lessons were practical: a 5-line
+complementary filter beats a hand-tuned Kalman on a 50 Hz loop;
+controller gains have to clear the motor deadband for the smallest error
+you care about; and a higher center of mass actually makes balance
+easier by lengthening the fall time constant. Switching to path
+planning under time pressure turned out to be the right call — it gave
+me a complete second deliverable and the headroom to return to balance
+with a teammate's hardware that worked.
