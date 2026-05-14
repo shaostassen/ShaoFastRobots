@@ -229,12 +229,12 @@ Here's what my best inverted pendulum on Ananya's car. This is purely the code I
 ### First attempt
 We found that the performance of the controller with the initial gain matrix was pretty bad, with the robot oscillating a lot and not being able to balance for more than a second if at all.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/497FraAeoGw"
+<iframe width="560" height="315" src="https://youtube.com/embed/jXx1CmFetPo"
   title="First attempt — gains too low" frameborder="0" allowfullscreen></iframe>
 
 ### After tuning
 Instead of trying to tune the Q and R matrices to get a better gain matrix, we decided to just manually tune the gain matrix by hand.
-<iframe width="560" height="315" src="https://www.youtube.com/embed/lLXaZBUH5W"
+<iframe width="560" height="315" src="https://youtube.com/embed/lLXaZBUH5WM"
   title="Tuned gains" frameborder="0" allowfullscreen></iframe>
 
 ### PID solution
