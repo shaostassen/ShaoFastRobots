@@ -108,30 +108,44 @@ body:has(#docs-sidebar) main {
 }
 
 /* Section caption doubles as the <details> summary, and stays pinned while the
-   list below it scrolls. */
+   list below it scrolls. Styled as a full-width control rather than a bare
+   label: an uppercase muted caption reads as a heading, so nothing suggests it
+   can be clicked to fold the list. */
 #docs-sidebar .docs-nav-caption {
+	display: flex;
 	position: sticky;
 	z-index: 1;
+	align-items: center;
 	cursor: pointer;
 	inset-block-start: 0;
-	margin: 0 0 0.5rem;
+	transition: var(--transition);
+	margin: 0 0 0.25rem;
+	border-radius: var(--rounded-corner-small);
 	background-color: var(--docs-sidebar-bg);
-	padding: 0.125rem 0.5rem 0.375rem;
+	padding: 0.4375rem 0.5rem;
 	color: var(--fg-muted-5);
 	font-weight: 600;
 	font-size: var(--font-size-x-small);
 	letter-spacing: 0.06em;
 	text-transform: uppercase;
+	user-select: none;
 }
 
-#docs-sidebar .docs-nav-caption:hover {
+#docs-sidebar .docs-nav-caption:hover,
+#docs-sidebar .docs-nav-caption:focus-visible {
+	background-color: var(--fg-muted-2);
 	color: var(--fg-color);
 }
 
-/* Shrink the theme's disclosure chevron to suit a small caption. */
+/* Push the theme's disclosure chevron to the trailing edge, where a docs nav
+   normally puts it, and size it to read as a control. It flips on [open] via
+   the theme's own `transform: scaleY(-1)`. */
 #docs-sidebar .docs-nav-caption::before {
-	width: 0.75rem;
-	height: 0.75rem;
+	order: 1;
+	margin-inline: auto 0;
+	width: 0.9375rem;
+	height: 0.9375rem;
+	opacity: 0.9;
 }
 
 /* The one scrolling region. The scroll must sit on <details> itself, not on the
