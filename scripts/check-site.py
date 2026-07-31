@@ -136,6 +136,21 @@ def check_static(r: Results) -> None:
                 f"lists {entries}, expected {len(pages)}")
         print(f"  home lab index:    {entries} entries")
 
+    # A stale static/icons.css once shadowed the theme's generated one and silently
+    # blanked 22 icons (copy button, go-to-top, anchor links). Any --icon-* the
+    # stylesheets reference must actually be defined.
+    sheets = [os.path.join(PUBLIC, name) for name in ("icons.css", "style.css", "docs.css")]
+    sheets = [s for s in sheets if os.path.isfile(s)]
+    if sheets:
+        defined, used = set(), set()
+        for sheet in sheets:  # docs.css defines its own icons, so scan every sheet for both
+            css = open(sheet, encoding="utf-8").read()
+            defined |= set(re.findall(r"(--icon-[a-z0-9-]+)\s*:", css))
+            used |= set(re.findall(r"var\((--icon-[a-z0-9-]+)", css))
+        missing = sorted(used - defined)
+        r.check(not missing, "icon variables", f"{len(missing)} undefined: {missing[:6]}")
+        print(f"  icons:             {len(defined)} defined, {len(missing)} referenced-but-missing")
+
     index_path = os.path.join(PUBLIC, "search_index.en.json")
     if os.path.isfile(index_path):
         data = json.load(open(index_path))
