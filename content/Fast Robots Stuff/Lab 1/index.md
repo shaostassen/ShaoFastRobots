@@ -20,25 +20,25 @@ During section 1A, I installed the Arduino IDE and the corresponding libraries a
 
 The Artemis board flashed its onboard LED as expected.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/sc9GYfxh8Js" allowfullscreen></iframe> <figcaption>Blink test video</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/sc9GYfxh8Js" allowfullscreen></iframe><figcaption>Blink test video</figcaption></figure>
 
 ### Serial
 
 The Artemis received a string over USB serial and echoed it back as I typed into the Serial Monitor, confirming serial RX/TX.
 
-<iframe width="450" height="315" src="https://www.youtube.com/embed/2BgWrvYRqUY" allowfullscreen></iframe> <figcaption>Serial communication test</figcaption>
+<figure><iframe width="450" height="315" src="https://www.youtube.com/embed/2BgWrvYRqUY" allowfullscreen></iframe><figcaption>Serial communication test</figcaption></figure>
 
 ### AnalogRead with Temperature Sensor
 
 The onboard temperature sensor responded to heat (touch/breath), showing changing readings over time. In this case, I was blowing hot air to increase the temperature.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/SCBCG4Kok9c" allowfullscreen></iframe> <figcaption>Temperature sensor test</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/SCBCG4Kok9c" allowfullscreen></iframe><figcaption>Temperature sensor test</figcaption></figure>
 
 ### Microphone Output
 
 The PDM microphone output changed with voice/whistle input, confirming the microphone pipeline works. In this case, I was whistling in the background to increase the sound frequency.
 
-<iframe width="450" height="315" src="https://www.youtube.com/embed/r-GiDprUTt8" allowfullscreen></iframe> <figcaption>Microphone output test</figcaption>
+<figure><iframe width="450" height="315" src="https://www.youtube.com/embed/r-GiDprUTt8" allowfullscreen></iframe><figcaption>Microphone output test</figcaption></figure>
 
 Part A of this lab is mainly to set up and test if the microcontroller functions properly with the computer, which it does.
 

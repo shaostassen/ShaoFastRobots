@@ -75,8 +75,7 @@ To prevent the DMP's internal FIFO queue from overflowing and crashing the senso
 
 Initially, I started Kp at 0.9. Because the orientation ranges from -180 to 180 degrees, I mapped this against the PWM range using the deadband limit of 90 to 255 (a range of 165) that I learned from Lab 4. I then tuned the P value by increasing it slowly. Here is the result of this P-only controller targeting 90 degrees.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/MvP56cXlcOk" allowfullscreen></iframe>
-<figcaption>Initial P controller</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/MvP56cXlcOk" allowfullscreen></iframe><figcaption>Initial P controller</figcaption></figure>
 
 ## The Derivative Term and Anti-Kick
 
@@ -90,8 +89,7 @@ Because the derivative of a constant setpoint is zero, the derivative of the err
     float D = Kd * derivative;
 ```
 
-<iframe width="450" height="315" src="https://youtube.com/embed/NCYYelEjF5c" allowfullscreen></iframe>
-<figcaption>With a setpoint of 90 degrees, the car reacts to constant external turning</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/NCYYelEjF5c" allowfullscreen></iframe><figcaption>With a setpoint of 90 degrees, the car reacts to constant external turning</figcaption></figure>
 
 <figure>
 <img src="external.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;">
@@ -104,8 +102,7 @@ Control relies on differential drive, passing `control_effort` to the left motor
 
 Here is an example of the error, where before the derivative term could brake the bot, its momentum carried it past the setpoint, resulting in constant spinning.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/aPiQhUuWHdg" allowfullscreen></iframe>
-<figcaption> Positive feedback resulting in endless spinning </figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/aPiQhUuWHdg" allowfullscreen></iframe><figcaption> Positive feedback resulting in endless spinning </figcaption></figure>
 
 During tuning, the integral term (**Ki**) was kept at 0 to avoid integrator wind-up at first, as steady-state error is minimal for free-spinning wheels on a smooth floor. I did implement wind-up protection (`constrain(integral_sum, -50.0, 50.0);`), and later, when I noticed persistent small errors between my PD controller and the setpoints, I added the integral term.
 
@@ -119,15 +116,13 @@ I increased the proportional gain (**Kp**) until the robot snapped to the target
 
 Below are the results of the tuned PID controller handling consecutive setpoints (0 -\> 90 -\> -90 -\> 45 degrees) where I updated the yaw setpoint every 5 seconds. I tested this on two different surfaces: hard floor vs. carpet.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/xDcn3u4P5s4" allowfullscreen></iframe>
-<figcaption>Floor setting</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/xDcn3u4P5s4" allowfullscreen></iframe><figcaption>Floor setting</figcaption></figure>
 <figure>
 <img src="without_i.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;">
 <figcaption>Yaw vs. time with setpoint updates on floor</figcaption>
 </figure>
 
-<iframe width="450" height="315" src="https://youtube.com/embed/wg8QhRoUuI0" allowfullscreen></iframe>
-<figcaption>Carpet setting</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/wg8QhRoUuI0" allowfullscreen></iframe><figcaption>Carpet setting</figcaption></figure>
 <figure>
 <img src="with_i.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;">
 <figcaption>Yaw vs. time with setpoint updates on carpet</figcaption>
@@ -137,8 +132,7 @@ Below are the results of the tuned PID controller handling consecutive setpoints
 
 When I was tuning the integral terms of the PID controller on the carpet, I observed the situation below:
 
-<iframe width="450" height="315" src="https://youtube.com/embed/zwCbHPWFi0w" allowfullscreen></iframe>
-<figcaption>High Pitch Sound on Carpet with No Motion</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/zwCbHPWFi0w" allowfullscreen></iframe><figcaption>High Pitch Sound on Carpet with No Motion</figcaption></figure>
 
 After investigation, I realized this meant the battery was dying and simply needed to be charged.
 

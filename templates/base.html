@@ -25,6 +25,11 @@
 		{% block content %}{% endblock content %}
 		{% include "partials/extra_features.html" %}
 	</main>
+	{#- Grid sibling of <main>, not a child of it, so the rail gets its own
+	    column. Only on pages with enough headings to be worth navigating. -#}
+	{%- if page.toc and page.toc | length > 1 -%}
+		{%- include "partials/page-toc.html" -%}
+	{%- endif -%}
 	{% include "partials/footer.html" %}
 {% endblock body %}
 </body>

@@ -62,18 +62,15 @@ void executeStunt() {
 }
 ```
 <div style="text-align: center; max-width: 600px; margin: 0 auto 30px;">
-  <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/_3aq1grE6aE" frameborder="0" allowfullscreen></iframe>
-  <figcaption style="margin-top: 5px;">Flip Trial 1</figcaption>
+  <figure><iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/_3aq1grE6aE" frameborder="0" allowfullscreen></iframe><figcaption style="margin-top: 5px;">Flip Trial 1</figcaption></figure>
 </div>
 
 <div style="text-align: center; max-width: 600px; margin: 0 auto 30px;">
-  <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/auJoESy14xQ" frameborder="0" allowfullscreen></iframe>
-  <figcaption style="margin-top: 5px;">Flip Trial 2</figcaption>
+  <figure><iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/auJoESy14xQ" frameborder="0" allowfullscreen></iframe><figcaption style="margin-top: 5px;">Flip Trial 2</figcaption></figure>
 </div>
 
 <div style="text-align: center; max-width: 600px; margin: 0 auto 30px;">
-  <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/71280ro7Dq0" frameborder="0" allowfullscreen></iframe>
-  <figcaption style="margin-top: 5px;">Flip Trial 3</figcaption>
+  <figure><iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/71280ro7Dq0" frameborder="0" allowfullscreen></iframe><figcaption style="margin-top: 5px;">Flip Trial 3</figcaption></figure>
 </div>
 
 <figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
@@ -182,13 +179,11 @@ void executeDrift() {
 ### Failed Closed-Loop Drifts
 
 <div style="text-align: center; max-width: 600px; margin: 0 auto 30px;">
-  <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/PVKqU6e2cDs" frameborder="0" allowfullscreen></iframe>
-  <figcaption style="margin-top: 5px;">Failed Drift 1</figcaption>
+  <figure><iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/PVKqU6e2cDs" frameborder="0" allowfullscreen></iframe><figcaption style="margin-top: 5px;">Failed Drift 1</figcaption></figure>
 </div>
 
 <div style="text-align: center; max-width: 600px; margin: 0 auto 30px;">
-  <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/Zq9pKDQsBf4" frameborder="0" allowfullscreen></iframe>
-  <figcaption style="margin-top: 5px;">Failed Drift 2</figcaption>
+  <figure><iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/Zq9pKDQsBf4" frameborder="0" allowfullscreen></iframe><figcaption style="margin-top: 5px;">Failed Drift 2</figcaption></figure>
 </div>
 
 <figure style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%; margin: 0;">
@@ -244,18 +239,15 @@ ble.send_command(CMD.STOP, "")
 ```
 
 <div style="text-align: center; max-width: 600px; margin: 0 auto 30px;">
-  <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/dKT_YRsMmIQ" frameborder="0" allowfullscreen></iframe>
-  <figcaption style="margin-top: 5px;">Open Loop Drift 1</figcaption>
+  <figure><iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/dKT_YRsMmIQ" frameborder="0" allowfullscreen></iframe><figcaption style="margin-top: 5px;">Open Loop Drift 1</figcaption></figure>
 </div>
 
 <div style="text-align: center; max-width: 600px; margin: 0 auto 30px;">
-  <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/5R7PGEOX3fw" frameborder="0" allowfullscreen></iframe>
-  <figcaption style="margin-top: 5px;">Open Loop Drift 2</figcaption>
+  <figure><iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/5R7PGEOX3fw" frameborder="0" allowfullscreen></iframe><figcaption style="margin-top: 5px;">Open Loop Drift 2</figcaption></figure>
 </div>
 
 <div style="text-align: center; max-width: 600px; margin: 0 auto 30px;">
-  <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/BBu2gk1pCd8" frameborder="0" allowfullscreen></iframe>
-  <figcaption style="margin-top: 5px;">Open Loop Drift 3</figcaption>
+  <figure><iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/BBu2gk1pCd8" frameborder="0" allowfullscreen></iframe><figcaption style="margin-top: 5px;">Open Loop Drift 3</figcaption></figure>
 </div>
 
 While slower and less fluid than a continuous closed-loop maneuver, the open-loop sequence resulted in highly reliable, successful runs. As seen in the videos, the robot executes a strong initial linear sprint, comes to a distinct physical stop to kill its forward momentum, and then performs a clean, in-place 180-degree pivot. By allowing the chassis to fully settle between movements, the robot completely avoids the sliding and wall-clipping issues of the dynamic attempts, enabling it to aggressively sprint back to the start line with high repeatability.
@@ -264,8 +256,7 @@ While slower and less fluid than a continuous closed-loop maneuver, the open-loo
 
 ## Blooper Compilation - Enjoy!
 <div style="text-align: center; max-width: 600px; margin: 0 auto;">
-  <iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/WsmfVJnj4Uc" frameborder="0" allowfullscreen></iframe>
-  <figcaption style="margin-top: 5px;">Fun Blooper Compilation</figcaption>
+  <figure><iframe style="width: 100%; aspect-ratio: 16/9;" src="https://www.youtube.com/embed/WsmfVJnj4Uc" frameborder="0" allowfullscreen></iframe><figcaption style="margin-top: 5px;">Fun Blooper Compilation</figcaption></figure>
 </div>
 
 ## Summary and Challenges
