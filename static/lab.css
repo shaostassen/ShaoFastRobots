@@ -203,6 +203,19 @@ article figure[style*="flex"] figcaption {
 	text-align: center;
 }
 
+/* ------------------------------------------------------------ code blocks ---- */
+
+/* Deliberately NOT capped at 75% like figures. An image scales down gracefully;
+   code does not — it just moves behind a horizontal scrollbar. Measured across
+   the labs, narrowing to 75% pushes 24 of 41 blocks into scrolling, against 2
+   today. So code keeps the full measure and instead borrows the figures' flat
+   frame, so the two read as one system at content-appropriate widths. */
+article .pre-container {
+	box-shadow: none;
+	border: max(1px, 0.0625rem) solid var(--fg-muted-2);
+	overflow: hidden; /* clip the header's fill to the rounded corners */
+}
+
 /* --------------------------------------------------------------- lightbox ---- */
 
 .lab-lightbox {
