@@ -131,7 +131,10 @@ def check_static(r: Results) -> None:
 
     home = os.path.join(PUBLIC, "index.html")
     if os.path.isfile(home):
-        entries = open(home, encoding="utf-8").read().count("lab-index-title")
+        # The home page lists labs as a timeline; the section page uses the flat
+        # contents list. Either markup counts, as long as every lab is present.
+        html = open(home, encoding="utf-8").read()
+        entries = html.count("lab-timeline-title") or html.count("lab-index-title")
         r.check(entries == len(pages), "home lab index",
                 f"lists {entries}, expected {len(pages)}")
         print(f"  home lab index:    {entries} entries")

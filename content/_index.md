@@ -1,36 +1,64 @@
 +++
 title = "About Me"
 description = "Shao Stassen — senior at Cornell studying Computer Science with a focus in robotics, documenting the ECE 4160 Fast Robots lab sequence."
+
+[extra]
+styles = ["profile.css"]
+scripts = ["profile.js"]
 +++
 
 <!-- No blank lines inside these blocks: a blank line ends a raw-HTML block, and
      the following indented lines would then parse as an indented code block. -->
-<div class="profile-heading">
-  <h1>Shao Stassen</h1>
-  <div class="profile-links">
-    <a href="https://www.linkedin.com/in/shaostassen/" target="_blank" aria-label="LinkedIn">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M29.637 0H2.363C1.057 0 0 1.057 0 2.363v27.274C0 30.944 1.057 32 2.363 32h27.274c1.305 0 2.363-1.056 2.363-2.363V2.363C32 1.057 30.944 0 29.637 0zM9.764 25.452H5.86V12.763h3.904v12.689zM7.812 11.265c-1.186 0-2.147-.951-2.147-2.12 0-1.171.961-2.122 2.147-2.122 1.171 0 2.12.951 2.12 2.122 0 1.169-.949 2.12-2.12 2.12zm17.679 14.187h-3.902v-6.293c0-1.497-.026-3.418-2.074-3.418-2.078 0-2.397 1.617-2.397 3.288v6.423h-3.903v-12.689h3.744v1.728h.05c.522-.981 1.798-2.015 3.698-2.015 3.957 0 4.684 2.604 4.684 5.98v6.996z"/></svg>
-    </a>
-    <a href="mailto:ses439@cornell.edu" aria-label="Email">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4C2.895 4 2 4.895 2 6v12c0 1.105.895 2 2 2h16c1.105 0 2-.895 2-2V6c0-1.105-.895-2-2-2zm-1.35 4.693l-5.823 4.506a2 2 0 0 1-2.654 0L5.35 8.693a.75.75 0 0 1 .9-1.186L12 11l5.75-3.493a.75.75 0 1 1 .9 1.186z"/></svg>
-    </a>
-    <a href="https://github.com/shaostassen" target="_blank" aria-label="GitHub">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-    </a>
+<section class="hero">
+  <div class="hero-intro">
+    <h1 class="hero-name">Shao Stassen</h1>
+    <div class="profile-links">
+    <a href="https://www.linkedin.com/in/shaostassen/" target="_blank" aria-label="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M29.637 0H2.363C1.057 0 0 1.057 0 2.363v27.274C0 30.944 1.057 32 2.363 32h27.274c1.305 0 2.363-1.056 2.363-2.363V2.363C32 1.057 30.944 0 29.637 0zM9.764 25.452H5.86V12.763h3.904v12.689zM7.812 11.265c-1.186 0-2.147-.951-2.147-2.12 0-1.171.961-2.122 2.147-2.122 1.171 0 2.12.951 2.12 2.122 0 1.169-.949 2.12-2.12 2.12zm17.679 14.187h-3.902v-6.293c0-1.497-.026-3.418-2.074-3.418-2.078 0-2.397 1.617-2.397 3.288v6.423h-3.903v-12.689h3.744v1.728h.05c.522-.981 1.798-2.015 3.698-2.015 3.957 0 4.684 2.604 4.684 5.98v6.996z"/></svg></a>
+    <a href="mailto:ses439@cornell.edu" aria-label="Email"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4C2.895 4 2 4.895 2 6v12c0 1.105.895 2 2 2h16c1.105 0 2-.895 2-2V6c0-1.105-.895-2-2-2zm-1.35 4.693l-5.823 4.506a2 2 0 0 1-2.654 0L5.35 8.693a.75.75 0 0 1 .9-1.186L12 11l5.75-3.493a.75.75 0 1 1 .9 1.186z"/></svg></a>
+    <a href="https://github.com/shaostassen" target="_blank" aria-label="GitHub"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+    </div>
+    <p class="hero-tagline">Senior at Cornell University studying Computer Science with a focus in Robotics</p>
   </div>
-</div>
+  <figure class="hero-rig">
+    <svg viewBox="0 0 460 220" role="img" aria-label="An inverted pendulum on a cart: the pole is knocked off balance and the cart slides underneath it to bring it back upright.">
+      <line class="rig-rail" x1="20" y1="196" x2="440" y2="196" />
+      <g class="rig-cart">
+        <g transform="translate(180 178)">
+          <g class="rig-arm">
+            <line class="rig-pole" x1="0" y1="0" x2="0" y2="-108" />
+            <circle class="rig-bob" cx="0" cy="-108" r="11" />
+          </g>
+          <rect class="rig-body" x="-32" y="0" width="64" height="24" rx="6" />
+          <circle class="rig-wheel" cx="-17" cy="27" r="5" />
+          <circle class="rig-wheel" cx="17" cy="27" r="5" />
+        </g>
+      </g>
+    </svg>
+    <figcaption>An inverted pendulum is nonlinear and unstable — left alone, the pole falls. Here an LQR controller, designed on the linearization about upright, computes the cart motion that keeps it balanced. I used this same principle in <a href="Fast%20Robots%20Stuff/lab-12/">Lab 12</a>.</figcaption>
+  </figure>
+</section>
 
-<div class="profile">
+<ul class="spec-strip">
+  <li>12 labs</li>
+  <li>Artemis Nano</li>
+  <li>9DOF IMU</li>
+  <li>VL53L1X ToF</li>
+  <li>BLE</li>
+  <li>PID</li>
+  <li>Kalman</li>
+  <li>Bayes</li>
+  <li>LQR</li>
+</ul>
+
+<section class="profile reveal">
   <div class="profile-photo">
     <img src="ProfilePicture.jpg#no-hover#start" alt="Shao Stassen">
   </div>
   <div class="profile-bio">
-    <p>Senior at Cornell University studying Computer Science with a focus in Robotics</p>
     <p>Here on campus I am doing foundation model and diffusion policy research on the assistive robotic lab EmPRISE. I am also an Autonomous member of the Combat Robotics at Cornell Project Team. I will be updating my site through the semester to reflect my progress in Fast Robots - ECE4160.</p>
+    <div class="org-logos">
+      <a href="https://combatrobotics.engineering.cornell.edu/" target="_blank" rel="noopener" title="Combat Robotics at Cornell"><img src="crclogo.png#no-hover" alt="Combat Robotics at Cornell"></a>
+      <a href="https://emprise.cs.cornell.edu/" target="_blank" rel="noopener" title="EmPRISE Lab"><img src="empriselogo.png#no-hover" alt="EmPRISE Lab"></a>
+    </div>
   </div>
-</div>
-
-<div class="org-logos">
-  <img src="crclogo.png#no-hover" alt="Combat Robotics at Cornell logo">
-  <img src="empriselogo.png#no-hover" alt="EmPRISE Lab logo">
-</div>
+</section>

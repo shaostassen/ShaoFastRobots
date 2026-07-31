@@ -1,0 +1,24 @@
+{#- The lab index as a semester timeline. Used on the landing page only; the
+    section page keeps the plain contents list from partials/lab-index.html. -#}
+{%- set labs = get_section(path="Fast Robots Stuff/_index.md") -%}
+{%- set date_format = macros_translate::translate(key="date_format", default="%B %d, %Y", language_strings=language_strings) -%}
+{%- set date_locale = macros_translate::translate(key="date_locale", default="en_US", language_strings=language_strings) -%}
+
+<ol class="lab-timeline">
+	{%- for lab in labs.pages %}
+		<li class="lab-timeline-item reveal">
+			<span class="lab-timeline-marker" aria-hidden="true">{{ loop.index }}</span>
+			<div class="lab-timeline-body">
+				{%- if lab.date %}
+					<time class="lab-timeline-date" datetime="{{ lab.date | date(format='%+') }}">
+						{{- lab.date | date(format="%b %-d", locale=date_locale) -}}
+					</time>
+				{%- endif %}
+				<a class="lab-timeline-title" href="{{ lab.permalink }}">{{ lab.title }}</a>
+				{%- if lab.description %}
+					<p class="lab-timeline-description">{{ lab.description }}</p>
+				{%- endif %}
+			</div>
+		</li>
+	{%- endfor %}
+</ol>
