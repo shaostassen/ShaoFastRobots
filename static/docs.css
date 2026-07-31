@@ -10,6 +10,11 @@
  * and light mode both follow automatically.
  */
 
+:root {
+	/* Lucide "panel-left", drawn to match the theme's own icon set. */
+	--icon-panel-left: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Cpath d='M9 3v18'/%3E%3C/svg%3E");
+}
+
 body:has(#docs-sidebar) {
 	--docs-sidebar-width: 18rem;
 	--docs-content-width: 56rem;
@@ -46,6 +51,38 @@ body:has(#docs-sidebar) main {
 	width: 100%;
 	max-width: var(--docs-content-width);
 	padding: 1.25rem 2.5rem 5rem;
+}
+
+/* ------------------------------------------------------- sidebar toggle ---- */
+
+/* Matches the theme's other nav buttons, which mask an --icon-* var onto .icon. */
+#site-nav #sidebar-toggle .icon {
+	-webkit-mask-image: var(--icon-panel-left);
+	mask-image: var(--icon-panel-left);
+}
+
+/* Reads as "pressed" while the sidebar is hidden, so the state is visible even
+   though the thing it controls is gone. */
+html.sidebar-hidden #site-nav #sidebar-toggle .circle {
+	background-color: var(--accent-color);
+	color: var(--contrast-color);
+}
+
+html.sidebar-hidden #docs-sidebar {
+	display: none;
+}
+
+/* Collapse to a single column and centre the content column in the space. */
+html.sidebar-hidden body:has(#docs-sidebar) {
+	grid-template-columns: minmax(0, 1fr);
+	grid-template-areas:
+		"nav"
+		"main"
+		"footer";
+}
+
+html.sidebar-hidden body:has(#docs-sidebar) main {
+	margin-inline: auto;
 }
 
 /* --------------------------------------------------------------- sidebar ---- */

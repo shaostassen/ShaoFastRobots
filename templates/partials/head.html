@@ -122,6 +122,17 @@
 	<meta property="og:image" content="{% include 'partials/card.html' %}" />
 	<meta property="og:locale" content="{{ macros_translate::translate(key='date_locale', default='en_US', language_strings=language_strings) }}" />
 
+	{#- Restore the sidebar-hidden preference synchronously, before first paint.
+	    docs-nav.js is deferred, so applying it there would flash the sidebar on
+	    every page load. -#}
+	<script>
+		try {
+			if (localStorage.getItem("docs-sidebar-hidden") === "1") {
+				document.documentElement.classList.add("sidebar-hidden");
+			}
+		} catch (e) {}
+	</script>
+
 	{#- KaTeX is already loaded above from the bundled katex.css / katex.min.js /
 	    auto-render.min.js / katex-init.js when `extra.katex` is set. A second copy
 	    used to be pulled from a CDN here with an inline renderer, which downloaded

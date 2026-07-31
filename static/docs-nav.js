@@ -4,8 +4,43 @@
 	"use strict";
 
 	var NARROW = 1100; // keep in sync with the breakpoint in docs.css
+	var STORAGE_KEY = "docs-sidebar-hidden";
+
+	function store(hidden) {
+		try {
+			localStorage.setItem(STORAGE_KEY, hidden ? "1" : "0");
+		} catch (e) {
+			/* private browsing / storage disabled — the toggle still works per-page */
+		}
+	}
+
+	// Whole-sidebar show/hide. The preference is restored before paint by an
+	// inline script in partials/head.html; this only handles the button and
+	// persistence, so the choice survives navigating between labs.
+	function initSidebarToggle() {
+		var button = document.getElementById("sidebar-toggle-button");
+		if (!button) return;
+
+		var root = document.documentElement;
+
+		function sync() {
+			var hidden = root.classList.contains("sidebar-hidden");
+			button.setAttribute("aria-pressed", String(hidden));
+			button.title = hidden ? "Show sidebar" : "Hide sidebar";
+		}
+
+		button.addEventListener("click", function () {
+			var hidden = root.classList.toggle("sidebar-hidden");
+			store(hidden);
+			sync();
+		});
+
+		sync();
+	}
 
 	function init() {
+		initSidebarToggle();
+
 		var group = document.querySelector(".docs-nav-group");
 		if (!group) return;
 
