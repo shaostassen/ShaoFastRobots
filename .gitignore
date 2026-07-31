@@ -2,3 +2,9 @@
 .DS_Store
 .vscode/
 themes/
+
+# Build output. `zola build` wipes and regenerates this, and the Pages workflow
+# rebuilds it before uploading, so a committed copy never reaches the live site.
+public/
+# Python bytecode from scripts/
+__pycache__/

@@ -122,21 +122,9 @@
 	<meta property="og:image" content="{% include 'partials/card.html' %}" />
 	<meta property="og:locale" content="{{ macros_translate::translate(key='date_locale', default='en_US', language_strings=language_strings) }}" />
 
-	<!-- KaTeX Math Rendering -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-
-	<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-	<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-        onload="renderMathInElement(document.body, {
-          delimiters: [
-            {left: '$$', right: '$$', display: true},
-            {left: '$', right: '$', display: false}
-          ],
-          displayMode: true
-        });">
-		</script>
-
-
-
-
+	{#- KaTeX is already loaded above from the bundled katex.css / katex.min.js /
+	    auto-render.min.js / katex-init.js when `extra.katex` is set. A second copy
+	    used to be pulled from a CDN here with an inline renderer, which downloaded
+	    KaTeX twice and ran renderMathInElement twice on every page. katex-init.js
+	    uses the same $$…$$ / $…$ delimiters, so removing it changes nothing visible. -#}
 </head>
