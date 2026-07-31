@@ -1,0 +1,385 @@
+/*
+ * profile.css — landing page only, loaded via `extra.styles` in content/_index.md.
+ *
+ * The page states that it is about control systems, so it also demonstrates one:
+ * the hero plot is the analytic step response of an underdamped second-order
+ * system (zeta = 0.30), the same shape as the PID plots in Labs 5-7, and it draws
+ * itself once on load.
+ *
+ * Colours come from the theme's custom properties, so light and dark both follow.
+ * All motion is disabled under prefers-reduced-motion.
+ */
+
+/* ------------------------------------------------------------------ hero ---- */
+
+.hero {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+	align-items: center;
+	gap: 2rem 3rem;
+	margin-block: 0.5rem 2rem;
+}
+
+.hero-name {
+	margin: 0;
+	font-size: clamp(2.25rem, 6vw, 3.5rem);
+	line-height: 1.02;
+	letter-spacing: -0.02em;
+}
+
+.hero .profile-links {
+	display: flex;
+	align-items: center;
+	gap: 0.625rem;
+	margin-block-start: 0.875rem;
+}
+
+.hero .profile-links a {
+	display: inline-flex;
+	transition: var(--transition);
+	color: var(--accent-color);
+}
+
+.hero .profile-links a:hover {
+	transform: translateY(-2px);
+}
+
+.hero .profile-links svg {
+	fill: currentColor;
+	width: 1.625rem;
+	height: 1.625rem;
+}
+
+.hero-tagline {
+	margin-block: 1.125rem 0;
+	max-width: 32ch;
+	color: var(--fg-muted-5);
+	font-size: var(--font-size-large);
+	line-height: 1.45;
+	text-wrap: balance;
+}
+
+/* ------------------------------------------------------------- hero plot ---- */
+
+.hero-plot {
+	margin: 0;
+}
+
+.hero-plot svg {
+	display: block;
+	width: 100%;
+	height: auto;
+	overflow: visible;
+}
+
+.hero-plot-axis {
+	stroke: var(--fg-muted-3);
+	stroke-width: 1;
+}
+
+.hero-plot-setpoint {
+	stroke: var(--fg-muted-4);
+	stroke-width: 1.5;
+	stroke-dasharray: 5 5;
+}
+
+.hero-plot-curve {
+	fill: none;
+	stroke: var(--accent-color);
+	stroke-width: 2.75;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.hero-plot figcaption {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.375rem 1.25rem;
+	margin-block-start: 0.75rem;
+	color: var(--fg-muted-4);
+	font-size: var(--font-size-x-small);
+	font-family: var(--font-monospace, ui-monospace, monospace);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.hero-plot figcaption span::before {
+	margin-inline-end: 0.375rem;
+	color: var(--accent-color);
+	content: "\2022";
+}
+
+/* The signature moment: the trace draws itself once on load. Armed only after
+   profile.js has measured the real path length into --trace-length, so the dash
+   offset is exact rather than a guess — and so the curve renders as a normal
+   solid path if the script never runs. */
+.trace-ready .hero-plot-curve {
+	stroke-dasharray: var(--trace-length);
+	stroke-dashoffset: var(--trace-length);
+	animation: trace-draw 1.9s cubic-bezier(0.33, 0, 0.2, 1) 0.1s forwards;
+}
+
+@keyframes trace-draw {
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+.trace-ready .hero-plot-setpoint,
+.trace-ready .hero-plot-axis {
+	opacity: 0;
+	animation: fade-in 0.7s ease-out forwards;
+}
+
+@keyframes fade-in {
+	to {
+		opacity: 1;
+	}
+}
+
+/* ------------------------------------------------------------ spec strip ---- */
+
+.spec-strip {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 0.75rem;
+	margin-block: 0 2.5rem;
+	border-block: max(1px, 0.0625rem) solid var(--fg-muted-2);
+	padding: 0.875rem 0;
+	list-style: none;
+}
+
+.spec-strip li {
+	color: var(--fg-muted-5);
+	font-size: var(--font-size-x-small);
+	font-family: var(--font-monospace, ui-monospace, monospace);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.spec-strip li + li::before {
+	margin-inline-end: 0.75rem;
+	color: var(--fg-muted-3);
+	content: "/";
+}
+
+/* --------------------------------------------------------------- profile ---- */
+
+.profile {
+	display: grid;
+	grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+	align-items: start;
+	gap: 2rem;
+	margin-block-end: 3rem;
+}
+
+.profile-photo img {
+	display: block;
+	transition: var(--transition);
+	box-shadow: var(--shadow-glass, 0 1rem 2rem rgb(0 0 0 / 0.12));
+	border-radius: var(--rounded-corner);
+	width: 100%;
+	height: auto;
+}
+
+.profile-bio p:first-child {
+	margin-block-start: 0;
+}
+
+.org-logos {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1.75rem;
+	margin-block-start: 1.75rem;
+}
+
+.org-logos img {
+	transition: var(--transition);
+	filter: grayscale(1);
+	opacity: 0.75;
+	border: none;
+	box-shadow: none;
+	background-color: transparent;
+	width: auto;
+	max-width: 100%;
+	height: 5.5rem;
+}
+
+.org-logos img:hover {
+	filter: none;
+	opacity: 1;
+}
+
+/* -------------------------------------------------------------- timeline ---- */
+
+.lab-index-heading {
+	margin-block: 0 1.5rem;
+}
+
+.lab-timeline {
+	position: relative;
+	margin: 0;
+	padding: 0 0 0 2.4rem;
+	list-style: none;
+}
+
+/* The spine. Sits behind the markers, inset so it starts and ends on a dot. */
+.lab-timeline::before {
+	position: absolute;
+	inset-block: 0.9rem 1.1rem;
+	inset-inline-start: 0.6875rem;
+	background: linear-gradient(
+		to bottom,
+		var(--accent-color),
+		var(--fg-muted-2)
+	);
+	width: max(2px, 0.125rem);
+	content: "";
+}
+
+.lab-timeline-item {
+	position: relative;
+	padding-block: 0.5rem 1.375rem;
+}
+
+.lab-timeline-marker {
+	display: flex;
+	position: absolute;
+	align-items: center;
+	justify-content: center;
+	inset-block-start: 0.4rem;
+	inset-inline-start: -2.4rem;
+	transition: var(--transition);
+	box-shadow: 0 0 0 max(4px, 0.25rem) var(--bg-color);
+	border-radius: 999px;
+	background-color: var(--fg-muted-2);
+	width: 1.75rem;
+	height: 1.75rem;
+	color: var(--fg-color);
+	font-weight: 700;
+	font-size: var(--font-size-x-small);
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+}
+
+.lab-timeline-item:hover .lab-timeline-marker {
+	background-color: var(--accent-color);
+	color: var(--contrast-color);
+}
+
+.lab-timeline-date {
+	display: block;
+	margin-block-end: 0.125rem;
+	color: var(--fg-muted-4);
+	font-size: var(--font-size-x-small);
+	font-family: var(--font-monospace, ui-monospace, monospace);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.lab-timeline-title {
+	font-weight: 600;
+	font-size: var(--font-size-large);
+	text-decoration: none;
+}
+
+.lab-timeline-title:hover {
+	text-decoration: underline;
+}
+
+.lab-timeline-description {
+	margin-block: 0.25rem 0;
+	max-width: 60ch;
+	color: var(--fg-muted-5);
+	font-size: var(--font-size-small);
+}
+
+/* --------------------------------------------------------------- reveals ---- */
+
+/* Only armed once profile.js has confirmed it is running, so a failed script
+   can never leave the page blank. */
+.profile-js .reveal {
+	opacity: 0;
+	transform: translateY(1.25rem);
+}
+
+.profile-js .reveal.is-visible {
+	transition:
+		opacity 0.6s ease-out,
+		transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+	opacity: 1;
+	transform: none;
+}
+
+/* Stagger consecutive timeline rows slightly as a group scrolls in. */
+.profile-js .lab-timeline-item:nth-child(2n).is-visible {
+	transition-delay: 0.06s;
+}
+
+.profile-js .lab-timeline-item:nth-child(2n + 1).is-visible {
+	transition-delay: 0.12s;
+}
+
+/* ------------------------------------------------------------ responsive ---- */
+
+@media only screen and (max-width: 900px) {
+	.hero {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1.5rem;
+	}
+
+	.hero-tagline {
+		max-width: none;
+	}
+
+	.profile {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.profile-photo {
+		max-width: 14rem;
+	}
+}
+
+@media only screen and (max-width: 560px) {
+	.org-logos img {
+		height: 4rem;
+	}
+
+	.lab-timeline {
+		padding-inline-start: 2.1rem;
+	}
+
+	.lab-timeline-marker {
+		inset-inline-start: -2.1rem;
+	}
+}
+
+/* --------------------------------------------------------- reduced motion ---- */
+
+@media (prefers-reduced-motion: reduce) {
+	.trace-ready .hero-plot-curve,
+	.trace-ready .hero-plot-setpoint,
+	.trace-ready .hero-plot-axis {
+		opacity: 1;
+		animation: none;
+		stroke-dasharray: none;
+		stroke-dashoffset: 0;
+	}
+
+	.trace-ready .hero-plot-setpoint {
+		stroke-dasharray: 5 5;
+	}
+
+	.profile-js .reveal,
+	.profile-js .reveal.is-visible {
+		transition: none;
+		opacity: 1;
+		transform: none;
+	}
+
+	.hero .profile-links a:hover {
+		transform: none;
+	}
+}
