@@ -8,31 +8,6 @@
 		? window.matchMedia("(prefers-reduced-motion: reduce)").matches
 		: false;
 
-	// Measure a path's true length into a custom property, so the dash offset is
-	// exact for whatever curve is in the markup rather than a hardcoded guess.
-	function measure(selector, property) {
-		var path = document.querySelector(selector);
-		if (!path || typeof path.getTotalLength !== "function") return false;
-
-		var length = path.getTotalLength();
-		if (!length) return false;
-
-		path.style.setProperty(property, length.toFixed(1));
-		return true;
-	}
-
-	function initHeroPlot() {
-		if (measure(".hero-plot-curve", "--trace-length")) {
-			document.documentElement.classList.add("trace-ready");
-		}
-	}
-
-	// The attractor is ~11k of path; measuring it is what lets it draw on when it
-	// scrolls into view. Without this the CSS leaves it fully drawn.
-	function initChaosPlot() {
-		measure(".chaos-curve", "--chaos-length");
-	}
-
 	// Fade sections up as they scroll into view. Unobserved once shown, so
 	// scrolling back up does not replay them.
 	function initReveals() {
@@ -63,8 +38,6 @@
 	}
 
 	function init() {
-		initHeroPlot();
-		initChaosPlot();
 		initReveals();
 	}
 
