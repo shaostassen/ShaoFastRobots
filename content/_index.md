@@ -34,7 +34,7 @@ scripts = ["profile.js"]
         </g>
       </g>
     </svg>
-    <figcaption>Inverted pendulum held upright by an LQR controller — the cart slides to catch the pole. This is <a href="Fast%20Robots%20Stuff/lab-12/">Lab 12</a>.</figcaption>
+    <figcaption>An inverted pendulum is nonlinear and unstable — left alone, the pole falls. Here an LQR controller, designed on the linearization about upright, computes the cart motion that keeps it balanced. I used this same principle in <a href="Fast%20Robots%20Stuff/lab-12/">Lab 12</a>.</figcaption>
   </figure>
 </section>
 
