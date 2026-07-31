@@ -37,7 +37,7 @@ I verified basic IMU functionality using the SparkFun library example:
 I modified the code in the example slightly in order to get the serial prints and plotter to work nicely. However, this didn't impact the actual values, so there was minimal effect.
 I confirmed that acceleration (mg) and gyroscope (DPS) values updated as expected while rotating and translating the board.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/zQG1ElMjfRQ" allowfullscreen></iframe> <figcaption>Example Code IMU Test</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/zQG1ElMjfRQ" allowfullscreen></iframe><figcaption>Example Code IMU Test</figcaption></figure>
 
 ### AD0_VAL (what it is + what it should be)
 
@@ -73,7 +73,7 @@ roll_a  = atan2(accY, accZ) * 180.0 / M_PI;
 
 The video below showcases how I obtained 0, -90, and 90 degrees for the pitch and roll from the accelerometer.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/uuNqYMH4rGA" allowfullscreen></iframe> <figcaption>Roll and Pitch IMU Test</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/uuNqYMH4rGA" allowfullscreen></iframe><figcaption>Roll and Pitch IMU Test</figcaption></figure>
 
 Specifically, the 5 images below are static images of me hitting those specific angles.
 As the images indicate, the accuracy of the accelerometer is pretty decent, as the values are close to their true values, but they are not super precise. I used a 2-point calibration to attempt to make it a bit better. Specifically for pitch, true 0 degrees is about 2 degrees, and true -90 degrees is about -88 degrees. This is easy to fix; you just need to add a 2-degree offset. The roll value is a bit more complicated because true 0 degrees is roughly -1.5, true -90 degrees is about -91, and true 90 degrees is about 92 degrees. Using the slope function, we get the following, where `a` is the slope and `b` is the offset:
@@ -576,11 +576,9 @@ There is a total of 1663 samples collected in 5 seconds, which gives about 1663 
 
 Below are videos of the RC car stunts powered by battery.
 
-<iframe width="450" height="315" src="https://www.youtube.com/embed/FyHCUjPrKYg" allowfullscreen></iframe>
-<figcaption>RC car stunt 1</figcaption>
+<figure><iframe width="450" height="315" src="https://www.youtube.com/embed/FyHCUjPrKYg" allowfullscreen></iframe><figcaption>RC car stunt 1</figcaption></figure>
 
-<iframe width="450" height="315" src="https://www.youtube.com/embed/e-gonb3QiyY" allowfullscreen></iframe>
-<figcaption>RC car stunt 2</figcaption>
+<figure><iframe width="450" height="315" src="https://www.youtube.com/embed/e-gonb3QiyY" allowfullscreen></iframe><figcaption>RC car stunt 2</figcaption></figure>
 
 From playing with the car, I noticed that the RC car is quick at reacting to any signal sent from the controller. I observed the car's turning, driving straight, and drifting. It has a great self-turning mechanism if you hold down the turning trigger. I also noticed that it seems to maintain a constant speed while turning, and how easily it can be flipped over.
 

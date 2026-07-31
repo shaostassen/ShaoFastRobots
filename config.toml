@@ -49,8 +49,8 @@ fix_contrast_dark = true
 bundled_fonts = true
 
 # Docs-layout stylesheet, loaded after the theme's style.css so it wins the cascade.
-styles = ["docs.css"]
-scripts = ["docs-nav.js"]
+styles = ["docs.css", "lab.css"]
+scripts = ["docs-nav.js", "lab.js"]
 
 # Used by partials/breadcrumbs.html for the "Edit on GitHub" link.
 repo_url = "https://github.com/shaostassen/ShaoFastRobots"

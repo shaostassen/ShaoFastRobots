@@ -63,8 +63,7 @@ Starting 3000mm away with a 304mm setpoint creates a massive initial error (\~26
 
 My initial tests were from 1800mm due to the early sensor issues.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/vyQKNND2o0w" allowfullscreen></iframe>
-<figcaption>1800mm P Test</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/vyQKNND2o0w" allowfullscreen></iframe><figcaption>1800mm P Test</figcaption></figure>
 
 <figure>
 <img src="initP.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;">
@@ -73,8 +72,7 @@ My initial tests were from 1800mm due to the early sensor issues.
 
 While P-control was fairly accurate, higher speeds caused overshoot. Adding a Derivative (**Kd**) term acted as a brake, allowing a higher P-term.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/g93l-az-CnU" allowfullscreen></iframe>
-<figcaption>1800mm PD Test</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/g93l-az-CnU" allowfullscreen></iframe><figcaption>1800mm PD Test</figcaption></figure>
 
 <figure>
 <img src="tuneD.jpg" alt="circuit" style="display:block; width:100%; max-width:600px;">
@@ -122,8 +120,7 @@ With extrapolation, the PID loop runs continuously at over 150Hz. The robot smoo
 
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;">
 <div style="flex: 0 0 48%; min-width: 300px;">
-<iframe width="100%" height="315" src="https://youtube.com/embed/dOP3MGeF_IE" allowfullscreen></iframe>
-<figcaption style="text-align: center; font-style: italic;">Trial 1 Video</figcaption>
+<figure><iframe width="100%" height="315" src="https://youtube.com/embed/dOP3MGeF_IE" allowfullscreen></iframe><figcaption style="text-align: center; font-style: italic;">Trial 1 Video</figcaption></figure>
 </div>
 <div style="flex: 0 0 48%; min-width: 300px;">
 <figure style="margin: 0;">
@@ -135,8 +132,7 @@ With extrapolation, the PID loop runs continuously at over 150Hz. The robot smoo
 
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;">
 <div style="flex: 0 0 48%; min-width: 300px;">
-<iframe width="100%" height="315" src="https://youtube.com/embed/33lLNpuxZKE" allowfullscreen></iframe>
-<figcaption style="text-align: center; font-style: italic;">Trial 2 Video</figcaption>
+<figure><iframe width="100%" height="315" src="https://youtube.com/embed/33lLNpuxZKE" allowfullscreen></iframe><figcaption style="text-align: center; font-style: italic;">Trial 2 Video</figcaption></figure>
 </div>
 <div style="flex: 0 0 48%; min-width: 300px;">
 <figure style="margin: 0;">
@@ -148,8 +144,7 @@ With extrapolation, the PID loop runs continuously at over 150Hz. The robot smoo
 
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 40px;">
 <div style="flex: 0 0 48%; min-width: 300px;">
-<iframe width="100%" height="315" src="https://youtube.com/embed/v3NTideadpo" allowfullscreen></iframe>
-<figcaption style="text-align: center; font-style: italic;">Trial 3 Video</figcaption>
+<figure><iframe width="100%" height="315" src="https://youtube.com/embed/v3NTideadpo" allowfullscreen></iframe><figcaption style="text-align: center; font-style: italic;">Trial 3 Video</figcaption></figure>
 </div>
 <div style="flex: 0 0 48%; min-width: 300px;">
 <figure style="margin: 0;">
@@ -162,8 +157,7 @@ With extrapolation, the PID loop runs continuously at over 150Hz. The robot smoo
 Motor effort is the negative of PWM, due to some sign in calculation that's hard to fix. The max speed I acheieve with my linear PID while successful is approximately **1 m/s**, this could be find via slope from above graphs. 
 Finally, I shoved the car while the linear PID was active to test how well it adapted to changing states and external disturbances.
 
-<iframe width="100%" height="315" src="https://youtube.com/embed/sTJlFlL0Tps" allowfullscreen></iframe>
-<figcaption style="text-align: center; font-style: italic;">Disturbance Test Video</figcaption>
+<figure><iframe width="100%" height="315" src="https://youtube.com/embed/sTJlFlL0Tps" allowfullscreen></iframe><figcaption style="text-align: center; font-style: italic;">Disturbance Test Video</figcaption></figure>
 
 -----
 

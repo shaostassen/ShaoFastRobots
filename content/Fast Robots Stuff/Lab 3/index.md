@@ -98,9 +98,9 @@ The VL53L1X technically supports three distance modes:
 
 Below is the initial test I did after hooking up both of the ToF sensors and having them both function simultaneously. Note this satisfies Task 8, so I jumped ahead. Refer to the code snippet in the I2C Address section for how I got both of them to work.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/NNu_KvDo6iw" allowfullscreen></iframe> <figcaption>Two ToF test</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/NNu_KvDo6iw" allowfullscreen></iframe><figcaption>Two ToF test</figcaption></figure>
 
-<iframe width="450" height="315" src="https://youtube.com/embed/TP_kfJYFPFA" allowfullscreen></iframe> <figcaption>Serial Monitor - Two ToF test</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/TP_kfJYFPFA" allowfullscreen></iframe><figcaption>Serial Monitor - Two ToF test</figcaption></figure>
 
 ## ToF Sensor Speed and Non-Blocking Code
 

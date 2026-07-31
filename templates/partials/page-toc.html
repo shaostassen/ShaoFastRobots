@@ -1,0 +1,24 @@
+{#- Right-hand "On this page" rail. Rendered from base.html as a grid sibling of
+    <main>, so it can sit in its own column. lab.js highlights the section
+    currently in view. Only worth showing when there is more than one heading. -#}
+<aside id="lab-toc" aria-label="On this page">
+	<div class="lab-toc-inner">
+		<p class="lab-toc-caption">On this page</p>
+		<nav>
+			<ul class="lab-toc-list">
+				{%- for h in page.toc -%}
+					<li>
+						<a href="{{ h.permalink | safe }}">{{ h.title }}</a>
+						{%- if h.children -%}
+							<ul class="lab-toc-sub">
+								{%- for c in h.children -%}
+									<li><a href="{{ c.permalink | safe }}">{{ c.title }}</a></li>
+								{%- endfor -%}
+							</ul>
+						{%- endif -%}
+					</li>
+				{%- endfor -%}
+			</ul>
+		</nav>
+	</div>
+</aside>

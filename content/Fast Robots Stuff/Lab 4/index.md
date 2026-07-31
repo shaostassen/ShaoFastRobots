@@ -68,8 +68,7 @@ void loop() {
 
 ```
 Here is video showing my probe setup, as well as the results:
-<iframe width="450" height="315" src="https://youtube.com/embed/MVw43_S0BW8" allowfullscreen></iframe>
-<figcaption>Left Motor Driver PWM Test</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/MVw43_S0BW8" allowfullscreen></iframe><figcaption>Left Motor Driver PWM Test</figcaption></figure>
 
 The analogWrite(MOTOR_INL1,60) line indicated a 23.5% (60/255) duty cycle to pin 15. Oscilloscope graph:
 <figure>
@@ -78,8 +77,7 @@ The analogWrite(MOTOR_INL1,60) line indicated a 23.5% (60/255) duty cycle to pin
 </figure>
 
 Now I used a for loop to incrementally increase the PWM from 0 to 255 on the left motor, and this is a video showing this:
-<iframe width="450" height="315" src="https://youtube.com/embed/DooZhPy4oLc" allowfullscreen></iframe>
-<figcaption>Regulated Left Motor Driver PWM Test</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/DooZhPy4oLc" allowfullscreen></iframe><figcaption>Regulated Left Motor Driver PWM Test</figcaption></figure>
 
 Here is the example graph for the PWM being regulated:
 <figure>
@@ -88,8 +86,7 @@ Here is the example graph for the PWM being regulated:
 </figure>
 
 Switch to the right motor, and do the same regulating test:
-<iframe width="450" height="315" src="https://youtube.com/embed/LsvBeuKERr4" allowfullscreen></iframe>
-<figcaption>Regulated Right Motor Driver PWM Test</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/LsvBeuKERr4" allowfullscreen></iframe><figcaption>Regulated Right Motor Driver PWM Test</figcaption></figure>
 
 ### Motor Testing
 
@@ -98,19 +95,15 @@ After validating the signal, I dismantled the RC car. I decided not to remove th
 During this phase, I ran into a frustrating bug while testing the second motor driver. I wrote the exact same PWM code to verify the motor functioned correctly, I can also the motor try to spin from the hum sound, but it refused to spin. After extensive troubleshooting, I finally connected the `VIN` and `GND` leads of both motor drivers together into the power supply, and it worked perfectly—even though I was only actively controlling one driver.
 
 Here is some of the results of the PWM test on actual motors:
-<iframe width="450" height="315" src="https://youtube.com/embed/XDPilbXST54" allowfullscreen></iframe>
-<figcaption>Right Motor Driver Test (Elevated)</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/XDPilbXST54" allowfullscreen></iframe><figcaption>Right Motor Driver Test (Elevated)</figcaption></figure>
 
-<iframe width="450" height="315" src="https://youtube.com/embed/5jg_x6OLH68" allowfullscreen></iframe>
-<figcaption>Right Motor Driver Test (Elevated)</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/5jg_x6OLH68" allowfullscreen></iframe><figcaption>Right Motor Driver Test (Elevated)</figcaption></figure>
 
-<iframe width="450" height="315" src="https://youtube.com/embed/hbjFIpIejHI" allowfullscreen></iframe>
-<figcaption>Both Motors Running on Power Supply</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/hbjFIpIejHI" allowfullscreen></iframe><figcaption>Both Motors Running on Power Supply</figcaption></figure>
 
 Once both sides were verified, I transitioned power from the bench supply to the 3.7V 850mAh battery to ensure the system could run untethered.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/towbY2_A_A4" allowfullscreen></iframe>
-<figcaption>Both Motors Running on Battery Power</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/towbY2_A_A4" allowfullscreen></iframe><figcaption>Both Motors Running on Battery Power</figcaption></figure>
 
 ### Complete Hardware Integration on Car
 
@@ -121,6 +114,7 @@ All components were packed securely into the chassis. The IMU were zip-tied in t
 <figcaption>Top-down view of the fully integrated chassis</figcaption>
 </figure>
 
+<figure>
 <div style="display: flex; justify-content: space-around; align-items: center; gap: 10px;">
 <div style="text-align: center;">
 <img src="done_right.jpg" style="max-width: 100%; height: auto;">
@@ -132,6 +126,7 @@ All components were packed securely into the chassis. The IMU were zip-tied in t
 </div>
 </div>
 <figcaption>Side profiles of the fully integrated chassis</figcaption>
+</figure>
 
 ### Motor Functions
 
@@ -204,23 +199,19 @@ Here are the videos documenting the lower limit tests:
 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; text-align: center;">
 
 <div>
-<iframe width="100%" height="250" src="https://youtube.com/embed/aNkpLh34K3s" allowfullscreen></iframe>
-<figcaption>Decremental Limit Test with Forward and Backward</figcaption>
+<figure><iframe width="100%" height="250" src="https://youtube.com/embed/aNkpLh34K3s" allowfullscreen></iframe><figcaption>Decremental Limit Test with Forward and Backward</figcaption></figure>
 </div>
 
 <div>
-<iframe width="100%" height="250" src="https://youtube.com/embed/_9iMhKC3L0A" allowfullscreen></iframe>
-<figcaption>Turning Limit Test</figcaption>
+<figure><iframe width="100%" height="250" src="https://youtube.com/embed/_9iMhKC3L0A" allowfullscreen></iframe><figcaption>Turning Limit Test</figcaption></figure>
 </div>
 
 <div>
-<iframe width="100%" height="250" src="https://youtube.com/embed/2j2Tr3IEzgk" allowfullscreen></iframe>
-<figcaption>Forward Limit Test</figcaption>
+<figure><iframe width="100%" height="250" src="https://youtube.com/embed/2j2Tr3IEzgk" allowfullscreen></iframe><figcaption>Forward Limit Test</figcaption></figure>
 </div>
 
 <div>
-<iframe width="100%" height="250" src="https://youtube.com/embed/zOV7ENlsKYM" allowfullscreen></iframe>
-<figcaption>Backward Limit Test</figcaption>
+<figure><iframe width="100%" height="250" src="https://youtube.com/embed/zOV7ENlsKYM" allowfullscreen></iframe><figcaption>Backward Limit Test</figcaption></figure>
 </div>
 
 </div>
@@ -275,17 +266,14 @@ With the calibration applied, the car successfully followed a straight line foun
 
 
 
-<iframe width="100%" height="250" src="https://youtube.com/embed/761I6qX16ww" allowfullscreen></iframe>
-<figcaption>Straight Test Before Calibration</figcaption>
+<figure><iframe width="100%" height="250" src="https://youtube.com/embed/761I6qX16ww" allowfullscreen></iframe><figcaption>Straight Test Before Calibration</figcaption></figure>
 
-<iframe width="100%" height="250" src="https://youtube.com/embed/Fx5qrLB3bY8" allowfullscreen></iframe>
-<figcaption>Straight Test After Calibration</figcaption>
+<figure><iframe width="100%" height="250" src="https://youtube.com/embed/Fx5qrLB3bY8" allowfullscreen></iframe><figcaption>Straight Test After Calibration</figcaption></figure>
 
 ## Open Loop Testing
 Finally, I try to move the car in a race track manner, by have it move forward, turn left, move around the curve, turn left, move forward again, then turn. In general this drive is not great, but it achieve its goal.
 
-<iframe width="100%" height="250" src="https://youtube.com/embed/8wYWEQr-wOY" allowfullscreen></iframe>
-<figcaption>Open Loop Test</figcaption>
+<figure><iframe width="100%" height="250" src="https://youtube.com/embed/8wYWEQr-wOY" allowfullscreen></iframe><figcaption>Open Loop Test</figcaption></figure>
 
 ## Discussion
 

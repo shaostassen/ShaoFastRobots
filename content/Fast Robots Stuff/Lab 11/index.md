@@ -17,8 +17,7 @@ I am using the provided solution as an optimized filter (`localization_extras.py
 
 Running `lab11_sim.ipynb` produced the expected behavior. The filter belief stays close to ground truth across the whole trajectory, even as the odometry drifts off course. This is very similar to the result I get from lab 10. 
 
-<img src="sim.jpg" alt="Lab 11 simulation result" style="display:block;">
-<figcaption>Bayes filter trajectory in simulation</figcaption>
+<figure><img src="sim.jpg" alt="Lab 11 simulation result" style="display:block;"><figcaption>Bayes filter trajectory in simulation</figcaption></figure>
 
 - **Blue:** filter belief
 - **Red:** odometry-only estimate
@@ -130,11 +129,9 @@ The notification handler parses the Arduino's `time:yaw:tof1:tof2` strings, conv
 
 When I first ran this, I noticed my RC car did an okay job doing the rotation. I did some tuning, which made it a lot better, and I was able to get some really good localization results. However, as my battery drained, my turns started to degrade again, and so did my localization results. This reminded me of Lab 5 and Lab 6 where the same issue happened before. Here are some bad localization: 
 
-<img src="bad03.jpg" alt="Bad Localization at (0, 3)" style="display:block;">
-<figcaption>Bad localization at (0, 3)</figcaption>
+<figure><img src="bad03.jpg" alt="Bad Localization at (0, 3)" style="display:block;"><figcaption>Bad localization at (0, 3)</figcaption></figure>
 
-<img src="bad53.jpg" alt="Bad Localization at (5, 3)" style="display:block;">
-<figcaption>Bad localizatin at (5, 3)</figcaption>
+<figure><img src="bad53.jpg" alt="Bad Localization at (5, 3)" style="display:block;"><figcaption>Bad localizatin at (5, 3)</figcaption></figure>
 
 After I replaced my battery, I was able to go back to my originally tuned PID gains and got better localization results.
 
@@ -145,44 +142,36 @@ I ran the update step at each of the four marked grid positions, plus an additio
 <details>
 <summary><strong>(-3, -2)</strong></summary>
 
-<img src="-3-2.jpg" alt="Localization at (-3, -2)" style="display:block;">
-<figcaption>Belief vs. ground truth at (-3, -2)</figcaption>
+<figure><img src="-3-2.jpg" alt="Localization at (-3, -2)" style="display:block;"><figcaption>Belief vs. ground truth at (-3, -2)</figcaption></figure>
 
-<iframe width="450" height="315" src="https://www.youtube.com/embed/rvKvDf84wlo" allowfullscreen></iframe>
-<figcaption>Update step at (-3, -2)</figcaption>
+<figure><iframe width="450" height="315" src="https://www.youtube.com/embed/rvKvDf84wlo" allowfullscreen></iframe><figcaption>Update step at (-3, -2)</figcaption></figure>
 
 </details>
 
 <details>
 <summary><strong>(0, 3)</strong></summary>
 
-<img src="03.jpg" alt="Localization at (0, 3)" style="display:block;">
-<figcaption>Belief vs. ground truth at (0, 3)</figcaption>
+<figure><img src="03.jpg" alt="Localization at (0, 3)" style="display:block;"><figcaption>Belief vs. ground truth at (0, 3)</figcaption></figure>
 
-<iframe width="450" height="315" src="https://www.youtube.com/embed/YI2PUDUP7lg" allowfullscreen></iframe>
-<figcaption>Update step at (0, 3)</figcaption>
+<figure><iframe width="450" height="315" src="https://www.youtube.com/embed/YI2PUDUP7lg" allowfullscreen></iframe><figcaption>Update step at (0, 3)</figcaption></figure>
 
 </details>
 
 <details>
 <summary><strong>(5, -3)</strong></summary>
 
-<img src="5-3.jpg" alt="Localization at (5, -3)" style="display:block;">
-<figcaption>Belief vs. ground truth at (5, -3)</figcaption>
+<figure><img src="5-3.jpg" alt="Localization at (5, -3)" style="display:block;"><figcaption>Belief vs. ground truth at (5, -3)</figcaption></figure>
 
-<iframe width="450" height="315" src="https://www.youtube.com/embed/LxDthlAkrXs" allowfullscreen></iframe>
-<figcaption>Update step at (5, -3)</figcaption>
+<figure><iframe width="450" height="315" src="https://www.youtube.com/embed/LxDthlAkrXs" allowfullscreen></iframe><figcaption>Update step at (5, -3)</figcaption></figure>
 
 </details>
 
 <details>
 <summary><strong>(5, 3)</strong></summary>
 
-<img src="53.jpg" alt="Localization at (5, 3)" style="display:block;">
-<figcaption>Belief vs. ground truth at (5, 3)</figcaption>
+<figure><img src="53.jpg" alt="Localization at (5, 3)" style="display:block;"><figcaption>Belief vs. ground truth at (5, 3)</figcaption></figure>
 
-<iframe width="450" height="315" src="https://www.youtube.com/embed/wLfYSopqFc0" allowfullscreen></iframe>
-<figcaption>Update step at (5, 3)</figcaption>
+<figure><iframe width="450" height="315" src="https://www.youtube.com/embed/wLfYSopqFc0" allowfullscreen></iframe><figcaption>Update step at (5, 3)</figcaption></figure>
 
 
 </details>
@@ -190,11 +179,9 @@ I ran the update step at each of the four marked grid positions, plus an additio
 <details>
 <summary><strong>(0, 0)</strong> — bonus origin test</summary>
 
-<img src="00.jpg" alt="Localization at (0, 0)" style="display:block;">
-<figcaption>Belief vs. ground truth at (0, 0)</figcaption>
+<figure><img src="00.jpg" alt="Localization at (0, 0)" style="display:block;"><figcaption>Belief vs. ground truth at (0, 0)</figcaption></figure>
 
-<iframe width="450" height="315" src="https://www.youtube.com/embed/tmtGkR4kjDw" allowfullscreen></iframe>
-<figcaption>Update step at (0, 0)</figcaption>
+<figure><iframe width="450" height="315" src="https://www.youtube.com/embed/tmtGkR4kjDw" allowfullscreen></iframe><figcaption>Update step at (0, 0)</figcaption></figure>
 
 
 </details>

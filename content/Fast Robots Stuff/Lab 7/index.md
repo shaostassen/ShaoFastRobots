@@ -50,8 +50,7 @@ $$C = \begin{bmatrix} 1 & 0 \end{bmatrix}$$
 
 Here is a video of one of the trajectories while I was collecting data for a step response:
 
-<iframe width="450" height="315" src="https://youtube.com/embed/74Vm-SvuMSU" allowfullscreen></iframe>
-<figcaption>Data Collection Video</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/74Vm-SvuMSU" allowfullscreen></iframe><figcaption>Data Collection Video</figcaption></figure>
 
 <figure>
 <img src="velocity2.jpg" alt="c" style="display:block; width:100%; max-width:600px;">
@@ -232,8 +231,7 @@ $$u(t) = K_p(x_{target} - \mu_0) - K_d(\mu_1)$$
 
 This eliminated derivative chatter entirely. Approaching the 300 mm mark, $\mu_1$ applies a clean electronic braking force for a perfectly controlled stop.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/HNZxEkrY4M4" allowfullscreen></iframe>
-<figcaption>Linear PID Test with Tuned Kalman Filter</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/HNZxEkrY4M4" allowfullscreen></iframe><figcaption>Linear PID Test with Tuned Kalman Filter</figcaption></figure>
 
 ### Final Remark
 

@@ -126,8 +126,7 @@ def update_step():
 
 The video below shows the filter localizing along a pre-planned rectangular path. Red is the raw odometry estimate, green is ground truth, and blue is the Bayes filter's belief. The odometry drifts badly, you can see it shoot off the map entirely in the bottom right and overshoot again near the top, but the blue belief tracks green closely the whole way around the obstacle. The white cells behind the robot visualize the belief grid, brighter means higher probability, and I'm ignoring anything below $0.0001$.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/DMEheQDtAwY" allowfullscreen></iframe>
-<figcaption>Bayes simulation tracking ground truth vs. odometry.</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/DMEheQDtAwY" allowfullscreen></iframe><figcaption>Bayes simulation tracking ground truth vs. odometry.</figcaption></figure>
 
 The filter works noticeably better near obstacles. This is probably because ToF sensors are more stable at short ranges, so readings there carry more useful information. In the open middle of the arena there aren't many nearby things to lock onto, and the belief gets a bit fuzzier. Still, across the full trajectory the Bayes estimate consistently tracked ground truth far better than odometry alone.
 

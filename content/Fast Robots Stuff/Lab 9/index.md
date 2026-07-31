@@ -14,13 +14,11 @@ At the end of last lab, I encountered a cascade of system failures, this lingere
 ## Orientation Control Implementation
 
 To begin mapping, I utilized the orientational PID controller utilizing the IMU's DMP implemented in lab 6. By calculating the error between the target angle and current yaw, the robot could snap to specific orientations.
-<iframe width="450" height="315" src="https://youtube.com/embed/qVtZ4U6Ni5k" allowfullscreen></iframe>
-<figcaption>Pre-Tuning PID: Shows a decent turn, but with excessive overshoot and oscillation.</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/qVtZ4U6Ni5k" allowfullscreen></iframe><figcaption>Pre-Tuning PID: Shows a decent turn, but with excessive overshoot and oscillation.</figcaption></figure>
 
 After observing a decent orientation control, I decide to decrease the P term and increase D term just to get a slower and more reliable turn. 
 
-<iframe width="450" height="315" src="https://youtube.com/embed/0nv9n97dZTE" allowfullscreen></iframe>
-<figcaption>Post-Tuning PID: Decreased P term and increased D term result in a very crisp, reliable turn.</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/0nv9n97dZTE" allowfullscreen></iframe><figcaption>Post-Tuning PID: Decreased P term and increased D term result in a very crisp, reliable turn.</figcaption></figure>
 
 Orientation control proved highly effective for reliable on-axis turns. By commanding the robot through a series of $90^\circ$ turns and driving straight, I tested its odometry by mapping a 2x3 feet rectangular path under the lab table. The results below show a clean, stable path with minimal rotational drift, validating that the positional PID was well-tuned.
 
@@ -99,8 +97,7 @@ stopMotors();
 
 While fast, and taking 5-point distance and yaw averaging, this method still occasionally captured noisy data due to the continuous motion.
 
-<iframe width="450" height="315" src="https://youtube.com/embed/rwoKBCO3qzA" allowfullscreen></iframe>
-<figcaption>Robot Scanning Using Method 1</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/rwoKBCO3qzA" allowfullscreen></iframe><figcaption>Robot Scanning Using Method 1</figcaption></figure>
 
 <figure>
 <img src="pid_1.jpg" alt="Method 1 PID Data" style="display:block; width:100%; max-width:600px;">
@@ -197,8 +194,7 @@ if (current_time - last_rot_time >= 2000 && disc_idx < MAX_DISC_SAMPLES) {
 }
 ```
 
-<iframe width="450" height="315" src="https://youtube.com/embed/oM6GScy9wHg" allowfullscreen></iframe>
-<figcaption>Robot Scanning Using Method 2</figcaption>
+<figure><iframe width="450" height="315" src="https://youtube.com/embed/oM6GScy9wHg" allowfullscreen></iframe><figcaption>Robot Scanning Using Method 2</figcaption></figure>
 
 <figure>
 <img src="pid_2.jpg" alt="Method 2 PID Data" style="display:block; width:100%; max-width:600px;">
