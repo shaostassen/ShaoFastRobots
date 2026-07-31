@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" role="img" aria-label="Shao Stassen">
+  <!-- Hand-set on the 16px grid per the identity spec: 3px segments, square
+       corners, every edge on a whole pixel. The scaled mark goes to mush here. -->
+  <rect width="16" height="16" rx="3" fill="#16181D"/>
+  <g fill="#FFFFFF">
+    <rect x="4" y="1" width="8" height="3"/>
+    <rect x="4" y="1" width="3" height="8"/>
+    <rect x="9" y="6" width="3" height="8"/>
+    <rect x="4" y="11" width="8" height="3"/>
+  </g>
+  <rect x="4" y="6" width="8" height="3" fill="#48D4FF"/>
+</svg>

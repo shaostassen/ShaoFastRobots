@@ -1,0 +1,36 @@
+{#- The SES mark: S · E · S, the initials of Shaoyang Evan Stassen, each a legal
+    character on a seven-segment display. Unlit segments stay in as ghosts, so
+    the mark is a display showing the name rather than letters imitating one.
+
+    Lit segments take currentColor and the middle bar takes --accent-color, so
+    the mark follows the site's theme in both light and dark. Geometry is the
+    identity spec's 66x34 artboard: three digits at x = 0 / 24 / 48. -#}
+<svg class="ses-mark" viewBox="0 0 66 34" role="img" aria-label="Shao Stassen">
+	<g class="ses-ghost">
+		<rect x="14" y="3" width="4" height="12" rx="2" />
+		<rect x="0" y="19" width="4" height="12" rx="2" />
+		<rect x="38" y="3" width="4" height="12" rx="2" />
+		<rect x="38" y="19" width="4" height="12" rx="2" />
+		<rect x="62" y="3" width="4" height="12" rx="2" />
+		<rect x="48" y="19" width="4" height="12" rx="2" />
+	</g>
+	<g class="ses-lit">
+		<rect x="3" y="0" width="12" height="4" rx="2" />
+		<rect x="0" y="3" width="4" height="12" rx="2" />
+		<rect x="14" y="19" width="4" height="12" rx="2" />
+		<rect x="3" y="30" width="12" height="4" rx="2" />
+		<rect x="27" y="0" width="12" height="4" rx="2" />
+		<rect x="24" y="3" width="4" height="12" rx="2" />
+		<rect x="24" y="19" width="4" height="12" rx="2" />
+		<rect x="27" y="30" width="12" height="4" rx="2" />
+		<rect x="51" y="0" width="12" height="4" rx="2" />
+		<rect x="48" y="3" width="4" height="12" rx="2" />
+		<rect x="62" y="19" width="4" height="12" rx="2" />
+		<rect x="51" y="30" width="12" height="4" rx="2" />
+	</g>
+	<g class="ses-bar">
+		<rect x="3" y="15" width="12" height="4" rx="2" />
+		<rect x="27" y="15" width="12" height="4" rx="2" />
+		<rect x="51" y="15" width="12" height="4" rx="2" />
+	</g>
+</svg>

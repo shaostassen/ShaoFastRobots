@@ -42,7 +42,7 @@ index_format = "fuse_json"
 katex = true
 math = true
 
-favicon = "/favicon.png"
+favicon = "/favicon.svg"
 accent_color = "#0095ff"
 accent_color_dark = "#48d4ff"
 fix_contrast_dark = true

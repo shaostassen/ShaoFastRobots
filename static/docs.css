@@ -100,9 +100,45 @@ html.sidebar-hidden body:has(#docs-sidebar) main {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
+	gap: 0.5rem;
+	align-items: flex-start;
 	min-width: 0;
 	color: inherit;
 	text-decoration: none;
+}
+
+/* The SES mark. 34px tall is the identity's 1x size, where every segment edge
+   lands on a whole pixel. Lit segments follow the text colour, the middle bar
+   follows the site accent, so it works in both themes. */
+#docs-sidebar .ses-mark {
+	display: block;
+	flex: none;
+	width: 66px;
+	height: 34px;
+}
+
+.ses-lit {
+	fill: currentColor;
+}
+
+.ses-bar {
+	fill: var(--accent-color);
+}
+
+.ses-ghost {
+	opacity: 0.13;
+	fill: currentColor;
+}
+
+/* Spec: ghosts rise to 22% on dark, where 13% disappears. */
+[data-theme="dark"] .ses-ghost {
+	opacity: 0.22;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) .ses-ghost {
+		opacity: 0.22;
+	}
 }
 
 /* Collapse (« in the sidebar header) and expand (» pinned to the page edge).

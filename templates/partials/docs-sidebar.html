@@ -12,6 +12,7 @@
 	<div class="docs-sidebar-inner">
 		<div class="docs-sidebar-head">
 			<a class="docs-brand" href="{{ get_url(path='/', lang=lang) }}">
+				{%- include "partials/ses-mark.html" -%}
 				<span class="docs-brand-title">{{ config.title }}</span>
 				{%- if config.author %}
 					<span class="docs-brand-subtitle">{{ config.author }}</span>
