@@ -109,19 +109,42 @@
 	content: "\2022";
 }
 
-/* The signature moment: the trace draws itself once on load. Armed only after
+/* The trace draws itself, holds for ~2s, fades, and repeats. Armed only after
    profile.js has measured the real path length into --trace-length, so the dash
    offset is exact rather than a guess — and so the curve renders as a normal
-   solid path if the script never runs. */
+   solid path if the script never runs.
+   The reset happens at zero opacity, so the loop never visibly snaps. */
 .trace-ready .hero-plot-curve {
 	stroke-dasharray: var(--trace-length);
 	stroke-dashoffset: var(--trace-length);
-	animation: trace-draw 1.9s cubic-bezier(0.33, 0, 0.2, 1) 0.1s forwards;
+	animation: trace-loop 5s linear 0.1s infinite;
 }
 
-@keyframes trace-draw {
-	to {
+@keyframes trace-loop {
+	0% {
+		stroke-dashoffset: var(--trace-length);
+		opacity: 1;
+		animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1);
+	}
+
+	40% {
 		stroke-dashoffset: 0;
+		opacity: 1;
+	}
+
+	80% {              /* ~2s settled and readable before it resets */
+		stroke-dashoffset: 0;
+		opacity: 1;
+	}
+
+	95% {
+		stroke-dashoffset: 0;
+		opacity: 0;
+	}
+
+	100% {
+		stroke-dashoffset: var(--trace-length);
+		opacity: 0;
 	}
 }
 
@@ -194,10 +217,16 @@
 	margin-block-start: 1.75rem;
 }
 
-.org-logos img {
+.org-logos a {
+	display: inline-flex;
 	transition: var(--transition);
-	filter: grayscale(1);
-	opacity: 0.75;
+}
+
+.org-logos a:hover {
+	transform: translateY(-3px);
+}
+
+.org-logos img {
 	border: none;
 	box-shadow: none;
 	background-color: transparent;
@@ -206,9 +235,66 @@
 	height: 5.5rem;
 }
 
-.org-logos img:hover {
-	filter: none;
-	opacity: 1;
+/* ----------------------------------------------------------------- chaos ---- */
+
+.chaos {
+	display: grid;
+	grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+	align-items: center;
+	gap: 2rem 3rem;
+	margin-block-end: 3.5rem;
+	border-block-start: max(1px, 0.0625rem) solid var(--fg-muted-2);
+	padding-block-start: 2.5rem;
+}
+
+.chaos-figure {
+	margin: 0;
+}
+
+.chaos-figure svg {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* Hairline stroke: the attractor's density is the picture, so the overlapping
+   passes need to stay distinguishable rather than blending into a solid mass. */
+.chaos-curve {
+	fill: none;
+	stroke: url(#chaos-gradient);
+	stroke-width: 0.9;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	opacity: 0.95;
+}
+
+.chaos-note h2 {
+	margin-block: 0 0.75rem;
+	font-size: var(--font-size-x-large);
+}
+
+.chaos-note p {
+	margin-block: 0 0.875rem;
+	color: var(--fg-muted-5);
+	font-size: var(--font-size-small);
+	line-height: 1.6;
+}
+
+.chaos-note p:last-child {
+	margin-block-end: 0;
+}
+
+/* Draw the attractor on once, when it scrolls into view. */
+.profile-js .chaos.is-visible .chaos-curve {
+	animation: chaos-draw 3.4s ease-out forwards;
+	stroke-dasharray: var(--chaos-length);
+	stroke-dashoffset: var(--chaos-length);
+}
+
+@keyframes chaos-draw {
+	to {
+		stroke-dashoffset: 0;
+	}
 }
 
 /* -------------------------------------------------------------- timeline ---- */
@@ -340,6 +426,11 @@
 	.profile-photo {
 		max-width: 14rem;
 	}
+
+	.chaos {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1.5rem;
+	}
 }
 
 @media only screen and (max-width: 560px) {
@@ -370,6 +461,16 @@
 
 	.trace-ready .hero-plot-setpoint {
 		stroke-dasharray: 5 5;
+	}
+
+	.profile-js .chaos.is-visible .chaos-curve {
+		animation: none;
+		stroke-dasharray: none;
+		stroke-dashoffset: 0;
+	}
+
+	.org-logos a:hover {
+		transform: none;
 	}
 
 	.profile-js .reveal,
