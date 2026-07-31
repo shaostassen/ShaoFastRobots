@@ -63,15 +63,9 @@
 					</li>
 				{%- endif %}
 			{%- endfor -%}
-			{#- Shows/hides the whole docs sidebar. Lives in the nav rather than the
-			    sidebar so it stays reachable once the sidebar is gone. -#}
-			<li id="sidebar-toggle">
-				<button id="sidebar-toggle-button" class="circle" type="button"
-					aria-controls="docs-sidebar" aria-pressed="false"
-					title="Hide sidebar">
-					<i class="icon"></i>
-				</button>
-			</li>
+			{#- The sidebar show/hide controls live at the sidebar's own edge
+			    (partials/docs-sidebar.html and the expand button in base.html),
+			    which is where people look for them. -#}
 			{%- if config.build_search_index %}
 				<li id="search">
 					<button id="search-toggle" class="circle" title="{{ macros_translate::translate(key='search', default='Search', language_strings=language_strings) }}">

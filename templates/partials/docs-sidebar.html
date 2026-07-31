@@ -17,12 +17,12 @@
 					<span class="docs-brand-subtitle">{{ config.author }}</span>
 				{%- endif %}
 			</a>
-			{#- Collapse control where people actually look for one. The nav button
-			    does the same thing and is what brings the sidebar back. -#}
+			{#- Collapse control. A literal guillemet rather than a masked icon: if
+			    docs.css is ever missing or stale, this still reads as "«" instead
+			    of collapsing to an unstyled solid block. -#}
 			<button class="docs-sidebar-collapse" type="button"
-				aria-controls="docs-sidebar" title="Hide sidebar">
-				<i class="icon"></i>
-			</button>
+				aria-controls="docs-sidebar" title="Hide sidebar"
+				aria-label="Hide sidebar">&laquo;</button>
 		</div>
 
 		{#- Moved here from partials/nav.html. search-fuse.js binds these ids, so they

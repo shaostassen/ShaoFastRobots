@@ -17,33 +17,22 @@
 	// Whole-sidebar show/hide. The preference is restored before paint by an
 	// inline script in partials/head.html; this only handles the button and
 	// persistence, so the choice survives navigating between labs.
+	// Show/hide the whole sidebar. Two controls, each visible in exactly one
+	// state: « in the sidebar header collapses it, and » pinned to the page edge
+	// brings it back (a control inside the sidebar would vanish along with it).
 	function initSidebarToggle() {
 		var root = document.documentElement;
-		// Two entry points: the nav button (which also brings the sidebar back once
-		// it is gone) and a collapse control in the sidebar header, which is where
-		// people look for one first.
-		var navButton = document.getElementById("sidebar-toggle-button");
-		var collapseButton = document.querySelector(".docs-sidebar-collapse");
-		var buttons = [navButton, collapseButton].filter(Boolean);
+		var buttons = [
+			document.querySelector(".docs-sidebar-collapse"),
+			document.querySelector(".docs-sidebar-expand"),
+		].filter(Boolean);
 		if (!buttons.length) return;
-
-		function sync() {
-			var hidden = root.classList.contains("sidebar-hidden");
-			if (navButton) {
-				navButton.setAttribute("aria-pressed", String(hidden));
-				navButton.title = hidden ? "Show sidebar" : "Hide sidebar";
-			}
-		}
 
 		buttons.forEach(function (button) {
 			button.addEventListener("click", function () {
-				var hidden = root.classList.toggle("sidebar-hidden");
-				store(hidden);
-				sync();
+				store(root.classList.toggle("sidebar-hidden"));
 			});
 		});
-
-		sync();
 	}
 
 	function init() {

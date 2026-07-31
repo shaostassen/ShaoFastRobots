@@ -16,6 +16,10 @@
 		{% include "partials/nav.html" %}
 	{%- endif %}
 	{%- include "partials/docs-sidebar.html" -%}
+	{#- Expand control. Sits outside #docs-sidebar so it survives the sidebar
+	    being display:none, and is itself only shown while that is the case. -#}
+	<button class="docs-sidebar-expand" type="button" aria-controls="docs-sidebar"
+		title="Show sidebar" aria-label="Show sidebar">&raquo;</button>
 	<main id="main-content">
 		{% block custom %}{% endblock custom %}
 		{% block content %}{% endblock content %}
