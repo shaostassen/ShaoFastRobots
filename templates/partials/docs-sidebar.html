@@ -10,12 +10,20 @@
 
 <div id="docs-sidebar">
 	<div class="docs-sidebar-inner">
-		<a class="docs-brand" href="{{ get_url(path='/', lang=lang) }}">
-			<span class="docs-brand-title">{{ config.title }}</span>
-			{%- if config.author %}
-				<span class="docs-brand-subtitle">{{ config.author }}</span>
-			{%- endif %}
-		</a>
+		<div class="docs-sidebar-head">
+			<a class="docs-brand" href="{{ get_url(path='/', lang=lang) }}">
+				<span class="docs-brand-title">{{ config.title }}</span>
+				{%- if config.author %}
+					<span class="docs-brand-subtitle">{{ config.author }}</span>
+				{%- endif %}
+			</a>
+			{#- Collapse control where people actually look for one. The nav button
+			    does the same thing and is what brings the sidebar back. -#}
+			<button class="docs-sidebar-collapse" type="button"
+				aria-controls="docs-sidebar" title="Hide sidebar">
+				<i class="icon"></i>
+			</button>
+		</div>
 
 		{#- Moved here from partials/nav.html. search-fuse.js binds these ids, so they
 		    must appear exactly once in the document; #search-toggle stays in the nav. -#}

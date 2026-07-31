@@ -18,21 +18,29 @@
 	// inline script in partials/head.html; this only handles the button and
 	// persistence, so the choice survives navigating between labs.
 	function initSidebarToggle() {
-		var button = document.getElementById("sidebar-toggle-button");
-		if (!button) return;
-
 		var root = document.documentElement;
+		// Two entry points: the nav button (which also brings the sidebar back once
+		// it is gone) and a collapse control in the sidebar header, which is where
+		// people look for one first.
+		var navButton = document.getElementById("sidebar-toggle-button");
+		var collapseButton = document.querySelector(".docs-sidebar-collapse");
+		var buttons = [navButton, collapseButton].filter(Boolean);
+		if (!buttons.length) return;
 
 		function sync() {
 			var hidden = root.classList.contains("sidebar-hidden");
-			button.setAttribute("aria-pressed", String(hidden));
-			button.title = hidden ? "Show sidebar" : "Hide sidebar";
+			if (navButton) {
+				navButton.setAttribute("aria-pressed", String(hidden));
+				navButton.title = hidden ? "Show sidebar" : "Hide sidebar";
+			}
 		}
 
-		button.addEventListener("click", function () {
-			var hidden = root.classList.toggle("sidebar-hidden");
-			store(hidden);
-			sync();
+		buttons.forEach(function (button) {
+			button.addEventListener("click", function () {
+				var hidden = root.classList.toggle("sidebar-hidden");
+				store(hidden);
+				sync();
+			});
 		});
 
 		sync();
