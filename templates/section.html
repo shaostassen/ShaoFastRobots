@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+{%- include "partials/breadcrumbs.html" -%}
 <h1>{{ section.title }}</h1>
 {%- include "partials/statements.html" -%}
 {%- if section.extra.toc and not section.extra.toc_sidebar -%}

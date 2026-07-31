@@ -11,6 +11,8 @@
 	{%- set list_element = "ul" -%}
 {%- endif -%}
 
+{%- include "partials/breadcrumbs.html" -%}
+
 <article>
 	{%- if page.extra.banner -%}
 		<div id="banner-container">
@@ -141,16 +143,19 @@
 {%- if page.lower or page.higher -%}
 	<hr />
 	<nav id="post-nav">
-		{%- if page.higher -%}
-			<a class="post-nav-item post-nav-prev" href="{{ page.higher.permalink }}">
+		{#- Labs are weighted 1-12 ascending, so the *lower* weight is the earlier
+		    lab. This is the reverse of Duckquill's blog default, where a higher
+		    weight meant an older post. -#}
+		{%- if page.lower -%}
+			<a class="post-nav-item post-nav-prev" href="{{ page.lower.permalink }}">
 				<div class="nav-arrow">{{ macros_translate::translate(key="previous", default="Previous", language_strings=language_strings) }}</div>
-				<span class="post-title">{{ page.higher.title }}</span>
+				<span class="post-title">{{ page.lower.title }}</span>
 			</a>
 		{%- endif -%}
-		{%- if page.lower -%}
-			<a class="post-nav-item post-nav-next" href="{{ page.lower.permalink }}">
+		{%- if page.higher -%}
+			<a class="post-nav-item post-nav-next" href="{{ page.higher.permalink }}">
 				<div class="nav-arrow">{{ macros_translate::translate(key="next", default="Next", language_strings=language_strings) }}</div>
-				<span class="post-title">{{ page.lower.title }}</span>
+				<span class="post-title">{{ page.higher.title }}</span>
 			</a>
 		{%- endif -%}
 	</nav>

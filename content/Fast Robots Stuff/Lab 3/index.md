@@ -1,7 +1,8 @@
 +++
 title = "Lab 3: Time of Flight Sensors"
+description = "Permanently wiring two VL53L1X time-of-flight sensors, working around their shared I2C address, and streaming distance data over Bluetooth alongside the IMU."
 date = 2026-02-23
-weight = 10
+weight = 3
 [taxonomies]
 tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontroller" ]
 +++

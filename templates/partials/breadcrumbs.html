@@ -1,0 +1,35 @@
+{#- Breadcrumb trail plus an "Edit on GitHub" link, as on the reference site.
+    Works for both pages (page.*) and sections (section.*). -#}
+{%- set rel_attributes = macros_rel_attributes::rel_attributes() | trim -%}
+{%- set current_title = page.title | default(value=section.title) | default(value="") -%}
+{%- set relative_path = page.relative_path | default(value=section.relative_path) | default(value="") -%}
+
+<nav class="docs-breadcrumbs" aria-label="Breadcrumb">
+	<ol>
+		<li>
+			<a href="{{ get_url(path='/', lang=lang) }}">
+				{{- macros_translate::translate(key="home", default="Home", language_strings=language_strings) -}}
+			</a>
+		</li>
+		{#- Labs live one level down, so link their index when we're on a lab page. -#}
+		{%- if page.ancestors -%}
+			{%- for ancestor in page.ancestors -%}
+				{%- if ancestor != "_index.md" -%}
+					{%- set parent = get_section(path=ancestor, metadata_only=true) -%}
+					<li><a href="{{ parent.permalink }}">{{ parent.title }}</a></li>
+				{%- endif -%}
+			{%- endfor -%}
+		{%- endif -%}
+		{%- if current_title -%}
+			<li class="docs-breadcrumb-current" aria-current="page">{{ current_title }}</li>
+		{%- endif -%}
+	</ol>
+
+	{%- if config.extra.repo_url and relative_path %}
+		<a class="docs-edit-link"
+			href="{{ config.extra.repo_url }}/{{ config.extra.edit_path | default(value='blob/main/content') }}/{{ relative_path }}"
+			rel="{{ rel_attributes }}">
+			{{- macros_translate::translate(key="edit_on_github", default="Edit on GitHub", language_strings=language_strings) -}}
+		</a>
+	{%- endif %}
+</nav>

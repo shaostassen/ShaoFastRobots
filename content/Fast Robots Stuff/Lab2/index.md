@@ -1,7 +1,8 @@
 +++
 title = "Lab 2: IMU"
+description = "Integrating a 9DOF IMU, computing orientation from accelerometer and gyroscope data, characterizing noise in the frequency domain, and fusing the two estimates with a complementary filter."
 date = 2026-02-10
-weight = 11
+weight = 2
 [taxonomies]
 tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontroller" ]
 +++

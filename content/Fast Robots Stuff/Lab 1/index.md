@@ -1,7 +1,8 @@
 +++
 title = "Lab 1: Artemis and Bluetooth"
+description = "Setting up the SparkFun RedBoard Artemis Nano, verifying the serial, analog-read and PDM microphone examples, then building a BLE command-and-notify link between the board and my laptop."
 date = 2026-02-03
-weight = 12
+weight = 1
 [taxonomies]
 tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontroller" ]
 +++

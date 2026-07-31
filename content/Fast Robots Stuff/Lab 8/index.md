@@ -1,7 +1,8 @@
 +++
 title = "Lab 8: Stunts"
+description = "Engineering a two-phase state machine for the flip stunt with a Kalman-triggered transition, then pivoting to the drift task."
 date = 2026-04-06
-weight = 5
+weight = 8
 [taxonomies]
 tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontroller" ]
 +++

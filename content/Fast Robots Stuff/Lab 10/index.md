@@ -1,7 +1,8 @@
 +++
 title = "Lab 10: Grid Localization using Bayes Filter"
+description = "Implementing a Bayes filter in simulation over a (12, 9, 18) discretized grid, updating a belief over robot pose from ToF readings."
 date = 2026-04-20
-weight = 3
+weight = 10
 [taxonomies]
 tags = ["Robotics", "Python", "Sensors", "Bayes Filter", "Algorithms"]
 +++

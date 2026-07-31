@@ -1,0 +1,15 @@
+{#- Linear "contents" list of every lab, in weight order (Lab 1 → Lab 12).
+    Shared by index.html (home page) and article_list.html (section page) so the
+    two can't drift apart. -#}
+{%- set labs = get_section(path="Fast Robots Stuff/_index.md") -%}
+
+<ol class="lab-index">
+	{%- for lab in labs.pages %}
+		<li>
+			<a class="lab-index-title" href="{{ lab.permalink }}">{{ lab.title }}</a>
+			{%- if lab.description %}
+				<p class="lab-index-description">{{ lab.description }}</p>
+			{%- endif %}
+		</li>
+	{%- endfor %}
+</ol>

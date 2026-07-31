@@ -1,7 +1,8 @@
 +++
 title = "Lab 7: Kalman Filter"
+description = "Estimating drag and mass to build a state-space model of the robot, then running a Kalman filter to interpolate between slow ToF readings."
 date = 2026-03-23
-weight = 6
+weight = 7
 [taxonomies]
 tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontroller" ]
 +++

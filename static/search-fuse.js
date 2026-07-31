@@ -28,14 +28,14 @@
 		console.log("Search index initialized successfully");
 	}
 
-	function toggleSearch() {
+	// The docs sidebar keeps the search box permanently visible, so the nav button
+	// and the "/" shortcut move focus into it instead of toggling it open.
+	function focusSearch() {
 		initIndex();
 		const searchBar = document.getElementById("search-bar");
-		const searchContainer = document.getElementById("search-container");
-		const searchResults = document.getElementById("search-results");
-		searchContainer.classList.toggle("active");
-		searchBar.toggleAttribute("disabled");
+		searchBar.removeAttribute("disabled");
 		searchBar.focus();
+		searchBar.select();
 	}
 
 	function debounce(actual_fn, wait) {
@@ -59,21 +59,36 @@
 
 		let currentTerm = "";
 
-		searchBar.addEventListener("keyup", (e) => {
+		// Always-visible sidebar box: enable it up front and load the index on first
+		// interaction. Rendering is factored out so it can be re-run once the index
+		// resolves — otherwise anything typed while it was still loading is lost.
+		searchBar.removeAttribute("disabled");
+
+		function render() {
+			if (!searchSetup) return;
 			const searchVal = searchBar.value.trim();
-			const results = fuse.search(searchVal, { limit: MAX_ITEMS });
+			const results = searchVal ? fuse.search(searchVal, { limit: MAX_ITEMS }) : [];
 
 			let html = "";
 			for (const result of results) {
 				html += makeTeaser(result, searchVal);
 			}
 			searchResults.innerHTML = html;
+			searchResults.style.display = html ? "flex" : "none";
+		}
 
-			if (html) {
-				searchResults.style.display = "flex";
-			} else {
-				searchResults.style.display = "none";
+		function loadThenRender() {
+			initIndex().then(render).catch((e) => console.error("Search index failed:", e));
+		}
+
+		searchBar.addEventListener("focus", loadThenRender, { once: true });
+
+		searchBar.addEventListener("keyup", () => {
+			if (!searchSetup) {
+				loadThenRender(); // no-op once loaded; initIndex() is idempotent
+				return;
 			}
+			render();
 		});
 
 		function makeTeaser(result, searchVal) {
@@ -111,13 +126,18 @@
 		}, { passive: true });*/
 
 		document.addEventListener("keydown", function(event) {
+			// Don't hijack "/" while the user is already typing in a field.
+			const tag = event.target.tagName;
+			if (tag === "INPUT" || tag === "TEXTAREA" || event.target.isContentEditable) return;
+
 			if (event.key === "/") {
 				event.preventDefault();
-				toggleSearch();
+				focusSearch();
 			}
 		});
 
-		document.getElementById("search-toggle").addEventListener("click", toggleSearch);
+		const searchToggle = document.getElementById("search-toggle");
+		if (searchToggle) searchToggle.addEventListener("click", focusSearch);
 	}
 
 	if (document.readyState === "complete" ||

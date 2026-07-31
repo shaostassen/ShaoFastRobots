@@ -1,7 +1,8 @@
 +++
 title = "Lab 4: Motor Drivers and Open Loop Control"
+description = "Wiring dual motor drivers to the Artemis PWM pins, calibrating the drivetrain, and running open-loop maneuvers on the untethered car."
 date = 2026-03-02
-weight = 9
+weight = 4
 [taxonomies]
 tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontroller" ]
 +++

@@ -1,5 +1,6 @@
 theme = "duckquill"
-title = "Home"
+title = "ECE 4160: Fast Robots"
+description = "Lab documentation for ECE 4160 Fast Robots at Cornell — building an autonomous RC car with the Artemis Nano, time-of-flight sensing, PID and orientation control, Kalman filtering, mapping, Bayes localization, and path planning."
 base_url = "https://shaostassen.github.io/ShaoFastRobots"
 
 
@@ -47,13 +48,20 @@ accent_color_dark = "#48d4ff"
 fix_contrast_dark = true
 bundled_fonts = true
 
+# Docs-layout stylesheet, loaded after the theme's style.css so it wins the cascade.
+styles = ["docs.css"]
+scripts = ["docs-nav.js"]
+
+# Used by partials/breadcrumbs.html for the "Edit on GitHub" link.
+repo_url = "https://github.com/shaostassen/ShaoFastRobots"
+edit_path = "blob/main/content"
 
 show_copy_button = true
-# Whether to show estimated read time in posts.
-show_reading_time = true
+# Whether to show estimated read time in posts. Off: this is documentation, not a blog.
+show_reading_time = false
 
 # Whether to show a share button in article's quick actions.
-show_share_button = true
+show_share_button = false
 
 # Whether to show the backlinks button for linked articles in the article's quick actions
 show_backlinks = true
@@ -70,10 +78,9 @@ show_backlinks = true
 show_theme_switcher = true
 
 
+# The sidebar carries the full lab tree, so the top nav stays flat.
 links = [
-	{ name = "Projects", menu = [
-		{ url = "@/Fast Robots Stuff/_index.md", name = "ECE 4160 Fast Robots" },
-	] },
+	{ url = "@/Fast Robots Stuff/_index.md", name = "Lab Write-Ups" },
 ]
 
 

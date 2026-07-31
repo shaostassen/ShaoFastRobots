@@ -2,4 +2,9 @@
 
 {% block content %}
 {{ section.content | safe }}
+
+{%- set labs = get_section(path="Fast Robots Stuff/_index.md", metadata_only=true) %}
+<h2 class="lab-index-heading"><a href="{{ labs.permalink }}">{{ labs.title }}</a></h2>
+
+{% include "partials/lab-index.html" %}
 {% endblock content %}

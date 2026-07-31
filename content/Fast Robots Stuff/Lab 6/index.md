@@ -1,7 +1,8 @@
 +++
 title = "Lab 6: Orientation Control"
+description = "A yaw PID controller for in-place rotation with differential drive, mitigating gyroscope drift and derivative kick."
 date = 2026-03-17
-weight = 7
+weight = 6
 [taxonomies]
 tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontroller" ]
 +++

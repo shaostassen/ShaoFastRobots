@@ -1,7 +1,8 @@
 +++
 title = "Lab 12: Inverted Pendulum"
+description = "Balancing an inverted pendulum on the moving car with a Kalman filter and an LQR controller over the nonlinear cart-pole dynamics."
 date = 2026-05-13
-weight = 1
+weight = 12
 [taxonomies]
 tags = ["LQR Controller", "C++", "Sensors", "Embedded Software", "Nonlinear Dynamic", "Kalman Filter"]
 +++

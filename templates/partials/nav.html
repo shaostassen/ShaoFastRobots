@@ -136,15 +136,6 @@
 			{%- endif %}
 		</ul>
 	</nav>
-	{%- if config.build_search_index %}
-		<div id="search-container">
-			<label for="search-bar" class="visually-hidden">
-				{{- macros_translate::translate(key="search", default="Search", language_strings=language_strings) -}}
-			</label>
-			<input id="search-bar" placeholder="{{ macros_translate::translate(key='search_for', default='Search for', language_strings=language_strings) }}…" autocomplete="off" type="search" disabled>
-			<div id="search-results-container">
-				<div id="search-results"></div>
-			</div>
-		</div>
-	{%- endif %}
+	{#- #search-container lives in partials/docs-sidebar.html; the toggle button above
+	    still drives it (search-fuse.js binds by id, so it must not be duplicated). -#}
 </header>

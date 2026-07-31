@@ -1,0 +1,65 @@
+{#- Persistent documentation sidebar: brand, search, and the full lab nav tree.
+    Rendered on every page from base.html. Uses #docs-sidebar rather than the
+    theme's #sidebar so none of Duckquill's hover-to-reveal TOC rules apply.
+
+    Layout contract with docs.css: .docs-sidebar-inner is a sticky flex column
+    that does NOT scroll (so the search dropdown can escape it); only .docs-nav
+    scrolls. -#}
+{%- set labs = get_section(path="Fast Robots Stuff/_index.md") -%}
+{%- set here = current_url | default(value="") | trim_end_matches(pat="/") -%}
+
+<div id="docs-sidebar">
+	<div class="docs-sidebar-inner">
+		<a class="docs-brand" href="{{ get_url(path='/', lang=lang) }}">
+			<span class="docs-brand-title">{{ config.title }}</span>
+			{%- if config.author %}
+				<span class="docs-brand-subtitle">{{ config.author }}</span>
+			{%- endif %}
+		</a>
+
+		{#- Moved here from partials/nav.html. search-fuse.js binds these ids, so they
+		    must appear exactly once in the document; #search-toggle stays in the nav. -#}
+		{%- if config.build_search_index %}
+			<div id="search-container">
+				<label for="search-bar" class="visually-hidden">
+					{{- macros_translate::translate(key="search", default="Search", language_strings=language_strings) -}}
+				</label>
+				<input id="search-bar" placeholder="Search docs…" autocomplete="off" type="search" disabled>
+				<div id="search-results-container">
+					<div id="search-results"></div>
+				</div>
+			</div>
+		{%- endif %}
+
+		<details class="docs-nav-group" open>
+			<summary class="docs-nav-caption">Lab Write-Ups</summary>
+			<ul class="docs-nav">
+				{%- for lab in labs.pages -%}
+					{%- set is_current = lab.permalink | trim_end_matches(pat="/") == here -%}
+					<li{% if is_current %} class="current"{% endif %}>
+						<a href="{{ lab.permalink }}">{{ lab.title }}</a>
+						{#- Sub-headings only expand under the current page, as on the reference
+						    site. Uses the outer `page.toc` (the current page) rather than
+						    `lab.toc`, which is not populated from a section's page array. -#}
+						{%- if is_current and page.toc | default(value=[]) | length > 0 -%}
+							<ul class="docs-nav-toc">
+								{%- for heading in page.toc -%}
+									<li><a href="{{ heading.permalink | safe }}">{{ heading.title }}</a></li>
+								{%- endfor -%}
+							</ul>
+						{%- endif -%}
+					</li>
+				{%- endfor -%}
+			</ul>
+		</details>
+
+		{%- if config.taxonomies | length > 0 %}
+			<div class="docs-sidebar-foot">
+				<a href="{{ get_url(path='tags', lang=lang) }}"
+					{%- if here == get_url(path='tags', lang=lang) | trim_end_matches(pat='/') %} class="current"{% endif %}>
+					{{- macros_translate::translate(key="filter_by_tag", default="Browse by tag", language_strings=language_strings) -}}
+				</a>
+			</div>
+		{%- endif %}
+	</div>
+</div>

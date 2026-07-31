@@ -1,7 +1,8 @@
 +++
 title = "Lab 11: Localization on the Real Robot"
+description = "Running the Bayes filter update step on the real car against a uniform prior, localizing from a single 360-degree scan of 18 range readings."
 date = 2026-04-27
-weight = 2
+weight = 11
 [taxonomies]
 tags = ["Robotics", "C++", "Sensors", "Python", "Embedded Software", "Microcontroller", "Bayes Filter", "Localization" ]
 +++
