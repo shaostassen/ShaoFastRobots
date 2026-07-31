@@ -135,13 +135,16 @@ article {
 	counter-reset: figure;
 }
 
+/* Figures sit at 75% of the measure and centre. Full-bleed screenshots and
+   video swamp the prose otherwise, even with both rails expanded. */
 article figure {
-	margin-inline: 0;
 	margin-block: 1.75rem;
+	margin-inline: auto;
 	border: max(1px, 0.0625rem) solid var(--fg-muted-2);
 	border-radius: var(--rounded-corner);
 	background-color: var(--fg-muted-1);
 	padding: 0.75rem;
+	max-width: 75%;
 }
 
 article figure img,
@@ -151,6 +154,17 @@ article figure video {
 	margin-inline: auto;
 	border-radius: var(--rounded-corner-small);
 	max-width: 100%;
+}
+
+/* The theme forces `iframe { width: 100% }`, which overrides the width="450"
+   on these embeds while the height="315" attribute stays put — leaving video
+   stretched to a wrong aspect ratio. Restore 16:9. */
+article figure iframe[src*="youtube"],
+article figure iframe[src*="youtu.be"],
+article figure iframe[src*="vimeo"] {
+	aspect-ratio: 16 / 9;
+	width: 100%;
+	height: auto;
 }
 
 article figure img {
@@ -270,6 +284,14 @@ article figure[style*="flex"] figcaption {
 	body:has(#docs-sidebar):has(#lab-toc) main {
 		max-width: var(--docs-content-width);
 		padding-inline-end: 2.5rem;
+	}
+}
+
+/* Below the wide breakpoints the measure is already narrow; holding figures at
+   75% would just make them small. */
+@media only screen and (max-width: 1000px) {
+	article figure {
+		max-width: 100%;
 	}
 }
 

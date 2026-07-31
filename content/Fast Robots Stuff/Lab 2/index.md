@@ -1,5 +1,6 @@
 +++
 title = "Lab 2: IMU"
+aliases = ["Fast Robots Stuff/lab2/"]
 description = "Integrating a 9DOF IMU, computing orientation from accelerometer and gyroscope data, characterizing noise in the frequency domain, and fusing the two estimates with a complementary filter."
 date = 2026-02-10
 weight = 2

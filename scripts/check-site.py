@@ -72,8 +72,13 @@ def lab_pages() -> list[str]:
     pages = []
     for entry in sorted(os.listdir(root)):
         index = os.path.join(root, entry, "index.html")
-        if re.fullmatch(r"lab-?\d+", entry) and os.path.isfile(index):
-            pages.append(index)
+        if not (re.fullmatch(r"lab-?\d+", entry) and os.path.isfile(index)):
+            continue
+        # Skip `aliases` redirect stubs — Zola emits a ~500-byte page that just
+        # bounces to the real URL, and it has none of the page furniture.
+        if "<title>Redirect</title>" in open(index, encoding="utf-8").read(1000):
+            continue
+        pages.append(index)
     return sorted(pages, key=lambda p: int(re.search(r"lab-?(\d+)", p).group(1)))
 
 
