@@ -1,5 +1,6 @@
 +++
 title = "Lab 3: Time of Flight Sensors"
+aliases = ["Fast Robots Stuff/lab-3/"]
 description = "Permanently wiring two VL53L1X time-of-flight sensors, working around their shared I2C address, and streaming distance data over Bluetooth alongside the IMU."
 date = 2026-02-23
 weight = 3

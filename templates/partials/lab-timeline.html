@@ -1,6 +1,6 @@
 {#- The lab index as a semester timeline. Used on the landing page only; the
     section page keeps the plain contents list from partials/lab-index.html. -#}
-{%- set labs = get_section(path="Fast Robots Stuff/_index.md") -%}
+{%- set labs = get_section(path="labs/_index.md") -%}
 {%- set date_format = macros_translate::translate(key="date_format", default="%B %d, %Y", language_strings=language_strings) -%}
 {%- set date_locale = macros_translate::translate(key="date_locale", default="en_US", language_strings=language_strings) -%}
 

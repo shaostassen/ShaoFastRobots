@@ -5,7 +5,7 @@
     Layout contract with docs.css: .docs-sidebar-inner is a sticky flex column
     that does NOT scroll (so the search dropdown can escape it); only .docs-nav
     scrolls. -#}
-{%- set labs = get_section(path="Fast Robots Stuff/_index.md") -%}
+{%- set labs = get_section(path="labs/_index.md") -%}
 {%- set here = current_url | default(value="") | trim_end_matches(pat="/") -%}
 
 <div id="docs-sidebar">

@@ -1,5 +1,6 @@
 +++
 title = "Lab 7: Kalman Filter"
+aliases = ["Fast Robots Stuff/lab-7/"]
 description = "Estimating drag and mass to build a state-space model of the robot, then running a Kalman filter to interpolate between slow ToF readings."
 date = 2026-03-23
 weight = 7

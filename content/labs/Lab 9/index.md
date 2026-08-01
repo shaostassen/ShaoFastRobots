@@ -1,5 +1,6 @@
 +++
 title = "Lab 9: Mapping"
+aliases = ["Fast Robots Stuff/lab-9/"]
 description = "Reusing the orientation PID controller to spin the robot in place at set poses and assemble a map of the arena from ToF scans."
 date = 2026-04-14
 weight = 9

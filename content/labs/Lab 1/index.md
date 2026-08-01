@@ -1,5 +1,6 @@
 +++
 title = "Lab 1: Artemis and Bluetooth"
+aliases = ["Fast Robots Stuff/lab-1/"]
 description = "Setting up the SparkFun RedBoard Artemis Nano, verifying the serial, analog-read and PDM microphone examples, then building a BLE command-and-notify link between the board and my laptop."
 date = 2026-02-03
 weight = 1

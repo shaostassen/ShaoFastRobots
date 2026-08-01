@@ -1,5 +1,6 @@
 +++
 title = "Lab 11: Localization on the Real Robot"
+aliases = ["Fast Robots Stuff/lab-11/"]
 description = "Running the Bayes filter update step on the real car against a uniform prior, localizing from a single 360-degree scan of 18 range readings."
 date = 2026-04-27
 weight = 11

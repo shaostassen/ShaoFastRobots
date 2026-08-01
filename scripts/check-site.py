@@ -37,7 +37,7 @@ import urllib.request
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PUBLIC = os.path.join(REPO, "public")
-LABS_GLOB = "Fast Robots Stuff"
+LABS_GLOB = "labs"
 
 CHROME = os.environ.get(
     "CHROME_BIN", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"

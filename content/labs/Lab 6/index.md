@@ -1,5 +1,6 @@
 +++
 title = "Lab 6: Orientation Control"
+aliases = ["Fast Robots Stuff/lab-6/"]
 description = "A yaw PID controller for in-place rotation with differential drive, mitigating gyroscope drift and derivative kick."
 date = 2026-03-17
 weight = 6

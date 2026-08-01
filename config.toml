@@ -80,7 +80,7 @@ show_theme_switcher = true
 
 # The sidebar carries the full lab tree, so the top nav stays flat.
 links = [
-	{ url = "@/Fast Robots Stuff/_index.md", name = "Lab Write-Ups" },
+	{ url = "@/labs/_index.md", name = "Lab Write-Ups" },
 ]
 
 

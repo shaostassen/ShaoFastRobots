@@ -1,5 +1,6 @@
 +++
 title = "Lab 5: Linear PID Control and Linear Interpolation"
+aliases = ["Fast Robots Stuff/lab-5/"]
 description = "A linear PID controller that drives the robot to a stop 304 mm from a wall, using linear extrapolation to decouple the control loop from the slower ToF sample rate."
 date = 2026-03-15
 weight = 5

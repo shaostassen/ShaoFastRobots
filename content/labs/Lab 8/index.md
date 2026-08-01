@@ -1,5 +1,6 @@
 +++
 title = "Lab 8: Stunts"
+aliases = ["Fast Robots Stuff/lab-8/"]
 description = "Engineering a two-phase state machine for the flip stunt with a Kalman-triggered transition, then pivoting to the drift task."
 date = 2026-04-06
 weight = 8

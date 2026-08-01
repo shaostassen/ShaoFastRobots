@@ -1,5 +1,6 @@
 +++
 title = "Lab 4: Motor Drivers and Open Loop Control"
+aliases = ["Fast Robots Stuff/lab-4/"]
 description = "Wiring dual motor drivers to the Artemis PWM pins, calibrating the drivetrain, and running open-loop maneuvers on the untethered car."
 date = 2026-03-02
 weight = 4
