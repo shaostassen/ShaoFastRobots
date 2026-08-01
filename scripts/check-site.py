@@ -339,6 +339,36 @@ def check_browser(r: Results, port: int, shots_dir: str | None) -> None:
                 chrome.screenshot(os.path.join(
                     shots_dir, f"{label.replace(' ', '-')}.png"))
 
+        # The collapsed state has its own failure mode: if the expand control
+        # loses its styling it stops being a fixed tab and becomes an invisible
+        # full-width strip far down the page, stranding anyone whose stored
+        # preference has the sidebar hidden. Checking only the visible state
+        # missed exactly that.
+        chrome.viewport(1440, 1000)
+        chrome.goto(base + "/")
+        chrome.js("localStorage.setItem('docs-sidebar-hidden','1')")
+        chrome.goto(base + "/")
+        hidden = chrome.js(
+            "getComputedStyle(document.getElementById('docs-sidebar')).display")
+        tab = chrome.js("""(() => {
+            const b = document.querySelector('.docs-sidebar-expand');
+            if (!b) return null;
+            const r = b.getBoundingClientRect();
+            const s = getComputedStyle(b);
+            return {pos: s.position, w: Math.round(r.width), h: Math.round(r.height),
+                    x: Math.round(r.x), y: Math.round(r.y),
+                    onscreen: r.y >= 0 && r.y < window.innerHeight && r.width < 200};
+        })()""")
+        r.check(hidden == "none", "collapsed: sidebar hides", f"display={hidden}")
+        r.check(bool(tab) and tab.get("pos") == "fixed",
+                "collapsed: expand tab is fixed", str(tab))
+        r.check(bool(tab) and tab.get("onscreen"),
+                "collapsed: expand tab reachable", str(tab))
+        print(f"  collapsed     sidebar={hidden} tab={tab.get('w') if tab else '?'}x"
+              f"{tab.get('h') if tab else '?'} @{tab.get('y') if tab else '?'} "
+              f"pos={tab.get('pos') if tab else '?'}")
+        chrome.js("localStorage.removeItem('docs-sidebar-hidden')")
+
         # Sidebar search: type, then read the rendered results panel.
         chrome.viewport(1440, 1000)
         chrome.goto(lab_url)

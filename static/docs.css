@@ -145,6 +145,62 @@ html.sidebar-hidden body:has(#docs-sidebar) main {
 	}
 }
 
+/* Collapse (« in the sidebar header) and expand (» pinned to the page edge).
+   Both are plain text glyphs, so they stay legible even if this stylesheet is
+   stale or missing. */
+#docs-sidebar .docs-sidebar-collapse,
+.docs-sidebar-expand {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: var(--transition);
+	box-shadow: none;
+	border: none;
+	background-color: var(--fg-muted-1);
+	padding: 0;
+	color: var(--fg-muted-5);
+	font-weight: 700;
+	font-size: var(--font-size-medium);
+	line-height: 1;
+	font-family: inherit;
+	user-select: none;
+}
+
+#docs-sidebar .docs-sidebar-collapse:hover,
+#docs-sidebar .docs-sidebar-collapse:focus-visible,
+.docs-sidebar-expand:hover,
+.docs-sidebar-expand:focus-visible {
+	background-color: var(--fg-muted-2);
+	color: var(--accent-color);
+}
+
+#docs-sidebar .docs-sidebar-collapse {
+	border-radius: var(--rounded-corner-small);
+	width: 1.875rem;
+	height: 1.875rem;
+}
+
+/* Only present while the sidebar is hidden; a tab against the left edge, at the
+   height the sidebar header used to occupy. */
+.docs-sidebar-expand {
+	display: none;
+	position: fixed;
+	z-index: 998;
+	inset-block-start: var(--docs-nav-clearance, 5.5rem);
+	inset-inline-start: 0;
+	box-shadow: var(--edge-highlight);
+	border-start-end-radius: var(--rounded-corner);
+	border-end-end-radius: var(--rounded-corner);
+	width: 1.75rem;
+	height: 2.75rem;
+}
+
+html.sidebar-hidden .docs-sidebar-expand {
+	display: flex;
+}
+
 #docs-sidebar .docs-brand:hover .docs-brand-title {
 	color: var(--accent-color);
 }
